@@ -1,0 +1,26 @@
+.select {
+  font-size: 0.9rem;
+  position: relative;
+  cursor: pointer;
+  padding: var(--padding-square);
+  background: var(--gray-1);
+  flex-grow: 0;
+  &:first-child {
+    border-radius: var(--border-radius-start);
+  }
+  &:last-child {
+    border-radius: var(--border-radius-end);
+  }
+}
+
+.select-dropdown {
+  position: absolute;
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  padding: var(--padding-square);
+  box-shadow: var(--box-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 1;
+}
