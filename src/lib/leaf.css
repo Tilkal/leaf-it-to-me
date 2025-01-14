@@ -45,18 +45,6 @@
     }
   }
 
-  .leaf-confirm {
-    width: 1rem;
-    height: 1rem;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    & svg {
-      fill: var(--green-8);
-    }
-  }
-
   &.leaf-edit {
     &:hover {
       background-color: var(--white);
@@ -103,6 +91,7 @@
     padding: var(--padding-square);
     background-color: var(--green-1);
     transition: all ease-in 0.08s;
+    border: none;
     flex-grow: 0;
     &:hover {
       background-color: var(--green-2);
@@ -112,6 +101,11 @@
     }
     &:last-child {
       border-radius: var(--border-radius-end);
+    }
+    & svg {
+      width: 1rem;
+      height: 1rem;
+      fill: var(--green-8);
     }
   }
 }

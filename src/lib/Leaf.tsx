@@ -32,15 +32,12 @@ export const Leaf: React.FC<LeafProps> = ({
             type="text"
             value={value?.toString() ?? ""}
           />
-          {/* // TODO: Manage focus on tab for full div instead of button */}
-          <div className="leaf-input-group-button">
-            <button
-              className="leaf-confirm"
-              onClick={() => setIsEditing(false)}
-            >
-              <Tick />
-            </button>
-          </div>
+          <button
+            className="leaf-input-group-button"
+            onClick={() => setIsEditing(false)}
+          >
+            <Tick />
+          </button>
         </div>
         <button className="leaf-close">
           <X />

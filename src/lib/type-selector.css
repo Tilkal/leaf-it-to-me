@@ -1,6 +1,10 @@
-.select {
-  font-size: 0.9rem;
+.type-selector {
+  & select {
+    display: none;
+  }
+
   position: relative;
+  font-size: 0.9rem;
   cursor: pointer;
   padding: var(--padding-square);
   background: var(--gray-1);
@@ -13,14 +17,23 @@
   }
 }
 
-.select-dropdown {
+.type-selector-dropdown {
   position: absolute;
+  top: 1rem;
+  left: 0;
   background-color: var(--white);
   border-radius: var(--border-radius);
-  padding: var(--padding-square);
   box-shadow: var(--box-shadow);
   display: flex;
   flex-direction: column;
-  gap: 6px;
   z-index: 1;
+  overflow: hidden;
+}
+
+.type-selector-dropdown-item {
+  padding: var(--padding-square);
+
+  &:hover {
+    background-color: var(--gray-1);
+  }
 }
