@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from 'react'
 
-import { TypeTag } from "./TypeTag"
+import { TypeTag } from './TypeTag'
 
-import "./type-selector.css"
+import './type-selector.css'
 
 type SelectProps = {
   value: string
@@ -10,7 +10,7 @@ type SelectProps = {
   onSelect: (value: string) => void
 }
 
-const OPTIONS = ["string", "number", "boolean", "array", "object"]
+const OPTIONS = ['string', 'number', 'boolean', 'array', 'object']
 
 type IsOpen = { isFocused: boolean; isClicked: boolean }
 
@@ -34,8 +34,8 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
   }
 
   useEffect(() => {
-    document.addEventListener("click", onClickOutside)
-    return () => document.removeEventListener("click", onClickOutside)
+    document.addEventListener('click', onClickOutside)
+    return () => document.removeEventListener('click', onClickOutside)
   }, [ref])
 
   return (

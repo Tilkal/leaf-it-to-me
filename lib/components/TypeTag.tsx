@@ -1,6 +1,6 @@
-import React from "react"
+import React from 'react'
 
-import "./type-tag.css"
+import './type-tag.css'
 
 type TypeTagProps = {
   type: string

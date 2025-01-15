@@ -7,4 +7,5 @@ export type Tree = {
 export type Leaf = {
   name: string
   value: Primitive
+  readonly?: boolean
 }

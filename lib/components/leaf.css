@@ -9,11 +9,14 @@
   flex-direction: row;
   gap: var(--gap);
   justify-content: space-between;
-  font-family: sans-serif;
+  font-family: var(--font-family);
   align-items: center;
-  cursor: pointer;
 
-  &:hover {
+  &:not(.readonly) {
+    cursor: pointer;
+  }
+
+  &:hover:not(.readonly) {
     background-color: var(--gray-1);
   }
 
@@ -27,21 +30,26 @@
     }
   }
 
-  .leaf-close {
+  .leaf-delete {
     width: 1rem;
     height: 1rem;
     padding: 0;
     border: none;
     background: none;
-    cursor: pointer;
     opacity: 0;
-    transition: all ease-in 0.08s;
+    transition: opacity ease-in 0.08s;
+
     & svg {
-      transition: all ease-in 0.08s;
+      transition: opacity ease-in 0.08s;
       fill: var(--red-1);
-      &:hover {
+
+      &:hover:not(.readonly) {
         fill: var(--red-10);
       }
+    }
+
+    &:not(.readonly) {
+      cursor: pointer;
     }
   }
 
@@ -50,7 +58,7 @@
       background-color: var(--white);
     }
 
-    .leaf-close {
+    .leaf-delete:not(.readonly) {
       opacity: 1;
       & svg {
         fill: var(--red-10);
@@ -58,7 +66,7 @@
     }
   }
 
-  &:hover .leaf-close {
+  &:hover .leaf-delete:not(.readonly) {
     opacity: 1;
   }
 
@@ -90,7 +98,7 @@
     align-items: center;
     padding: var(--padding-square);
     background-color: var(--green-1);
-    transition: all ease-in 0.08s;
+    transition: background-color ease-in 0.08s;
     border: none;
     flex-grow: 0;
     &:hover {
