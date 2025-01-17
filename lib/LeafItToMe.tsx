@@ -1,5 +1,6 @@
 import React from 'react'
-import { Tree } from './types'
+
+import { Tree } from './defs'
 
 import './root.css'
 

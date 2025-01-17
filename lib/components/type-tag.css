@@ -1,9 +1,9 @@
 .type-tag {
   border-radius: 6px;
-  height: 1rem;
-  font-size: 0.8rem;
+  height: 0.9rem;
+  font-size: 0.7rem;
   width: fit-content;
-  padding: var(--padding-rectangle);
+  padding: var(--padding-rect-1);
 
   &.type-string {
     background-color: var(--blue-1);

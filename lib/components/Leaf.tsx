@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
-import { Leaf as LeafProps, Primitive } from '../types'
+import { Leaf as LeafProps, LeafType, Primitive } from '../defs'
 import { classNames } from '../utils/classNames'
+import { isValidString } from '../utils/json'
 import { TypeSelector } from './TypeSelector'
 import { TypeTag } from './TypeTag'
 import { Tick } from './icons/Tick'
@@ -10,33 +11,78 @@ import { X } from './icons/X'
 import './leaf.css'
 
 export const Leaf: React.FC<LeafProps> = ({
+  type: initType,
   name: initName,
   value: initValue,
   readonly,
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [name, setName] = useState<string>(initName)
-  const [value, setValue] = useState<Primitive>(initValue)
-  const type = 'string'
+  const [value, setValue] = useState<string>(initValue?.toString() ?? '')
+  const [type, setType] = useState<LeafType>(initType)
+  const [errors, setErrors] = useState<Record<string, boolean>>({})
+
+  const hasError = useMemo(
+    () => Object.values(errors).some((value) => value),
+    [errors],
+  )
+
+  useEffect(() => {
+    setErrors((prev) => ({ ...prev, name: !isValidString(name) }))
+  }, [name])
+
+  useEffect(() => {
+    switch (type) {
+      case 'string':
+        setErrors((prev) => ({ ...prev, value: !isValidString(value) }))
+        break
+      default:
+        break
+    }
+  }, [type, value])
 
   if (!readonly && isEditing) {
     return (
-      <div className="leaf leaf-edit">
+      <form
+        className={classNames('leaf', 'leaf-edit', {
+          error: hasError,
+        })}
+        onSubmit={(event) => {
+          event.preventDefault()
+          if (hasError) {
+            console.log({ hasError })
+          } else {
+            setIsEditing(false)
+          }
+        }}
+      >
         <div className="leaf-input-group">
           <TypeSelector
             value={type}
             options={['string', 'boolean', 'number']}
-            onSelect={(value) => console.log({ value })}
+            onSelect={(value) => setType(value)}
           />
-          <input className="leaf-input input-name" type="text" value={name} />
           <input
-            className="leaf-input input-value"
+            className={classNames('leaf-input', 'input-name', {
+              error: errors.name,
+            })}
+            type="text"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
+          <input
+            className={classNames('leaf-input', 'input-value', {
+              error: errors.value,
+            })}
             type="text"
             value={value?.toString() ?? ''}
+            onChange={(event) => setValue(event.target.value)}
           />
           <button
-            className="leaf-input-group-button"
-            onClick={() => setIsEditing(false)}
+            className={classNames('leaf-input-group-button', 'button-submit', {
+              error: hasError,
+            })}
+            type="submit"
           >
             <Tick />
           </button>
@@ -44,7 +90,7 @@ export const Leaf: React.FC<LeafProps> = ({
         <button className="leaf-delete">
           <X />
         </button>
-      </div>
+      </form>
     )
   }
 

@@ -1,10 +1,10 @@
 .leaf {
   background-color: var(--white);
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-4);
   box-shadow: var(--box-shadow);
   width: 100%;
   max-width: 100%;
-  padding: var(--padding-square);
+  padding: var(--padding-sqr-4);
   display: flex;
   flex-direction: row;
   gap: var(--gap);
@@ -20,6 +20,12 @@
     background-color: var(--gray-1);
   }
 
+  * {
+    &:focus {
+      outline: 2px solid var(--blue-8);
+    }
+  }
+
   .leaf-name {
     color: var(--gray-7);
   }
@@ -27,6 +33,26 @@
   .leaf-value {
     &.type-string {
       color: var(--blue-7);
+    }
+
+    &.type-string {
+      color: var(--blue-7);
+    }
+
+    &.type-number {
+      color: var(--green-7);
+    }
+
+    &.type-boolean {
+      color: var(--orange-7);
+    }
+
+    &.type-array {
+      color: var(--violet-7);
+    }
+
+    &.type-object {
+      color: var(--red-7);
     }
   }
 
@@ -73,22 +99,28 @@
   .leaf-input-group {
     display: flex;
     flex-direction: row;
-    gap: 2px;
+    gap: 3px;
     width: 100%;
   }
 
   .leaf-input {
     font-size: 1rem;
     position: relative;
-    padding: var(--padding-square);
+    padding: var(--padding-sqr-4);
     background: var(--gray-1);
     border: none;
     flex-grow: 1;
     &:first-child {
-      border-radius: var(--border-radius-start);
+      border-radius: var(--border-radius-h-start-4);
     }
     &:last-child {
-      border-radius: var(--border-radius-end);
+      border-radius: var(--border-radius-h-end-4);
+    }
+    &.error {
+      outline: 1px solid var(--red-5);
+      &:focus {
+        outline: 2px solid var(--red-5);
+      }
     }
   }
 
@@ -96,7 +128,7 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: var(--padding-square);
+    padding: var(--padding-sqr-4);
     background-color: var(--green-1);
     transition: background-color ease-in 0.08s;
     border: none;
@@ -105,15 +137,25 @@
       background-color: var(--green-2);
     }
     &:first-child {
-      border-radius: var(--border-radius-start);
+      border-radius: var(--border-radius-h-start-4);
     }
     &:last-child {
-      border-radius: var(--border-radius-end);
+      border-radius: var(--border-radius-h-end-4);
     }
     & svg {
       width: 1rem;
       height: 1rem;
       fill: var(--green-8);
+    }
+    &.button-submit.error {
+      background-color: var(--gray-2);
+      cursor: not-allowed;
+      &:focus {
+        outline: 2px solid var(--red-5);
+      }
+      & svg {
+        fill: var(--gray-5);
+      }
     }
   }
 }

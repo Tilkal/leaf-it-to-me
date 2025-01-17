@@ -19,6 +19,7 @@ type Story = StoryObj<typeof Leaf>
 
 export const Default: Story = {
   args: {
+    type: 'string',
     name: 'example',
     value: 'value',
   },
@@ -26,6 +27,7 @@ export const Default: Story = {
 
 export const StringLeaf: Story = {
   args: {
+    type: 'string',
     name: 'lorem',
     value: 'ipsum',
   },

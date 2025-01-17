@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
+import { LEAF_TYPES, LeafType } from '../defs'
 import { TypeTag } from './TypeTag'
 
 import './type-selector.css'
@@ -7,10 +8,8 @@ import './type-selector.css'
 type SelectProps = {
   value: string
   options: string[]
-  onSelect: (value: string) => void
+  onSelect: (value: LeafType) => void
 }
-
-const OPTIONS = ['string', 'number', 'boolean', 'array', 'object']
 
 type IsOpen = { isFocused: boolean; isClicked: boolean }
 
@@ -22,8 +21,9 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
     isClicked: false,
   })
   const ref = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const onClickOutside: EventListener = (event) => {
+  const onClickOutside = (event: Event) => {
     if (
       ref &&
       event.target instanceof Node &&
@@ -44,15 +44,22 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
       ref={ref}
       tabIndex={0}
       onFocus={() => setIsOpen((prev) => ({ ...prev, isFocused: true }))}
-      onBlur={() => setIsOpen((prev) => ({ ...prev, isFocused: false }))}
+      onBlur={(event) => {
+        if (!dropdownRef.current?.contains(event.relatedTarget)) {
+          setIsOpen({ isClicked: false, isFocused: false })
+        }
+      }}
+      onKeyDown={(event) => {
+        if (
+          event.key === 'ArrowDown' &&
+          event.target === document.activeElement &&
+          dropdownRef.current?.firstChild &&
+          dropdownRef.current.firstChild instanceof HTMLElement
+        ) {
+          dropdownRef.current.firstChild.focus()
+        }
+      }}
     >
-      <select>
-        {OPTIONS.map((option) => (
-          <option value={option} selected={selected === option}>
-            {option}
-          </option>
-        ))}
-      </select>
       <div
         className={`type-selector-value type-${selected}`}
         onClick={() => {
@@ -66,14 +73,35 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
         <TypeTag type={selected} />
       </div>
       {(isOpen.isFocused || isOpen.isClicked) && (
-        <div className="type-selector-dropdown">
-          {OPTIONS.map((option) => (
+        <div className="type-selector-dropdown" ref={dropdownRef}>
+          {LEAF_TYPES.map((option) => (
             <div
+              key={option}
+              tabIndex={0}
               className={`type-selector-dropdown-item type-${option}`}
               onClick={() => {
                 setSelected(option)
                 onSelect(option)
                 setIsOpen({ isClicked: false, isFocused: false })
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  setSelected(option)
+                }
+                if (
+                  event.key === 'ArrowDown' &&
+                  event.target instanceof HTMLElement &&
+                  event.target.nextSibling instanceof HTMLElement
+                ) {
+                  event.target.nextSibling.focus()
+                }
+                if (
+                  event.key === 'ArrowUp' &&
+                  event.target instanceof HTMLElement &&
+                  event.target.previousSibling instanceof HTMLElement
+                ) {
+                  event.target.previousSibling.focus()
+                }
               }}
             >
               <TypeTag type={option} />

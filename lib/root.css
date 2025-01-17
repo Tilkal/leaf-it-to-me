@@ -2,11 +2,42 @@
   --font-family: sans-serif;
   --box-shadow: rgba(50, 50, 93, 0.125) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.125) 0px 1px 3px -1px;
-  --border-radius: 8px;
-  --border-radius-start: 8px 0 0 8px;
-  --border-radius-end: 0 8px 8px 0;
-  --padding-square: 8px;
-  --padding-rectangle: 3px 6px;
+
+  --border-radius-1: 2px;
+  --border-radius-2: 4px;
+  --border-radius-3: 6px;
+  --border-radius-4: 8px;
+
+  --border-radius-v-start-1: 2px 2px 0 0;
+  --border-radius-v-start-2: 4px 4px 0 0;
+  --border-radius-v-start-3: 6px 6px 0 0;
+  --border-radius-v-start-4: 8px 8px 0 0;
+
+  --border-radius-v-end-1: 0 0 2px 2px;
+  --border-radius-v-end-2: 0 0 4px 4px;
+  --border-radius-v-end-3: 0 0 6px 6px;
+  --border-radius-v-end-4: 0 0 8px 8px;
+
+  --border-radius-h-start-1: 2px 0 0 2px;
+  --border-radius-h-start-2: 4px 0 0 4px;
+  --border-radius-h-start-3: 6px 0 0 6px;
+  --border-radius-h-start-4: 8px 0 0 8px;
+
+  --border-radius-h-end-1: 0 2px 2px 0;
+  --border-radius-h-end-2: 0 4px 4px 0;
+  --border-radius-h-end-3: 0 6px 6px 0;
+  --border-radius-h-end-4: 0 8px 8px 0;
+
+  --padding-sqr-1: 2px;
+  --padding-sqr-2: 4px;
+  --padding-sqr-3: 6px;
+  --padding-sqr-4: 8px;
+
+  --padding-rect-1: 2px 4px;
+  --padding-rect-2: 4px 8px;
+  --padding-rect-3: 6px 12px;
+  --padding-rect-4: 8px 16px;
+
   --gap: 8px;
 
   --white: #ffffff;
