@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { isValidString } from './json'
+import { isValidNumber, isValidString } from './json'
 
 describe('isValidString', () => {
   it('should be valid for keys without special characters', () => {
@@ -25,5 +25,47 @@ describe('isValidString', () => {
     expect(isValidString(String.raw`unescaped " quote`)).toBe(false)
     expect(isValidString(String.raw`unescaped \ reverse solidus`)).toBe(false)
     expect(isValidString(String.raw`unterminatedKey \u12`)).toBe(false)
+  })
+})
+
+
+describe('isValidNumber', () => {
+  it('should be represented in base 10', () => {
+    expect(isValidNumber("10")).toBe(true)
+    expect(isValidNumber("E4CB35")).toBe(false)
+  })
+
+  it('should be a number', () => {
+    expect(isValidNumber("10")).toBe(true)
+    expect(isValidNumber("Bonjour")).toBe(false)
+  })
+
+  it('should accept valid negative number', () => {
+    expect(isValidNumber("-10")).toBe(true)
+    expect(isValidNumber("10-")).toBe(false)
+    expect(isValidNumber("--10")).toBe(false)
+  })
+
+  it('should accept valid fraction', () => {
+    expect(isValidNumber("0.5")).toBe(true)
+    expect(isValidNumber("0.")).toBe(true)
+    expect(isValidNumber(".5")).toBe(false)
+    expect(isValidNumber("0..5")).toBe(false)
+    expect(isValidNumber("0.1.2")).toBe(false)
+    expect(isValidNumber("0,5")).toBe(false)
+  })
+
+  it('should accept an exponent of 10, prefixed by e or E with a plus or minus sign', () => {
+    expect(isValidNumber("10e+2")).toBe(true)
+    expect(isValidNumber("10e-5")).toBe(true)
+    expect(isValidNumber("10E+2")).toBe(true)
+    expect(isValidNumber("10e5")).toBe(false)
+    expect(isValidNumber("10e+2.4")).toBe(false)
+    expect(isValidNumber("e+5")).toBe(false)
+  })
+
+  it('should not accept NaN or Infinity', () => {
+    expect(isValidNumber("NaN")).toBe(false)
+    expect(isValidNumber("Infinity")).toBe(false)
   })
 })
