@@ -1,0 +1,29 @@
+.popover-container {
+  position: relative;
+
+  & .popover {
+    position: absolute;
+    bottom: calc(100% + 7px);
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-radius: var(--border-radius-2);
+    padding: var(--padding-sqr-3);
+    background: var(--transparent-black);
+    color: var(--white);
+
+    &:after {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-width: 6px 6px 0;
+      border-color: var(--transparent-black) transparent;
+      top: 100%;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+
+    &:not(.active) {
+      display: none;
+    }
+  }
+}

@@ -13,7 +13,6 @@ type SelectProps = {
 
 type IsOpen = { isFocused: boolean; isClicked: boolean }
 
-// TODO: manage tab navigation + focus display
 export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
   const [selected, setSelected] = useState<string>(value)
   const [isOpen, setIsOpen] = useState<IsOpen>({

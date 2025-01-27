@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { Leaf as LeafProps, LeafType, Primitive } from '../defs'
+import { Leaf as LeafProps, LeafType } from '../defs'
 import { classNames } from '../utils/classNames'
 import { isValidString } from '../utils/json'
 import { TypeSelector } from './TypeSelector'
