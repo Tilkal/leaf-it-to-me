@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { LeafMode } from '../defs'
 import { Leaf } from './Leaf'
 
 import '../root.css'
@@ -30,5 +31,22 @@ export const StringLeaf: Story = {
     type: 'string',
     name: 'lorem',
     value: 'ipsum',
+  },
+}
+
+export const ArrayLeaf: Story = {
+  args: {
+    type: 'string',
+    value: 'ipsum',
+    mode: LeafMode.ARRAY,
+  },
+}
+
+export const Readonly: Story = {
+  args: {
+    type: 'string',
+    name: 'lorem',
+    value: 'ipsum',
+    readonly: true,
   },
 }
