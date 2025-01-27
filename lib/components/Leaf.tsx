@@ -7,6 +7,7 @@ import { Switch } from './Switch'
 import { TypeSelector } from './TypeSelector'
 import { TypeTag } from './TypeTag'
 import { Tick } from './icons/Tick'
+import { TrashCan } from './icons/TrashCan'
 import { X } from './icons/X'
 
 import './leaf.css'
@@ -140,7 +141,7 @@ export const Leaf: React.FC<LeafProps> = ({
         </div>
       )}
       <button className={classNames('leaf-delete', { readonly })}>
-        <X />
+        <TrashCan />
       </button>
     </div>
   )
