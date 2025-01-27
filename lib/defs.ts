@@ -16,7 +16,11 @@ export type LeafType = (typeof LEAF_TYPES)[number]
 
 export type Leaf = {
   type: LeafType
-  name: string
+  name?: string
   value: Primitive
-  readonly?: boolean
+}
+
+export enum LeafMode {
+  OBJECT,
+  ARRAY,
 }

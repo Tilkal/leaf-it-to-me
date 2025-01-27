@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { Leaf as LeafProps, LeafType } from '../defs'
+import { LeafMode, LeafType, Leaf as ObjectLeaf } from '../defs'
 import { classNames } from '../utils/classNames'
 import { isValidNumber, isValidString } from '../utils/json'
 import { Switch } from './Switch'
@@ -11,14 +11,20 @@ import { X } from './icons/X'
 
 import './leaf.css'
 
+type LeafProps = ObjectLeaf & {
+  mode?: LeafMode
+  readonly?: boolean
+}
+
 export const Leaf: React.FC<LeafProps> = ({
   type: initType,
   name: initName,
   value: initValue,
+  mode = LeafMode.OBJECT,
   readonly,
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [name, setName] = useState<string>(initName)
+  const [name, setName] = useState<string>(initName ?? '')
   const [value, setValue] = useState<string>(initValue?.toString() ?? '')
   const [isChecked, setIsChecked] = useState<boolean>(
     typeof initValue === 'boolean' ? initValue : false,
@@ -72,14 +78,16 @@ export const Leaf: React.FC<LeafProps> = ({
             options={['string', 'boolean', 'number']}
             onSelect={(value) => setType(value)}
           />
-          <input
-            className={classNames('leaf-input', 'input-name', {
-              error: errors.name,
-            })}
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
+          {mode === LeafMode.OBJECT && (
+            <input
+              className={classNames('leaf-input', 'input-name', {
+                error: errors.name,
+              })}
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
+          )}
           {['string', 'number'].includes(type) && (
             <input
               className={classNames('leaf-input', 'input-value', {
@@ -120,8 +128,17 @@ export const Leaf: React.FC<LeafProps> = ({
       <div className={`leaf-type type-${type}`}>
         <TypeTag type={type} />
       </div>
-      <div className={`leaf-name type-${type}`}>{name}</div>
-      <div className={`leaf-value type-${type}`}>{value}</div>
+      {mode === LeafMode.OBJECT && (
+        <div className={`leaf-name type-${type}`}>{name}</div>
+      )}
+      {['string', 'number'].includes(type) && (
+        <div className={`leaf-value type-${type}`}>{value}</div>
+      )}
+      {['boolean'].includes(type) && (
+        <div className={`leaf-value type-${type}`}>
+          {Boolean(isChecked).toString()}
+        </div>
+      )}
       <button className={classNames('leaf-delete', { readonly })}>
         <X />
       </button>
