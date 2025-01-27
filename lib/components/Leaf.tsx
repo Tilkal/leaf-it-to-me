@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 import { Leaf as LeafProps, LeafType } from '../defs'
 import { classNames } from '../utils/classNames'
-import { isValidString } from '../utils/json'
+import { isValidNumber, isValidString } from '../utils/json'
 import { TypeSelector } from './TypeSelector'
 import { TypeTag } from './TypeTag'
 import { Tick } from './icons/Tick'
@@ -35,6 +35,10 @@ export const Leaf: React.FC<LeafProps> = ({
     switch (type) {
       case 'string':
         setErrors((prev) => ({ ...prev, value: !isValidString(value) }))
+        break
+
+      case 'number':
+        setErrors((prev) => ({...prev, value: !isValidNumber(value)}))
         break
       default:
         break
