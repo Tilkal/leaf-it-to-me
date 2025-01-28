@@ -1,156 +1,229 @@
-.leaf {
-  background-color: var(--white);
-  border-radius: var(--border-radius-4);
-  box-shadow: var(--box-shadow);
-  width: 100%;
-  max-width: 100%;
-  padding: var(--padding-sqr-4);
+.leaf-container {
   display: flex;
-  flex-direction: row;
-  gap: var(--gap);
   justify-content: space-between;
-  font-family: var(--font-family);
   align-items: center;
+  gap: 0.625rem;
 
-  &:not(.readonly) {
-    cursor: pointer;
-  }
-
-  &:hover:not(.readonly) {
-    background-color: var(--gray-1);
-  }
-
-  * {
-    &:focus {
-      outline: 2px solid var(--blue-8);
-    }
-  }
-
-  .leaf-name {
-    color: var(--gray-7);
-  }
-
-  .leaf-value {
-    &.type-string {
-      color: var(--blue-8);
-    }
-
-    &.type-number {
-      color: var(--green-9);
-    }
-
-    &.type-boolean {
-      color: var(--orange-10);
-    }
-
-    &.type-array {
-      color: var(--violet-10);
-    }
-
-    &.type-object {
-      color: var(--red-10);
-    }
-  }
-
-  .leaf-delete {
-    width: 1rem;
-    height: 1rem;
-    padding: 0;
-    border: none;
-    background: none;
-    opacity: 0;
-    transition: opacity ease-in 0.08s;
-
-    & svg {
-      transition: opacity ease-in 0.08s;
-      fill: var(--red-1);
-
-      &:hover:not(.readonly) {
-        fill: var(--red-10);
-      }
-    }
+  .leaf {
+    background-color: var(--white);
+    border-radius: var(--border-radius-4);
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    max-width: 100%;
+    padding: var(--padding-sqr-4);
+    display: flex;
+    flex-direction: row;
+    gap: var(--gap);
+    justify-content: space-between;
+    font-family: var(--font-family);
+    align-items: center;
 
     &:not(.readonly) {
       cursor: pointer;
     }
-  }
 
-  &.leaf-edit {
-    &:hover {
-      background-color: var(--white);
+    &:hover:not(.readonly) {
+      background-color: var(--gray-1);
     }
 
-    .leaf-delete:not(.readonly) {
+    * {
+      &:focus {
+        outline: 2px solid var(--blue-8);
+      }
+    }
+
+    .leaf-name {
+      color: var(--gray-7);
+    }
+
+    .leaf-value {
+      &.type-string {
+        color: var(--blue-8);
+      }
+
+      &.type-number {
+        color: var(--green-9);
+      }
+
+      &.type-boolean {
+        color: var(--orange-10);
+      }
+
+      &.type-array {
+        color: var(--violet-10);
+      }
+
+      &.type-object {
+        color: var(--red-10);
+      }
+    }
+
+    &.leaf-edit {
+      &:hover {
+        background-color: var(--white);
+      }
+
+      .leaf-delete:not(.readonly) {
+        opacity: 1;
+        & svg {
+          fill: var(--red-10);
+        }
+      }
+    }
+
+    &:hover .leaf-delete:not(.readonly) {
       opacity: 1;
-      & svg {
-        fill: var(--red-10);
+    }
+
+    .leaf-input-group {
+      display: flex;
+      flex-direction: row;
+      gap: 3px;
+      width: 100%;
+    }
+
+    .leaf-input {
+      font-size: 1rem;
+      position: relative;
+      padding: var(--padding-sqr-4);
+      background: var(--gray-1);
+      border: none;
+      flex-grow: 1;
+      &:first-child {
+        border-radius: var(--border-radius-h-start-4);
+      }
+      &:last-child {
+        border-radius: var(--border-radius-h-end-4);
+      }
+      &.error {
+        outline: 1px solid var(--red-5);
+        &:focus {
+          outline: 2px solid var(--red-5);
+        }
+      }
+    }
+
+    .leaf-input-group-button {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: var(--padding-sqr-4);
+      background-color: var(--green-1);
+      transition: background-color ease-in 0.08s;
+      border: none;
+      flex-grow: 0;
+
+      &:first-child {
+        border-radius: var(--border-radius-h-start-4);
+      }
+      &:last-child {
+        border-radius: var(--border-radius-h-end-4);
       }
     }
   }
 
-  &:hover .leaf-delete:not(.readonly) {
-    opacity: 1;
-  }
-
-  .leaf-input-group {
-    display: flex;
-    flex-direction: row;
-    gap: 3px;
-    width: 100%;
-  }
-
-  .leaf-input {
-    font-size: 1rem;
+  .leaf-actions {
+    width: calc((3 * 1.5rem) + (2 * 8px));
+    min-width: calc((3 * 1.5rem) + (2 * 8px));
+    height: var(--action-button-size);
     position: relative;
-    padding: var(--padding-sqr-4);
-    background: var(--gray-1);
-    border: none;
-    flex-grow: 1;
-    &:first-child {
-      border-radius: var(--border-radius-h-start-4);
-    }
-    &:last-child {
-      border-radius: var(--border-radius-h-end-4);
-    }
-    &.error {
-      outline: 1px solid var(--red-5);
-      &:focus {
-        outline: 2px solid var(--red-5);
-      }
-    }
-  }
+    transition: width ease-in 0.5s;
 
-  .leaf-input-group-button {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: var(--padding-sqr-4);
-    background-color: var(--green-1);
-    transition: background-color ease-in 0.08s;
-    border: none;
-    flex-grow: 0;
-    &:hover {
-      background-color: var(--green-2);
-    }
-    &:first-child {
-      border-radius: var(--border-radius-h-start-4);
-    }
-    &:last-child {
-      border-radius: var(--border-radius-h-end-4);
-    }
-    & svg {
-      width: 1rem;
-      height: 1rem;
-      fill: var(--green-8);
-    }
-    &.button-submit.error {
-      background-color: var(--gray-2);
-      cursor: not-allowed;
-      &:focus {
-        outline: 2px solid var(--red-5);
-      }
+    .leaf-action-button {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--action-button-size);
+      height: var(--action-button-size);
+      padding: var(--padding-sqr-2);
+      border: none;
+      background: var(--white);
+      border-radius: var(--action-button-border-radius);
+      box-shadow: var(--box-shadow);
+      transition: all ease-out 0.2s;
+
       & svg {
-        fill: var(--gray-5);
+        transition: fill 0.2s ease-in;
+        fill: var(--gray-8);
+
+        &:hover:not(.readonly) {
+          fill: var(--gray-10);
+        }
+      }
+
+      &:not(.readonly) {
+        cursor: pointer;
+      }
+    }
+
+    .button-expand {
+      & svg {
+        transition: transform ease-in 0.2s;
+      }
+      z-index: 1;
+    }
+    .button-delete,
+    .button-edit {
+      opacity: 0;
+    }
+
+    .button-delete {
+      & svg {
+        fill: var(--red-8);
+      }
+      background-color: var(--red-1);
+    }
+
+    &.expanded {
+      .button-expand {
+        & svg {
+          transform: rotate(180deg);
+        }
+      }
+
+      .button-submit {
+        left: 0%;
+        background-color: var(--green-1);
+
+        &:hover {
+          & svg {
+            fill: var(--green-9);
+          }
+          background-color: var(--green-2);
+        }
+        & svg {
+          fill: var(--green-8);
+        }
+        &.error {
+          background-color: var(--gray-2);
+          cursor: not-allowed;
+          &:focus {
+            outline: 2px solid var(--red-5);
+          }
+          & svg {
+            fill: var(--gray-5);
+          }
+        }
+      }
+      .button-cancel {
+        left: 33%;
+      }
+
+      .button-delete {
+        left: 66%;
+        opacity: 1;
+
+        &:hover {
+          background-color: var(--red-2);
+          & svg {
+            fill: var(--red-9);
+          }
+        }
+      }
+
+      .button-edit {
+        left: 33%;
+        opacity: 1;
       }
     }
   }
