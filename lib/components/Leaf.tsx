@@ -13,18 +13,20 @@ import { X } from './icons/X'
 import './leaf.css'
 
 type LeafProps = ObjectLeaf & {
+  edit?: boolean
   mode?: LeafMode
   readonly?: boolean
 }
 
 export const Leaf: React.FC<LeafProps> = ({
+  edit = false,
   type: initType,
   name: initName,
   value: initValue,
   mode = LeafMode.OBJECT,
   readonly,
 }) => {
-  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [isEditing, setIsEditing] = useState<boolean>(edit)
   const [name, setName] = useState<string>(initName ?? '')
   const [value, setValue] = useState<string>(initValue?.toString() ?? '')
   const [isChecked, setIsChecked] = useState<boolean>(
@@ -87,6 +89,7 @@ export const Leaf: React.FC<LeafProps> = ({
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
+              aria-label="Modifier la clé"
             />
           )}
           {['string', 'number'].includes(type) && (
@@ -97,6 +100,7 @@ export const Leaf: React.FC<LeafProps> = ({
               type="text"
               value={value?.toString() ?? ''}
               onChange={(event) => setValue(event.target.value)}
+              aria-label="Modifier la valeur"
             />
           )}
           {type === 'boolean' && (
@@ -110,11 +114,12 @@ export const Leaf: React.FC<LeafProps> = ({
               error: hasError,
             })}
             type="submit"
+            aria-label="Valider les modifications"
           >
             <Tick />
           </button>
         </div>
-        <button className="leaf-delete">
+        <button className="leaf-delete" aria-label="Annuler les modifications">
           <X />
         </button>
       </form>
@@ -140,7 +145,10 @@ export const Leaf: React.FC<LeafProps> = ({
           {Boolean(isChecked).toString()}
         </div>
       )}
-      <button className={classNames('leaf-delete', { readonly })}>
+      <button
+        className={classNames('leaf-delete', { readonly })}
+        aria-label="Supprimer la ligne"
+      >
         <TrashCan />
       </button>
     </div>

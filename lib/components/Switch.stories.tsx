@@ -22,7 +22,19 @@ export const Default: Story = {
     checked: true,
   },
   render: (props) => (
-    <div style={{ width: '400px', height: '50px' }}>
+    <div style={{ width: '200px', height: '50px' }}>
+      <Switch {...props} />
+    </div>
+  ),
+}
+
+export const Accessible: Story = {
+  args: {
+    checked: true,
+    ariaLabel: 'Switch element',
+  },
+  render: (props) => (
+    <div style={{ width: '200px', height: '50px' }}>
       <Switch {...props} />
     </div>
   ),

@@ -18,6 +18,7 @@
     "@chromatic-com/storybook": "^3.2.3",
     "@commitlint/cli": "^19.6.1",
     "@eslint/js": "^9.17.0",
+    "@storybook/addon-a11y": "^8.5.2",
     "@storybook/addon-essentials": "^8.4.7",
     "@storybook/addon-interactions": "^8.4.7",
     "@storybook/addon-onboarding": "^8.4.7",

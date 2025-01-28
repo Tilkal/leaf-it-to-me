@@ -32,27 +32,23 @@
 
   .leaf-value {
     &.type-string {
-      color: var(--blue-7);
-    }
-
-    &.type-string {
-      color: var(--blue-7);
+      color: var(--blue-8);
     }
 
     &.type-number {
-      color: var(--green-7);
+      color: var(--green-9);
     }
 
     &.type-boolean {
-      color: var(--orange-7);
+      color: var(--orange-10);
     }
 
     &.type-array {
-      color: var(--violet-7);
+      color: var(--violet-10);
     }
 
     &.type-object {
-      color: var(--red-7);
+      color: var(--red-10);
     }
   }
 
