@@ -1,10 +1,14 @@
-export type Primitive = string | number | boolean | undefined | null
+export type Primitive = string | number | boolean | null
 
-export type Tree = {
-  [key: string | number]: Primitive | Primitive[] | Tree | Tree[]
-}
+export type Tree =
+  | Primitive
+  | {
+      [key: string]: Tree
+    }
+  | Tree[]
 
 export const LEAF_TYPES = [
+  'null',
   'string',
   'number',
   'boolean',
@@ -14,10 +18,17 @@ export const LEAF_TYPES = [
 
 export type LeafType = (typeof LEAF_TYPES)[number]
 
-export type Leaf = {
+export type Node = {
   type: LeafType
   name?: string
+  value?: Primitive
+  children?: Node[]
+}
+
+export type Leaf = Node & {
   value: Primitive
+  mode?: LeafMode
+  readonly?: boolean
 }
 
 export enum LeafMode {

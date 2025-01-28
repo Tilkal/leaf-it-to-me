@@ -14,8 +14,6 @@ import './leaf.css'
 
 type LeafProps = ObjectLeaf & {
   edit?: boolean
-  mode?: LeafMode
-  readonly?: boolean
 }
 
 export const Leaf: React.FC<LeafProps> = ({
