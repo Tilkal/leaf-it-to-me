@@ -34,7 +34,39 @@ export const StringLeaf: Story = {
   },
 }
 
+export const NumberLeaf: Story = {
+  args: {
+    type: 'number',
+    name: 'lorem',
+    value: 42,
+  },
+}
+
+export const BooleanLeaf: Story = {
+  args: {
+    type: 'boolean',
+    name: 'lorem',
+    value: true,
+  },
+}
+
 export const ArrayLeaf: Story = {
+  args: {
+    type: 'array',
+    name: 'lorem',
+    value: 'ipsum',
+  },
+}
+
+export const ObjectLeaf: Story = {
+  args: {
+    type: 'object',
+    name: 'lorem',
+    value: 'ipsum',
+  },
+}
+
+export const ArrayElementLeaf: Story = {
   args: {
     type: 'string',
     value: 'ipsum',
@@ -48,5 +80,14 @@ export const Readonly: Story = {
     name: 'lorem',
     value: 'ipsum',
     readonly: true,
+  },
+}
+
+export const EditingLeaf: Story = {
+  args: {
+    type: 'string',
+    name: 'lorem',
+    value: 'ipsum',
+    edit: true,
   },
 }
