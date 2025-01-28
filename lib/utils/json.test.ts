@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { isValidNumber, isValidString } from './json'
+import { getTreeDescription, isValidNumber, isValidString } from './json'
 
 describe('isValidString', () => {
   it('should be valid for keys without special characters', () => {
@@ -28,44 +28,511 @@ describe('isValidString', () => {
   })
 })
 
-
 describe('isValidNumber', () => {
   it('should be represented in base 10', () => {
-    expect(isValidNumber("10")).toBe(true)
-    expect(isValidNumber("E4CB35")).toBe(false)
+    expect(isValidNumber('10')).toBe(true)
+    expect(isValidNumber('E4CB35')).toBe(false)
   })
 
   it('should be a number', () => {
-    expect(isValidNumber("10")).toBe(true)
-    expect(isValidNumber("Bonjour")).toBe(false)
+    expect(isValidNumber('10')).toBe(true)
+    expect(isValidNumber('Bonjour')).toBe(false)
   })
 
   it('should accept valid negative number', () => {
-    expect(isValidNumber("-10")).toBe(true)
-    expect(isValidNumber("10-")).toBe(false)
-    expect(isValidNumber("--10")).toBe(false)
+    expect(isValidNumber('-10')).toBe(true)
+    expect(isValidNumber('10-')).toBe(false)
+    expect(isValidNumber('--10')).toBe(false)
   })
 
   it('should accept valid fraction', () => {
-    expect(isValidNumber("0.5")).toBe(true)
-    expect(isValidNumber("0.")).toBe(true)
-    expect(isValidNumber(".5")).toBe(false)
-    expect(isValidNumber("0..5")).toBe(false)
-    expect(isValidNumber("0.1.2")).toBe(false)
-    expect(isValidNumber("0,5")).toBe(false)
+    expect(isValidNumber('0.5')).toBe(true)
+    expect(isValidNumber('0.')).toBe(true)
+    expect(isValidNumber('.5')).toBe(false)
+    expect(isValidNumber('0..5')).toBe(false)
+    expect(isValidNumber('0.1.2')).toBe(false)
+    expect(isValidNumber('0,5')).toBe(false)
   })
 
   it('should accept an exponent of 10, prefixed by e or E with a plus or minus sign', () => {
-    expect(isValidNumber("10e+2")).toBe(true)
-    expect(isValidNumber("10e-5")).toBe(true)
-    expect(isValidNumber("10E+2")).toBe(true)
-    expect(isValidNumber("10e5")).toBe(false)
-    expect(isValidNumber("10e+2.4")).toBe(false)
-    expect(isValidNumber("e+5")).toBe(false)
+    expect(isValidNumber('10e+2')).toBe(true)
+    expect(isValidNumber('10e-5')).toBe(true)
+    expect(isValidNumber('10E+2')).toBe(true)
+    expect(isValidNumber('10e5')).toBe(false)
+    expect(isValidNumber('10e+2.4')).toBe(false)
+    expect(isValidNumber('e+5')).toBe(false)
   })
 
   it('should not accept NaN or Infinity', () => {
-    expect(isValidNumber("NaN")).toBe(false)
-    expect(isValidNumber("Infinity")).toBe(false)
+    expect(isValidNumber('NaN')).toBe(false)
+    expect(isValidNumber('Infinity')).toBe(false)
+  })
+})
+
+describe('getTreeDescription', () => {
+  // Node types
+  it('should include the type of a node', () => {
+    expect(getTreeDescription('')).toMatchObject({
+      type: 'string',
+    })
+  })
+
+  it('should correctly identify a string and have a value', () => {
+    expect(getTreeDescription('')).toStrictEqual({
+      type: 'string',
+      value: '',
+    })
+
+    expect(getTreeDescription('not empty string')).toStrictEqual({
+      type: 'string',
+      value: 'not empty string',
+    })
+  })
+
+  it('should correctly identify a number and have a value', () => {
+    expect(getTreeDescription(0)).toStrictEqual({
+      type: 'number',
+      value: 0,
+    })
+
+    expect(getTreeDescription(42)).toStrictEqual({
+      type: 'number',
+      value: 42,
+    })
+
+    expect(getTreeDescription(-42)).toStrictEqual({
+      type: 'number',
+      value: -42,
+    })
+  })
+
+  it('should correctly identify a boolean and have a value', () => {
+    expect(getTreeDescription(true)).toStrictEqual({
+      type: 'boolean',
+      value: true,
+    })
+
+    expect(getTreeDescription(false)).toStrictEqual({
+      type: 'boolean',
+      value: false,
+    })
+  })
+
+  it('should correctly identify a null and have null as value', () => {
+    expect(getTreeDescription(null)).toStrictEqual({
+      type: 'null',
+      value: null,
+    })
+  })
+
+  it('should correctly identify an array and have children', () => {
+    expect(getTreeDescription([])).toStrictEqual({
+      type: 'array',
+      children: [],
+    })
+  })
+
+  it('should correctly identify an object and have children', () => {
+    expect(getTreeDescription({})).toStrictEqual({
+      type: 'object',
+      children: [],
+    })
+  })
+
+  it('should correctly identify values of an array as nodes with value but no name', () => {
+    expect(getTreeDescription([42])).toStrictEqual({
+      type: 'array',
+      children: [
+        {
+          type: 'number',
+          value: 42,
+        },
+      ],
+    })
+  })
+
+  it('should correctly identify values of an object as nodes with value and name', () => {
+    expect(getTreeDescription({ key: 'value' })).toStrictEqual({
+      type: 'object',
+      children: [
+        {
+          type: 'string',
+          name: 'key',
+          value: 'value',
+        },
+      ],
+    })
+  })
+
+  // Empty array and object
+  it('should return an empty root object if the input JSON is empty', () => {
+    expect(getTreeDescription({})).toStrictEqual({
+      type: 'object',
+      children: [],
+    })
+
+    expect(getTreeDescription([])).toStrictEqual({
+      type: 'array',
+      children: [],
+    })
+  })
+
+  // Simple "map"
+  it('should handle a JSON with a single key-value pair', () => {
+    expect(getTreeDescription({ key: 'value' })).toStrictEqual({
+      type: 'object',
+      children: [
+        {
+          type: 'string',
+          name: 'key',
+          value: 'value',
+        },
+      ],
+    })
+  })
+
+  it('should handle a JSON with multiple key-value pairs', () => {
+    expect(
+      getTreeDescription({ key1: 'value', key2: 42, key3: true, key4: null }),
+    ).toStrictEqual({
+      type: 'object',
+      children: [
+        {
+          type: 'string',
+          name: 'key1',
+          value: 'value',
+        },
+        {
+          type: 'number',
+          name: 'key2',
+          value: 42,
+        },
+        {
+          type: 'boolean',
+          name: 'key3',
+          value: true,
+        },
+        {
+          type: 'null',
+          name: 'key4',
+          value: null,
+        },
+      ],
+    })
+  })
+
+  // Simple array JSON
+  it('should handle a JSON array with primitive values', () => {
+    expect(getTreeDescription(['value', 'value'])).toStrictEqual({
+      type: 'array',
+      children: [
+        {
+          type: 'string',
+          value: 'value',
+        },
+        {
+          type: 'string',
+          value: 'value',
+        },
+      ],
+    })
+  })
+
+  it('should handle a JSON array with mixed primitive types', () => {
+    expect(getTreeDescription(['value', 42, true, null])).toStrictEqual({
+      type: 'array',
+      children: [
+        {
+          type: 'string',
+          value: 'value',
+        },
+        {
+          type: 'number',
+          value: 42,
+        },
+        {
+          type: 'boolean',
+          value: true,
+        },
+        {
+          type: 'null',
+          value: null,
+        },
+      ],
+    })
+  })
+
+  // Nested objects and arrays
+  it('should handle a JSON object with nested objects', () => {
+    expect(
+      getTreeDescription({
+        key1: 'value',
+        key2: { key3: 'value2', key4: { key5: 'value3' } },
+        key6: 42,
+      }),
+    ).toStrictEqual({
+      type: 'object',
+      children: [
+        {
+          type: 'string',
+          name: 'key1',
+          value: 'value',
+        },
+        {
+          type: 'object',
+          name: 'key2',
+          children: [
+            {
+              type: 'string',
+              name: 'key3',
+              value: 'value2',
+            },
+            {
+              type: 'object',
+              name: 'key4',
+              children: [{ type: 'string', name: 'key5', value: 'value3' }],
+            },
+          ],
+        },
+        {
+          type: 'number',
+          name: 'key6',
+          value: 42,
+        },
+      ],
+    })
+  })
+
+  it('should handle a JSON array with nested arrays', () => {
+    expect(
+      getTreeDescription(['value1', [1, true, 'value2', ['value3']], null]),
+    ).toStrictEqual({
+      type: 'array',
+      children: [
+        {
+          type: 'string',
+          value: 'value1',
+        },
+        {
+          type: 'array',
+          children: [
+            {
+              type: 'number',
+              value: 1,
+            },
+            {
+              type: 'boolean',
+              value: true,
+            },
+            {
+              type: 'string',
+              value: 'value2',
+            },
+            {
+              type: 'array',
+              children: [
+                {
+                  type: 'string',
+                  value: 'value3',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'null',
+          value: null,
+        },
+      ],
+    })
+  })
+
+  it('should handle a JSON object with mixed nested objects and arrays', () => {
+    expect(
+      getTreeDescription({
+        key1: [1, { key2: 'value', key3: [true] }],
+        key4: null,
+      }),
+    ).toStrictEqual({
+      type: 'object',
+      children: [
+        {
+          type: 'array',
+          name: 'key1',
+          children: [
+            {
+              type: 'number',
+              value: 1,
+            },
+            {
+              type: 'object',
+              children: [
+                {
+                  type: 'string',
+                  name: 'key2',
+                  value: 'value',
+                },
+                {
+                  type: 'array',
+                  name: 'key3',
+                  children: [
+                    {
+                      type: 'boolean',
+                      value: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'null',
+          name: 'key4',
+          value: null,
+        },
+      ],
+    })
+  })
+  it('should handle a JSON array with mixed nested objects and arrays', () => {
+    expect(
+      getTreeDescription([
+        [1, { key1: 'value', key2: [true] }],
+        null,
+        {
+          key3: [42],
+        },
+      ]),
+    ).toStrictEqual({
+      type: 'array',
+      children: [
+        {
+          type: 'array',
+          children: [
+            {
+              type: 'number',
+              value: 1,
+            },
+            {
+              type: 'object',
+              children: [
+                {
+                  type: 'string',
+                  name: 'key1',
+                  value: 'value',
+                },
+                {
+                  type: 'array',
+                  name: 'key2',
+                  children: [
+                    {
+                      type: 'boolean',
+                      value: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        { type: 'null', value: null },
+        {
+          type: 'object',
+          children: [
+            {
+              type: 'array',
+              name: 'key3',
+              children: [
+                {
+                  type: 'number',
+                  value: 42,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+  })
+
+  // Error cases
+  it('should throw a TypeError for invalid JSON input', () => {
+    // @ts-expect-error -- Expected invalid type
+    expect(() => getTreeDescription({ a: 1n })).toThrowError(
+      'invalid JSON value',
+    )
+
+    // @ts-expect-error -- Expected invalid type
+    expect(() => getTreeDescription({ a: () => undefined })).toThrowError(
+      'invalid JSON value',
+    )
+
+    // @ts-expect-error -- Expected invalid type
+    expect(() => getTreeDescription(undefined)).toThrowError(
+      'invalid JSON value',
+    )
+
+    // @ts-expect-error -- Expected invalid type
+    expect(() => getTreeDescription(function () {})).toThrowError(
+      'invalid JSON value',
+    )
+
+    // @ts-expect-error -- Expected invalid type
+    expect(() => getTreeDescription(() => undefined)).toThrowError(
+      'invalid JSON value',
+    )
+
+    // @ts-expect-error -- Expected invalid type
+    expect(() => getTreeDescription(Symbol())).toThrowError(
+      'invalid JSON value',
+    )
+  })
+
+  it('should throw a SyntaxError for invalid string values', () => {
+    expect(() =>
+      getTreeDescription({ a: String.raw`unescaped " quote` }),
+    ).toThrowError('invalid JSON string value')
+
+    expect(() =>
+      getTreeDescription({ a: String.raw`unescaped \ reverse solidus` }),
+    ).toThrowError('invalid JSON string value')
+
+    expect(() =>
+      getTreeDescription({ a: String.raw`unterminatedKey \u12` }),
+    ).toThrowError('invalid JSON string value')
+  })
+
+  // undefined case
+  it('should ignore undefined values', () => {
+    expect(
+      // @ts-expect-error -- Testing undefined case
+      getTreeDescription([undefined, 42, undefined, 'value', undefined]),
+    ).toStrictEqual({
+      type: 'array',
+      children: [
+        {
+          type: 'number',
+          value: 42,
+        },
+        {
+          type: 'string',
+          value: 'value',
+        },
+      ],
+    })
+
+    expect(
+      // @ts-expect-error -- Testing undefined case
+      getTreeDescription({ key1: undefined, key2: 42 }),
+    ).toStrictEqual({
+      type: 'object',
+      children: [
+        {
+          type: 'number',
+          name: 'key2',
+          value: 42,
+        },
+      ],
+    })
   })
 })
