@@ -120,4 +120,7 @@
   --yellow-8: #ffdc4a;
   --yellow-9: #ffd839;
   --yellow-10: #ffd428;
+
+  --action-button-size: 1.5rem;
+  --action-button-border-radius: 50%;
 }
