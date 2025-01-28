@@ -34,4 +34,10 @@
     color: var(--red-10);
     border: 1px solid var(--red-2);
   }
+
+  &.type-null {
+    background-color: var(--gray-2);
+    color: var(--gray-10);
+    border: 1px solid var(--gray-3);
+  }
 }

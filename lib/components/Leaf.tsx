@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { LeafMode, LeafType, Leaf as ObjectLeaf } from '../defs'
+import { LeafMode, LeafType, Leaf as ObjectLeaf, Primitive } from '../defs'
 import { classNames } from '../utils/classNames'
 import { isValidNumber, isValidString } from '../utils/json'
 import { Switch } from './Switch'
@@ -18,6 +18,11 @@ type LeafProps = ObjectLeaf & {
   edit?: boolean
 }
 
+type TempValue<T extends Primitive> = {
+  value: T
+  tempValue: T
+}
+
 export const Leaf: React.FC<LeafProps> = ({
   edit = false,
   type: initType,
@@ -27,13 +32,23 @@ export const Leaf: React.FC<LeafProps> = ({
   readonly,
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(edit)
-  const [name, setName] = useState<string>(initName ?? '')
-  const [value, setValue] = useState<string>(initValue?.toString() ?? '')
-  const [isChecked, setIsChecked] = useState<boolean>(
-    typeof initValue === 'boolean' ? initValue : false,
-  )
+  const [name, setName] = useState<TempValue<string>>({
+    value: initName ?? '',
+    tempValue: initName ?? '',
+  })
+  const [value, setValue] = useState<TempValue<string>>({
+    value: initValue?.toString() ?? '',
+    tempValue: initValue?.toString() ?? '',
+  })
+  const [isChecked, setIsChecked] = useState<TempValue<boolean>>({
+    value: typeof initValue === 'boolean' ? initValue : false,
+    tempValue: typeof initValue === 'boolean' ? initValue : false,
+  })
+  const [type, setType] = useState<TempValue<LeafType>>({
+    value: initType,
+    tempValue: initType,
+  })
   const [isExpanded, setIsExpanded] = useState(false)
-  const [type, setType] = useState<LeafType>(initType)
   const [errors, setErrors] = useState<Record<string, boolean>>({})
 
   const hasError = useMemo(
@@ -42,16 +57,22 @@ export const Leaf: React.FC<LeafProps> = ({
   )
 
   useEffect(() => {
-    setErrors((prev) => ({ ...prev, name: !isValidString(name) }))
+    setErrors((prev) => ({ ...prev, name: !isValidString(name.tempValue) }))
   }, [name])
 
   useEffect(() => {
-    switch (type) {
+    switch (type.tempValue) {
       case 'string':
-        setErrors((prev) => ({ ...prev, value: !isValidString(value) }))
+        setErrors((prev) => ({
+          ...prev,
+          value: !isValidString(value.tempValue),
+        }))
         break
       case 'number':
-        setErrors((prev) => ({ ...prev, value: !isValidNumber(value) }))
+        setErrors((prev) => ({
+          ...prev,
+          value: !isValidNumber(value.tempValue),
+        }))
         break
       case 'boolean':
         setErrors((prev) => ({ ...prev, value: false }))
@@ -59,30 +80,37 @@ export const Leaf: React.FC<LeafProps> = ({
       default:
         break
     }
-  }, [type, value])
+  }, [type.tempValue, value.tempValue])
 
   if (!readonly && isEditing) {
     return (
-      <form className="leaf-container">
+      <form
+        className="leaf-container"
+        onSubmit={(event) => {
+          event.preventDefault()
+          if (hasError) {
+            console.log({ hasError })
+          } else {
+            setName((prev) => ({ ...prev, value: prev.tempValue }))
+            setValue((prev) => ({ ...prev, value: prev.tempValue }))
+            setIsChecked((prev) => ({ ...prev, value: prev.tempValue }))
+            setType((prev) => ({ ...prev, value: prev.tempValue }))
+            setIsEditing(false)
+          }
+        }}
+      >
         <div
           className={classNames('leaf', 'leaf-edit', {
             error: hasError,
           })}
-          onSubmit={(event) => {
-            console.log({ event })
-            event.preventDefault()
-            if (hasError) {
-              console.log({ hasError })
-            } else {
-              setIsEditing(false)
-            }
-          }}
         >
           <div className="leaf-input-group">
             <TypeSelector
-              value={type}
+              value={type.tempValue}
               options={['string', 'boolean', 'number']}
-              onSelect={(value) => setType(value)}
+              onSelect={(value) =>
+                setType((prev) => ({ ...prev, tempValue: value }))
+              }
             />
             {mode === LeafMode.OBJECT && (
               <input
@@ -90,26 +118,38 @@ export const Leaf: React.FC<LeafProps> = ({
                   error: errors.name,
                 })}
                 type="text"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
+                value={name.tempValue}
+                onChange={(event) =>
+                  setName((prev) => ({
+                    ...prev,
+                    tempValue: event.target.value,
+                  }))
+                }
                 aria-label="Modifier la clé"
               />
             )}
-            {['string', 'number'].includes(type) && (
+            {['string', 'number'].includes(type.tempValue) && (
               <input
                 className={classNames('leaf-input', 'input-value', {
                   error: errors.value,
                 })}
                 type="text"
-                value={value?.toString() ?? ''}
-                onChange={(event) => setValue(event.target.value)}
+                value={value.tempValue}
+                onChange={(event) =>
+                  setValue((prev) => ({
+                    ...prev,
+                    tempValue: event.target.value,
+                  }))
+                }
                 aria-label="Modifier la valeur"
               />
             )}
-            {type === 'boolean' && (
+            {type.tempValue === 'boolean' && (
               <Switch
-                checked={isChecked}
-                onChange={(checked) => setIsChecked(checked)}
+                checked={isChecked.tempValue}
+                onChange={(checked) =>
+                  setIsChecked((prev) => ({ ...prev, tempValue: checked }))
+                }
               />
             )}
           </div>
@@ -127,6 +167,13 @@ export const Leaf: React.FC<LeafProps> = ({
           <button
             className="leaf-action-button button-cancel"
             aria-label="Annuler les modifications"
+            onClick={() => {
+              setName((prev) => ({ ...prev, tempValue: prev.value }))
+              setValue((prev) => ({ ...prev, tempValue: prev.value }))
+              setIsChecked((prev) => ({ ...prev, tempValue: prev.value }))
+              setType((prev) => ({ ...prev, tempValue: prev.value }))
+              setIsEditing(false)
+            }}
           >
             <X />
           </button>
@@ -138,18 +185,18 @@ export const Leaf: React.FC<LeafProps> = ({
   return (
     <div className="leaf-container">
       <div className={classNames('leaf', { readonly })}>
-        <div className={`leaf-type type-${type}`}>
-          <TypeTag type={type} />
+        <div className={`leaf-type type-${type.value}`}>
+          <TypeTag type={type.value} />
         </div>
         {mode === LeafMode.OBJECT && (
-          <div className={`leaf-name type-${type}`}>{name}</div>
+          <div className={`leaf-name type-${type.value}`}>{name.value}</div>
         )}
-        {['string', 'number'].includes(type) && (
-          <div className={`leaf-value type-${type}`}>{value}</div>
+        {['string', 'number'].includes(type.value) && (
+          <div className={`leaf-value type-${type.value}`}>{value.value}</div>
         )}
-        {['boolean'].includes(type) && (
-          <div className={`leaf-value type-${type}`}>
-            {Boolean(isChecked).toString()}
+        {['boolean'].includes(type.value) && (
+          <div className={`leaf-value type-${type.value}`}>
+            {Boolean(isChecked.value).toString()}
           </div>
         )}
       </div>
@@ -168,7 +215,6 @@ export const Leaf: React.FC<LeafProps> = ({
         >
           <Chevron />
         </button>
-
         <button
           className={classNames('leaf-action-button button-edit', {
             readonly,
@@ -178,7 +224,6 @@ export const Leaf: React.FC<LeafProps> = ({
         >
           <Pencil />
         </button>
-
         <button
           className={classNames('leaf-action-button button-delete', {
             readonly,
