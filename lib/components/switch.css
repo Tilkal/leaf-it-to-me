@@ -2,6 +2,19 @@
   position: relative;
   font-family: sans-serif;
   min-width: 8rem;
+  overflow: hidden;
+
+  &:first-child {
+    border-radius: var(--border-radius-h-start-4);
+  }
+
+  &:last-child {
+    border-radius: var(--border-radius-h-end-4);
+  }
+
+  &:only-child {
+    border-radius: var(--border-radius-4);
+  }
 
   & .switch-checkbox {
     opacity: 0;
@@ -19,7 +32,7 @@
     width: 100%;
     background-color: var(--gray-1);
     position: relative;
-    transition: background-color ease-in 0.2s;
+    transition: background-color ease-in 0.1s;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -44,8 +57,8 @@
       background-color: var(--white);
       top: 4px;
       left: 4px;
-      transition: width ease-in 0.2s;
-      transition: left ease-in 0.2s;
+      transition: width ease-in 0.1s;
+      transition: left ease-in 0.1s;
       box-shadow: var(--box-shadow);
     }
     &.checked {
