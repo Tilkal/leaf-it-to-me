@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { LeafMode, LeafType, Leaf as ObjectLeaf, Primitive } from '../defs'
 import { classNames } from '../utils/classNames'
 import { isValidNumber, isValidString } from '../utils/json'
+import { ActionButton } from './ActionButton'
 import { Switch } from './Switch'
 import { TypeSelector } from './TypeSelector'
 import { TypeTag } from './TypeTag'
@@ -155,18 +156,17 @@ export const Leaf: React.FC<LeafProps> = ({
           </div>
         </div>
         <div className="leaf-actions expanded">
-          <button
-            className={classNames('leaf-action-button', 'button-submit', {
-              error: hasError,
-            })}
+          <ActionButton
+            className="leaf-action-button button-submit"
             type="submit"
-            aria-label="Valider les modifications"
-          >
-            <Tick />
-          </button>
-          <button
+            aria-label="Save"
+            icon={<Tick />}
+            disabled={hasError}
+            popover={{ content: 'Save' }}
+          />
+          <ActionButton
             className="leaf-action-button button-cancel"
-            aria-label="Annuler les modifications"
+            aria-label="Cancel"
             onClick={() => {
               setName((prev) => ({ ...prev, tempValue: prev.value }))
               setValue((prev) => ({ ...prev, tempValue: prev.value }))
@@ -174,9 +174,9 @@ export const Leaf: React.FC<LeafProps> = ({
               setType((prev) => ({ ...prev, tempValue: prev.value }))
               setIsEditing(false)
             }}
-          >
-            <X />
-          </button>
+            icon={<X />}
+            popover={{ content: 'Cancel' }}
+          />
         </div>
       </form>
     )
@@ -206,32 +206,35 @@ export const Leaf: React.FC<LeafProps> = ({
           expanded: isExpanded,
         })}
       >
-        <button
-          className={classNames('leaf-action-button button-expand', {
-            readonly,
-          })}
-          aria-label="Ouvrir"
+        <ActionButton
+          className="leaf-action-button button-expand"
+          aria-label={isExpanded ? 'Close toolbar' : 'Open toolbar'}
           onClick={() => setIsExpanded((prev) => !prev)}
-        >
-          <Chevron />
-        </button>
-        <button
+          icon={<Chevron />}
+          disabled={readonly}
+          popover={{ content: isExpanded ? 'Close toolbar' : 'Open toolbar' }}
+        />
+        <ActionButton
           className={classNames('leaf-action-button button-edit', {
-            readonly,
+            hidden: !isExpanded,
           })}
-          onClick={() => !readonly && setIsEditing(true)}
-          aria-label="Modifier la ligne"
-        >
-          <Pencil />
-        </button>
-        <button
+          onClick={() => !readonly && isExpanded && setIsEditing(true)}
+          aria-label="Edit"
+          icon={<Pencil />}
+          disabled={readonly}
+          tabIndex={isExpanded ? 0 : -1}
+          popover={{ content: 'Edit', enabled: !readonly && isExpanded }}
+        />
+        <ActionButton
           className={classNames('leaf-action-button button-delete', {
-            readonly,
+            hidden: !isExpanded,
           })}
-          aria-label="Supprimer la ligne"
-        >
-          <TrashCan />
-        </button>
+          aria-label="Delete"
+          icon={<TrashCan />}
+          disabled={readonly}
+          tabIndex={isExpanded ? 0 : -1}
+          popover={{ content: 'Delete', enabled: !readonly && isExpanded }}
+        />
       </div>
     </div>
   )

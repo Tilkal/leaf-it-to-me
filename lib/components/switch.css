@@ -1,6 +1,6 @@
 .switch-container {
   position: relative;
-  font-family: sans-serif;
+  font-family: var(--font-family);
   min-width: 8rem;
   overflow: hidden;
 

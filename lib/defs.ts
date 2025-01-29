@@ -26,7 +26,6 @@ export type Node = {
 }
 
 export type Leaf = Node & {
-  value: Primitive
   mode?: LeafMode
   readonly?: boolean
 }
@@ -34,4 +33,5 @@ export type Leaf = Node & {
 export enum LeafMode {
   OBJECT,
   ARRAY,
+  ROOT,
 }

@@ -1,0 +1,33 @@
+.action-button {
+  width: var(--action-button-size);
+  height: var(--action-button-size);
+  padding: var(--padding-sqr-2);
+  border: none;
+  background-color: var(--white);
+  border-radius: var(--action-button-border-radius);
+  box-shadow: var(--box-shadow);
+  cursor: pointer;
+  transition: background-color ease-in 0.1s;
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: var(--gray-1);
+
+    & svg {
+      fill: var(--gray-4);
+    }
+  }
+
+  &:not(:disabled) svg {
+    transition: fill ease-in 0.1s;
+    fill: var(--gray-8);
+  }
+
+  &:not(:disabled):hover {
+    background-color: var(--gray-1);
+
+    & svg {
+      fill: var(--gray-10);
+    }
+  }
+}
