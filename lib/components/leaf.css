@@ -20,7 +20,6 @@
     display: flex;
     flex-direction: row;
     gap: var(--gap);
-    justify-content: space-between;
     font-family: var(--font-family);
     align-items: center;
 
@@ -75,6 +74,10 @@
         border-radius: var(--border-radius-h-end-4);
       }
 
+      &:only-child {
+        border-radius: var(--border-radius-4);
+      }
+
       &.error {
         outline: 1px solid var(--red-5);
 
@@ -89,33 +92,20 @@
     width: calc((3 * 1.5rem) + (2 * 8px));
     min-width: calc((3 * 1.5rem) + (2 * 8px));
     height: var(--action-button-size);
-    position: relative;
-    transition: width ease-in 0.1s;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    transition: gap ease-in 0.1s;
 
     .leaf-action-button {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: var(--action-button-size);
-      height: var(--action-button-size);
-      padding: var(--padding-sqr-2);
-      border: none;
-      background: var(--white);
-      border-radius: var(--action-button-border-radius);
-      box-shadow: var(--box-shadow);
-      transition: background-color ease-out 0.1s;
+      opacity: 1;
+      transition:
+        opacity ease-in 0.1s,
+        background-color ease-in 0.1s;
 
-      & svg {
-        transition: fill 0.1s ease-in;
-        fill: var(--gray-8);
-
-        &:hover:not(.readonly) {
-          fill: var(--gray-10);
-        }
-      }
-
-      &:not(.readonly) {
-        cursor: pointer;
+      &.hidden {
+        cursor: default;
+        opacity: 0;
       }
     }
 
@@ -127,11 +117,6 @@
       }
     }
 
-    .button-delete,
-    .button-edit {
-      opacity: 0;
-    }
-
     .button-delete {
       background-color: var(--red-1);
 
@@ -141,6 +126,8 @@
     }
 
     &.expanded {
+      gap: 0.5rem;
+
       .button-expand {
         & svg {
           transform: rotate(180deg);
@@ -148,51 +135,41 @@
       }
 
       .button-submit {
-        left: 0%;
         background-color: var(--green-1);
-
-        &:hover {
-          background-color: var(--green-2);
-          & svg {
-            fill: var(--green-9);
-          }
-        }
 
         & svg {
           fill: var(--green-8);
         }
 
+        &:hover {
+          background-color: var(--green-2);
+
+          & svg {
+            fill: var(--green-9);
+          }
+        }
+
         &.error {
           background-color: var(--gray-2);
           cursor: not-allowed;
+
           &:focus {
             outline: 2px solid var(--red-5);
           }
+
           & svg {
             fill: var(--gray-5);
           }
         }
       }
 
-      .button-cancel {
-        left: 33%;
-      }
-
       .button-delete {
-        left: 66%;
-        opacity: 1;
-
         &:hover {
           background-color: var(--red-2);
           & svg {
             fill: var(--red-9);
           }
         }
-      }
-
-      .button-edit {
-        left: 33%;
-        opacity: 1;
       }
     }
   }

@@ -1,5 +1,5 @@
 import React, {
-  PropsWithChildren,
+  ReactElement,
   useEffect,
   useMemo,
   useRef,
@@ -10,8 +10,10 @@ import { classNames } from '../utils/classNames'
 
 import './popover.css'
 
-type PopoverProps = PropsWithChildren & {
+export type PopoverProps = {
   content: string
+  enabled?: boolean
+  children: ReactElement
 }
 
 type IsOpen = { isClicked: boolean; isFocused: boolean; isHovered: boolean }
@@ -22,7 +24,11 @@ const CLOSED_STATE: IsOpen = {
   isHovered: false,
 }
 
-export const Popover: React.FC<PopoverProps> = ({ content, children }) => {
+export const Popover: React.FC<PopoverProps> = ({
+  content,
+  children,
+  enabled = true,
+}) => {
   const [isOpen, setIsOpen] = useState<IsOpen>(CLOSED_STATE)
 
   const ref = useRef<HTMLDivElement>(null)
@@ -51,21 +57,30 @@ export const Popover: React.FC<PopoverProps> = ({ content, children }) => {
     <div
       className="popover-container"
       ref={ref}
-      tabIndex={0}
       onClick={() =>
+        enabled &&
         setIsOpen((prev) =>
           isActive ? CLOSED_STATE : { ...prev, isClicked: true },
         )
       }
-      onMouseEnter={() => setIsOpen((prev) => ({ ...prev, isHovered: true }))}
-      onMouseLeave={() => setIsOpen((prev) => ({ ...prev, isHovered: false }))}
-      onFocus={() => setIsOpen((prev) => ({ ...prev, isFocused: true }))}
-      onBlur={() => setIsOpen((prev) => ({ ...prev, isFocused: false }))}
+      onMouseEnter={() =>
+        enabled && setIsOpen((prev) => ({ ...prev, isHovered: true }))
+      }
+      onMouseLeave={() =>
+        enabled && setIsOpen((prev) => ({ ...prev, isHovered: false }))
+      }
     >
       <div className={classNames('popover', { active: isActive })}>
         {content}
       </div>
-      <div className="popover-children">{children}</div>
+      <div className="popover-children">
+        {React.cloneElement(children, {
+          onFocus: () =>
+            enabled && setIsOpen((prev) => ({ ...prev, isFocused: true })),
+          onBlur: () =>
+            enabled && setIsOpen((prev) => ({ ...prev, isFocused: false })),
+        })}
+      </div>
     </div>
   )
 }

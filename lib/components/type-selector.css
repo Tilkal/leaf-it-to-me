@@ -12,6 +12,10 @@
   &:last-child {
     border-radius: var(--border-radius-h-end-4);
   }
+
+  &:only-child {
+    border-radius: var(--border-radius-4);
+  }
 }
 
 .type-selector-dropdown {
@@ -35,6 +39,10 @@
 
   &:last-child {
     border-radius: var(--border-radius-v-end-4);
+  }
+
+  &:only-child {
+    border-radius: var(--border-radius-4);
   }
 
   &:hover {

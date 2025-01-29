@@ -6,7 +6,7 @@ export type ClassName =
 export const classNames = (...classes: ClassName[]): string =>
   classes
     .reduce((cn: string[], current: ClassName) => {
-      if (typeof current === 'string') {
+      if (typeof current === 'string' && current !== '') {
         cn.push(current)
       } else if (Array.isArray(current)) {
         cn.push(...classNames(...current).split(' '))

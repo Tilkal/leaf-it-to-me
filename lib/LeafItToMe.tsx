@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { Tree } from './defs'
+import { TreeView } from './components/TreeView'
+import { LeafMode, Tree } from './defs'
 import { getTreeDescription } from './utils/json'
 
 import './root.css'
@@ -12,30 +13,5 @@ type LeafItToMeProps = {
 export const LeafItToMe: React.FC<LeafItToMeProps> = ({ tree }) => {
   const description = getTreeDescription(tree)
 
-  console.log({ description })
-
-  if (tree === null) {
-    return <div>null</div>
-  }
-  if (['string', 'number'].includes(typeof tree)) {
-    return <div>{tree.toString()}</div>
-  }
-  if (Array.isArray(tree)) {
-    return (
-      <div>
-        {tree.map((_, index) => (
-          <div>{index}</div>
-        ))}
-      </div>
-    )
-  }
-  if (typeof tree === 'object') {
-    return (
-      <div>
-        {Object.entries(tree).map(([key]) => (
-          <div>{key}</div>
-        ))}
-      </div>
-    )
-  }
+  return <TreeView node={description} mode={LeafMode.ROOT} />
 }

@@ -1,5 +1,9 @@
 .popover-container {
   position: relative;
+  width: max-content;
+  font-family: var(--font-family);
+  white-space: nowrap;
+  font-size: 0.9rem;
 
   & .popover {
     position: absolute;
@@ -9,7 +13,9 @@
     border-radius: var(--border-radius-2);
     padding: var(--padding-sqr-3);
     background: var(--transparent-black);
+    backdrop-filter: blur(0.1rem);
     color: var(--white);
+    z-index: 2;
 
     &:after {
       content: '';
