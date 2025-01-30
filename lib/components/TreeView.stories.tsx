@@ -71,4 +71,16 @@ export const Default: Story = {
       ],
     },
   },
+  render: (props) => (
+    <div
+      style={{
+        height: '100%',
+        width: '700px',
+        backgroundColor: '#f6f6f6',
+        padding: '20px',
+      }}
+    >
+      <TreeView {...props} />
+    </div>
+  ),
 }

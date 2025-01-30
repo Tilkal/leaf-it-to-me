@@ -6,7 +6,7 @@ import { ActionButton } from './ActionButton'
 import { Leaf } from './Leaf'
 import { X } from './icons/X'
 
-import './tree.css'
+import './tree-view.css'
 
 type TreeProps = {
   node: Node
@@ -38,6 +38,7 @@ export const TreeView: React.FC<TreeProps> = ({ node, mode }) => {
             className="button-add"
             icon={<X />}
             popover={{ content: 'Add item' }}
+            aria-label="Add item"
           />
         </div>
       )}
