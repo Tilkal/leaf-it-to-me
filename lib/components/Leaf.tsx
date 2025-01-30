@@ -199,6 +199,9 @@ export const Leaf: React.FC<LeafProps> = ({
             {Boolean(isChecked.value).toString()}
           </div>
         )}
+        {type.value === 'null' && (
+          <div className="leaf-value type-${type.value}">null</div>
+        )}
       </div>
       <div
         className={classNames('leaf-actions', {
