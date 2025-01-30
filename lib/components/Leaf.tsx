@@ -51,15 +51,25 @@ export const Leaf: React.FC<LeafProps> = ({
   })
   const [isExpanded, setIsExpanded] = useState(false)
   const [errors, setErrors] = useState<Record<string, boolean>>({})
+  const [warnings, setWarnings] = useState<Record<string, boolean>>({})
 
   const hasError = useMemo(
     () => Object.values(errors).some((value) => value),
     [errors],
   )
 
+  const hasWarning = useMemo(
+    () => Object.values(warnings).some((value) => value),
+    [warnings],
+  )
+
   useEffect(() => {
     setErrors((prev) => ({ ...prev, name: !isValidString(name.tempValue) }))
-  }, [name])
+    setWarnings((prev) => ({
+      ...prev,
+      name: mode === LeafMode.OBJECT && name.tempValue === '',
+    }))
+  }, [mode, name])
 
   useEffect(() => {
     switch (type.tempValue) {
@@ -68,6 +78,7 @@ export const Leaf: React.FC<LeafProps> = ({
           ...prev,
           value: !isValidString(value.tempValue),
         }))
+        setWarnings((prev) => ({ ...prev, value: value.tempValue === '' }))
         break
       case 'number':
         setErrors((prev) => ({
@@ -117,6 +128,7 @@ export const Leaf: React.FC<LeafProps> = ({
               <input
                 className={classNames('leaf-input', 'input-name', {
                   error: errors.name,
+                  warning: !hasError && warnings.name,
                 })}
                 type="text"
                 value={name.tempValue}
@@ -127,12 +139,14 @@ export const Leaf: React.FC<LeafProps> = ({
                   }))
                 }
                 aria-label="Modifier la clé"
+                placeholder="Key"
               />
             )}
             {['string', 'number'].includes(type.tempValue) && (
               <input
                 className={classNames('leaf-input', 'input-value', {
                   error: errors.value,
+                  warning: !hasError && warnings.value,
                 })}
                 type="text"
                 value={value.tempValue}
@@ -143,6 +157,7 @@ export const Leaf: React.FC<LeafProps> = ({
                   }))
                 }
                 aria-label="Modifier la valeur"
+                placeholder="Value"
               />
             )}
             {type.tempValue === 'boolean' && (
@@ -157,7 +172,10 @@ export const Leaf: React.FC<LeafProps> = ({
         </div>
         <div className="leaf-actions expanded">
           <ActionButton
-            className="leaf-action-button button-submit"
+            className={classNames('leaf-action-button button-submit', {
+              error: hasError,
+              warning: !hasError && hasWarning,
+            })}
             type="submit"
             aria-label="Save"
             icon={<Tick />}
@@ -184,15 +202,33 @@ export const Leaf: React.FC<LeafProps> = ({
 
   return (
     <div className="leaf-container">
-      <div className={classNames('leaf', { readonly })}>
+      <div
+        className={classNames('leaf', {
+          readonly,
+          error: hasError,
+          warning: hasWarning,
+        })}
+      >
         <div className={`leaf-type type-${type.value}`}>
           <TypeTag type={type.value} />
         </div>
         {mode === LeafMode.OBJECT && (
-          <div className={`leaf-name type-${type.value}`}>{name.value}</div>
+          <div
+            className={classNames(`leaf-name type-${type.value}`, {
+              ['empty-string']: name.value === '',
+            })}
+          >
+            {name.value !== '' ? name.value : 'empty key'}
+          </div>
         )}
         {['string', 'number'].includes(type.value) && (
-          <div className={`leaf-value type-${type.value}`}>{value.value}</div>
+          <div
+            className={classNames(`leaf-value type-${type.value}`, {
+              ['empty-string']: value.value === '',
+            })}
+          >
+            {value.value !== '' ? value.value : 'empty value'}
+          </div>
         )}
         {['boolean'].includes(type.value) && (
           <div className={`leaf-value type-${type.value}`}>

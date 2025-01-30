@@ -23,13 +23,29 @@
     font-family: var(--font-family);
     align-items: center;
 
+    &.error {
+      outline: 1px solid var(--red-5);
+    }
+
+    &.warning {
+      outline: 1px solid var(--orange-5);
+    }
+
     .leaf-name {
       color: var(--gray-7);
+      &.empty-string {
+        color: var(--gray-5);
+        font-size: 0.8rem;
+      }
     }
 
     .leaf-value {
       &.type-string {
         color: var(--blue-8);
+        &.empty-string {
+          color: var(--gray-5);
+          font-size: 0.8rem;
+        }
       }
 
       &.type-number {
@@ -83,6 +99,14 @@
 
         &:focus {
           outline: 2px solid var(--red-5);
+        }
+      }
+
+      &.warning {
+        outline: 1px solid var(--orange-5);
+
+        &:focus {
+          outline: 2px solid var(--orange-5);
         }
       }
     }
@@ -149,13 +173,29 @@
           }
         }
 
+        &.warning {
+          background-color: var(--orange-2);
+
+          &:focus {
+            outline: 2px solid var(--orange-5);
+          }
+
+          & svg {
+            fill: var(--orange-8);
+          }
+
+          &:hover {
+            background-color: var(--orange-3);
+
+            & svg {
+              fill: var(--orange-9);
+            }
+          }
+        }
+
         &.error {
           background-color: var(--gray-2);
           cursor: not-allowed;
-
-          &:focus {
-            outline: 2px solid var(--red-5);
-          }
 
           & svg {
             fill: var(--gray-5);
