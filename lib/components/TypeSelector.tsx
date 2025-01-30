@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import { LEAF_TYPES, LeafType } from '../defs'
+import { classNames } from '../utils/classNames'
 import { TypeTag } from './TypeTag'
 
 import './type-selector.css'
@@ -11,14 +12,11 @@ type SelectProps = {
   onSelect: (value: LeafType) => void
 }
 
-type IsOpen = { isFocused: boolean; isClicked: boolean }
-
 export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
-  const [selected, setSelected] = useState<string>(value)
-  const [isOpen, setIsOpen] = useState<IsOpen>({
-    isFocused: false,
-    isClicked: false,
-  })
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [selectedIndex, setSelectedIndex] = useState<number>(
+    LEAF_TYPES.findIndex((item) => item === value),
+  )
   const ref = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -28,7 +26,7 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
       event.target instanceof Node &&
       !ref.current?.contains(event.target)
     ) {
-      setIsOpen({ isFocused: false, isClicked: false })
+      setIsOpen(false)
     }
   }
 
@@ -42,65 +40,51 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
       className="type-selector"
       ref={ref}
       tabIndex={0}
-      onFocus={() => setIsOpen((prev) => ({ ...prev, isFocused: true }))}
+      role="select"
+      onClick={() => {
+        setIsOpen((prev) => !prev)
+      }}
       onBlur={(event) => {
         if (!dropdownRef.current?.contains(event.relatedTarget)) {
-          setIsOpen({ isClicked: false, isFocused: false })
+          setIsOpen(false)
         }
       }}
       onKeyDown={(event) => {
         if (
           event.key === 'ArrowDown' &&
-          event.target === document.activeElement &&
-          dropdownRef.current?.firstChild &&
-          dropdownRef.current.firstChild instanceof HTMLElement
+          event.target === document.activeElement
         ) {
-          dropdownRef.current.firstChild.focus()
+          event.preventDefault()
+          setSelectedIndex((prev) =>
+            prev === LEAF_TYPES.length - 1 ? prev : prev + 1,
+          )
+        }
+        if (
+          event.key === 'ArrowUp' &&
+          event.target === document.activeElement
+        ) {
+          event.preventDefault()
+          setSelectedIndex((prev) => (prev === 0 ? prev : prev - 1))
         }
       }}
     >
-      <div
-        className={`type-selector-value type-${selected}`}
-        onClick={() => {
-          ref.current?.focus()
-          setIsOpen((prev) => ({
-            isClicked: !prev.isClicked,
-            isFocused: false,
-          }))
-        }}
-      >
-        <TypeTag type={selected} />
+      <div className={`type-selector-value type-${LEAF_TYPES[selectedIndex]}`}>
+        <TypeTag type={LEAF_TYPES[selectedIndex]} />
       </div>
-      {(isOpen.isFocused || isOpen.isClicked) && (
+      {isOpen && (
         <div className="type-selector-dropdown" ref={dropdownRef}>
-          {LEAF_TYPES.map((option) => (
+          {LEAF_TYPES.map((option, index) => (
             <div
               key={option}
-              tabIndex={0}
-              className={`type-selector-dropdown-item type-${option}`}
+              className={classNames(
+                `type-selector-dropdown-item type-${option}`,
+                { hover: index === selectedIndex },
+              )}
+              role="option"
               onClick={() => {
-                setSelected(option)
+                setSelectedIndex(index)
                 onSelect(option)
-                setIsOpen({ isClicked: false, isFocused: false })
-              }}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  setSelected(option)
-                }
-                if (
-                  event.key === 'ArrowDown' &&
-                  event.target instanceof HTMLElement &&
-                  event.target.nextSibling instanceof HTMLElement
-                ) {
-                  event.target.nextSibling.focus()
-                }
-                if (
-                  event.key === 'ArrowUp' &&
-                  event.target instanceof HTMLElement &&
-                  event.target.previousSibling instanceof HTMLElement
-                ) {
-                  event.target.previousSibling.focus()
-                }
+                setIsOpen(false)
               }}
             >
               <TypeTag type={option} />

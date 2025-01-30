@@ -45,7 +45,8 @@
     border-radius: var(--border-radius-4);
   }
 
-  &:hover {
+  &:hover,
+  &.hover {
     background-color: var(--gray-1);
   }
 }
