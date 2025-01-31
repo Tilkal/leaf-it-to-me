@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
+import { Error } from './components/Error'
 import { TreeRoot } from './components/TreeRoot'
 import { LeafItToMeConfig } from './contexts/ConfigContext/ConfigContext'
 import { ConfigContextProvider } from './contexts/ConfigContext/ConfigContextProvider'
 import { TreeContextProvider } from './contexts/TreeContext/TreeContextProvider'
-import { JSONType } from './defs'
+import { JSONType, Node } from './defs'
 import { getJsonDescription } from './utils/json'
 
 import './root.css'
@@ -20,7 +21,24 @@ export const LeafItToMe: React.FC<LeafItToMeProps> = ({
   json,
   onChange,
 }) => {
-  const description = getJsonDescription(json)
+  const [description, setDescription] = useState<Node | null>(null)
+  const [hasError, setHasError] = useState<boolean>(false)
+
+  useEffect(() => {
+    try {
+      setDescription(getJsonDescription(json))
+    } catch (error) {
+      setHasError(true)
+    }
+  }, [json])
+
+  if (hasError) {
+    return <Error />
+  }
+
+  if (description === null) {
+    return null
+  }
 
   return (
     <ConfigContextProvider config={config}>
