@@ -1,6 +1,10 @@
 import React from 'react'
 
 import { TreeView } from './components/TreeView'
+import {
+  ConfigContextProvider,
+  LeafItToMeConfig,
+} from './contexts/ConfigContext'
 import { LeafMode, Tree } from './defs'
 import { getTreeDescription } from './utils/json'
 
@@ -8,10 +12,15 @@ import './root.css'
 
 type LeafItToMeProps = {
   tree: Tree
+  config?: LeafItToMeConfig
 }
 
-export const LeafItToMe: React.FC<LeafItToMeProps> = ({ tree }) => {
+export const LeafItToMe: React.FC<LeafItToMeProps> = ({ config, tree }) => {
   const description = getTreeDescription(tree)
 
-  return <TreeView node={description} mode={LeafMode.ROOT} />
+  return (
+    <ConfigContextProvider config={config}>
+      <TreeView node={description} mode={LeafMode.ROOT} />
+    </ConfigContextProvider>
+  )
 }
