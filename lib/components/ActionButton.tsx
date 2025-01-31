@@ -1,4 +1,4 @@
-import React, { ComponentPropsWithoutRef, ReactElement } from 'react'
+import { ComponentPropsWithoutRef, ReactElement, forwardRef } from 'react'
 
 import { classNames } from '../utils/classNames'
 import { Popover, PopoverProps } from './Popover'
@@ -11,31 +11,31 @@ type ActionButtonProps = ComponentPropsWithoutRef<'button'> & {
   popover?: Omit<PopoverProps, 'children'>
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({
-  icon,
-  className,
-  readonly,
-  popover,
-  ...props
-}) => {
-  if (popover) {
+export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
+  ({ icon, className, readonly, popover, ...props }, ref) => {
+    if (popover) {
+      return (
+        <Popover {...popover}>
+          <button
+            ref={ref}
+            className={classNames('action-button', className ?? '', {
+              readonly,
+            })}
+            {...props}
+          >
+            {icon}
+          </button>
+        </Popover>
+      )
+    }
     return (
-      <Popover {...popover}>
-        <button
-          className={classNames('action-button', className ?? '', { readonly })}
-          {...props}
-        >
-          {icon}
-        </button>
-      </Popover>
+      <button
+        ref={ref}
+        className={classNames('action-button', className ?? '', { readonly })}
+        {...props}
+      >
+        {icon}
+      </button>
     )
-  }
-  return (
-    <button
-      className={classNames('action-button', className ?? '', { readonly })}
-      {...props}
-    >
-      {icon}
-    </button>
-  )
-}
+  },
+)
