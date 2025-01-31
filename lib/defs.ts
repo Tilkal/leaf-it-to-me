@@ -35,3 +35,8 @@ export enum LeafMode {
   ARRAY,
   ROOT,
 }
+
+export type TempValue<T extends Primitive> = {
+  value: T
+  tempValue: T
+}
