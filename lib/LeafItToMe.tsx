@@ -1,10 +1,8 @@
 import React from 'react'
 
 import { TreeView } from './components/TreeView'
-import {
-  ConfigContextProvider,
-  LeafItToMeConfig,
-} from './contexts/ConfigContext'
+import { LeafItToMeConfig } from './contexts/ConfigContext/ConfigContext'
+import { ConfigContextProvider } from './contexts/ConfigContext/ConfigContextProvider'
 import { LeafMode, Tree } from './defs'
 import { getTreeDescription } from './utils/json'
 

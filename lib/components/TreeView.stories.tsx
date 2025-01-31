@@ -23,41 +23,50 @@ export const Default: Story = {
     mode: LeafMode.ROOT,
     node: {
       type: 'object',
+      path: '',
       children: [
         {
           type: 'string',
           name: 'key1',
           value: 'value1',
+          path: 'key1',
         },
         {
           type: 'array',
           name: 'key2',
+          path: 'key2',
           children: [
             {
               type: 'string',
               value: 'value2',
+              path: 'key2.0',
             },
             {
               type: 'number',
               value: 42,
+              path: 'key2.1',
             },
             {
               type: 'object',
+              path: 'key2.2',
               children: [
                 {
                   type: 'number',
                   name: 'key3',
                   value: 42,
+                  path: 'key2.2.key3',
                 },
                 {
                   type: 'boolean',
                   name: 'key4',
                   value: true,
+                  path: 'key2.2.key4',
                 },
                 {
                   type: 'null',
                   name: 'key5',
                   value: null,
+                  path: 'key2.2.key5',
                 },
               ],
             },
@@ -67,6 +76,7 @@ export const Default: Story = {
           type: 'string',
           name: 'key6',
           value: 'value3',
+          path: 'key6',
         },
       ],
     },

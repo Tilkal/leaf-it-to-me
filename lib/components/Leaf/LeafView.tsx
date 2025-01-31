@@ -7,7 +7,7 @@ import React, {
   useRef,
 } from 'react'
 
-import { LeafMode, LeafType, TempValue } from '../../defs'
+import { LeafMode, Node as LeafNode } from '../../defs'
 import { classNames } from '../../utils/classNames'
 import { ActionButton } from '../ActionButton'
 import { TypeTag } from '../TypeTag'
@@ -16,14 +16,11 @@ import { Pencil } from '../icons/Pencil'
 import { TrashCan } from '../icons/TrashCan'
 
 type LeafViewProps = {
+  node: LeafNode
   readonly?: boolean
   mode: LeafMode
   hasError: boolean
   hasWarning: boolean
-  name: TempValue<string>
-  value: TempValue<string>
-  isChecked: TempValue<boolean>
-  type: TempValue<LeafType>
   setIsEditing: Dispatch<SetStateAction<boolean>>
   addon?: ReactElement | null
   isExpanded: boolean
@@ -31,14 +28,11 @@ type LeafViewProps = {
 }
 
 export const LeafView: React.FC<LeafViewProps> = ({
+  node,
   readonly,
   mode,
   hasError,
   hasWarning,
-  name,
-  value,
-  isChecked,
-  type,
   setIsEditing,
   addon,
   isExpanded,
@@ -77,34 +71,34 @@ export const LeafView: React.FC<LeafViewProps> = ({
         })}
       >
         <div className="leaf-content">
-          <div className={`leaf-type type-${type.value}`}>
-            <TypeTag type={type.value} />
+          <div className={`leaf-type type-${node.type}`}>
+            <TypeTag type={node.type} />
           </div>
           {mode === LeafMode.OBJECT && (
             <div
-              className={classNames(`leaf-name type-${type.value}`, {
-                ['empty-string']: name.value === '',
+              className={classNames(`leaf-name type-${node.type}`, {
+                ['empty-string']: node.name === '',
               })}
             >
-              {name.value !== '' ? name.value : 'empty key'}
+              {node.name !== '' ? node.name : 'empty key'}
             </div>
           )}
-          {['string', 'number'].includes(type.value) && (
+          {['string', 'number'].includes(node.type) && (
             <div
-              className={classNames(`leaf-value type-${type.value}`, {
-                ['empty-string']: value.value === '',
+              className={classNames(`leaf-value type-${node.type}`, {
+                ['empty-string']: node.value === '',
               })}
             >
-              {value.value !== '' ? value.value : 'empty value'}
+              {node.value !== '' ? node.value : 'empty value'}
             </div>
           )}
-          {['boolean'].includes(type.value) && (
-            <div className={`leaf-value type-${type.value}`}>
-              {Boolean(isChecked.value).toString()}
+          {['boolean'].includes(node.type) && (
+            <div className={`leaf-value type-${node.type}`}>
+              {Boolean(node.value).toString()}
             </div>
           )}
-          {type.value === 'null' && (
-            <div className="leaf-value type-${type.value}">null</div>
+          {node.type === 'null' && (
+            <div className="leaf-value type-${node.type}">null</div>
           )}
         </div>
 

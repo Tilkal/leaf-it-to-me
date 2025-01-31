@@ -8,7 +8,6 @@ import './type-selector.css'
 
 type SelectProps = {
   value: string
-  options: string[]
   onSelect: (value: LeafType) => void
 }
 

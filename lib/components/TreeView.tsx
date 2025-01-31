@@ -26,11 +26,8 @@ export const TreeView: React.FC<TreeProps> = memo(
         className={classNames('tree-view', { root: mode === LeafMode.ROOT })}
       >
         <Leaf
-          type={node.type}
-          name={node.name}
-          value={node.value}
+          node={node}
           mode={mode}
-          readonly={false}
           edit={node.type === 'string' && node.name === '' && node.value === ''}
           addon={
             ['object', 'array'].includes(node.type) && node.children?.length ? (
@@ -51,6 +48,7 @@ export const TreeView: React.FC<TreeProps> = memo(
           <>
             {node.children?.map((child) => (
               <TreeView
+                key={hashCode(child)}
                 node={child}
                 mode={node.type === 'array' ? LeafMode.ARRAY : LeafMode.OBJECT}
               />
@@ -70,6 +68,7 @@ export const TreeView: React.FC<TreeProps> = memo(
                           ...node.children,
                           {
                             type: 'string',
+                            path: `${node.path}.`,
                             name: '',
                             value: '',
                           },

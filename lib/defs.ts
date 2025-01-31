@@ -26,11 +26,6 @@ export type Node = {
   children?: Node[]
 }
 
-export type Leaf = Node & {
-  mode?: LeafMode
-  readonly?: boolean
-}
-
 export enum LeafMode {
   OBJECT,
   ARRAY,
