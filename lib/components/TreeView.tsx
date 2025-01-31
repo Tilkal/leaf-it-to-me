@@ -35,7 +35,7 @@ export const TreeView: React.FC<TreeProps> = memo(
           addon={
             ['object', 'array'].includes(node.type) && node.children?.length ? (
               <ActionButton
-                className={classNames('button-expand', {
+                className={classNames('button-toggle', {
                   expanded: isExpanded,
                 })}
                 aria-label={isExpanded ? 'Collapse' : 'Expand'}

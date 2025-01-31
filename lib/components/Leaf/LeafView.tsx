@@ -51,6 +51,9 @@ export const LeafView: React.FC<LeafViewProps> = ({
       if (
         ref &&
         event.target instanceof Node &&
+        [...document.querySelectorAll('.button-expand')].some((element) =>
+          element.contains(event.target as Node),
+        ) &&
         !ref.current?.contains(event.target)
       ) {
         setIsExpanded(false)

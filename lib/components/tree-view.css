@@ -11,7 +11,7 @@
 
   .leaf {
     .leaf-addon {
-      .button-expand {
+      .button-toggle {
         box-shadow: none;
         transform: rotate(90deg);
         transition: transform ease-in 0.1s;
