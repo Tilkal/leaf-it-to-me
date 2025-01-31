@@ -20,6 +20,7 @@ export type LeafType = (typeof LEAF_TYPES)[number]
 
 export type Node = {
   type: LeafType
+  path: string
   name?: string
   value?: Primitive
   children?: Node[]

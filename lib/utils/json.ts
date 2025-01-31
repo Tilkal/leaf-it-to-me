@@ -28,8 +28,15 @@ const getNodeType = (input: Tree): LeafType => {
 const isPrimitive = (input: Primitive | Tree): input is Primitive =>
   ['string', 'number', 'boolean'].includes(typeof input) || input === null
 
+const getNewPath = (parent: string, child?: string | number): string =>
+  `${parent}${parent !== '' && child !== undefined ? '.' : ''}${child ?? ''}`
+
 // Recursively create the tree description from a given input
-export const getTreeDescription = (input: Tree, name?: string): Node => {
+export const getTreeDescription = (
+  input: Tree,
+  path: string = '',
+  nameOrIndex?: string | number,
+): Node => {
   // JSON only allows a limited type of values, JS objects do not
   // Since we work with JSON, we only allow JSON types
   if (isInvalidValue(input)) throw new TypeError('invalid JSON value')
@@ -40,15 +47,21 @@ export const getTreeDescription = (input: Tree, name?: string): Node => {
     throw new SyntaxError('invalid JSON string value')
 
   // The same rule exist for JSON keys
-  if (name && !isValidString(name))
+  if (
+    nameOrIndex &&
+    typeof nameOrIndex === 'string' &&
+    !isValidString(nameOrIndex)
+  )
     throw new SyntaxError('invalid JSON string key')
 
+  const newPath = getNewPath(path, nameOrIndex)
   const node: Node = {
     type: getNodeType(input),
+    path: newPath,
   }
 
   // The name is optional, since it is only used for subtrees in an object (no primitives nor arrays)
-  if (name) node.name = name
+  if (nameOrIndex && typeof nameOrIndex === 'string') node.name = nameOrIndex
 
   // Primitives are final nodes with values
   if (isPrimitive(input)) node.value = input
@@ -58,13 +71,13 @@ export const getTreeDescription = (input: Tree, name?: string): Node => {
     node.children = input
       // Remove undefined values in subtree, they are not allowed in JSON
       .filter((value) => value !== undefined)
-      .map((value) => getTreeDescription(value))
+      .map((value, index) => getTreeDescription(value, newPath, index))
 
   if (node.type === 'object' && typeof input === 'object' && input !== null)
     node.children = Object.entries(input)
       // Remove undefined values in subtree, they are not allowed in JSON
       .filter(([, value]) => value !== undefined)
-      .map(([key, value]) => getTreeDescription(value, key))
+      .map(([key, value]) => getTreeDescription(value, newPath, key))
 
   return node
 }

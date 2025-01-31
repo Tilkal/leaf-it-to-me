@@ -77,69 +77,69 @@ describe('getTreeDescription', () => {
   })
 
   it('should correctly identify a string and have a value', () => {
-    expect(getTreeDescription('')).toStrictEqual({
+    expect(getTreeDescription('')).toMatchObject({
       type: 'string',
       value: '',
     })
 
-    expect(getTreeDescription('not empty string')).toStrictEqual({
+    expect(getTreeDescription('not empty string')).toMatchObject({
       type: 'string',
       value: 'not empty string',
     })
   })
 
   it('should correctly identify a number and have a value', () => {
-    expect(getTreeDescription(0)).toStrictEqual({
+    expect(getTreeDescription(0)).toMatchObject({
       type: 'number',
       value: 0,
     })
 
-    expect(getTreeDescription(42)).toStrictEqual({
+    expect(getTreeDescription(42)).toMatchObject({
       type: 'number',
       value: 42,
     })
 
-    expect(getTreeDescription(-42)).toStrictEqual({
+    expect(getTreeDescription(-42)).toMatchObject({
       type: 'number',
       value: -42,
     })
   })
 
   it('should correctly identify a boolean and have a value', () => {
-    expect(getTreeDescription(true)).toStrictEqual({
+    expect(getTreeDescription(true)).toMatchObject({
       type: 'boolean',
       value: true,
     })
 
-    expect(getTreeDescription(false)).toStrictEqual({
+    expect(getTreeDescription(false)).toMatchObject({
       type: 'boolean',
       value: false,
     })
   })
 
   it('should correctly identify a null and have null as value', () => {
-    expect(getTreeDescription(null)).toStrictEqual({
+    expect(getTreeDescription(null)).toMatchObject({
       type: 'null',
       value: null,
     })
   })
 
   it('should correctly identify an array and have children', () => {
-    expect(getTreeDescription([])).toStrictEqual({
+    expect(getTreeDescription([])).toMatchObject({
       type: 'array',
       children: [],
     })
   })
 
   it('should correctly identify an object and have children', () => {
-    expect(getTreeDescription({})).toStrictEqual({
+    expect(getTreeDescription({})).toMatchObject({
       type: 'object',
       children: [],
     })
   })
 
   it('should correctly identify values of an array as nodes with value but no name', () => {
-    expect(getTreeDescription([42])).toStrictEqual({
+    expect(getTreeDescription([42])).toMatchObject({
       type: 'array',
       children: [
         {
@@ -151,7 +151,7 @@ describe('getTreeDescription', () => {
   })
 
   it('should correctly identify values of an object as nodes with value and name', () => {
-    expect(getTreeDescription({ key: 'value' })).toStrictEqual({
+    expect(getTreeDescription({ key: 'value' })).toMatchObject({
       type: 'object',
       children: [
         {
@@ -165,12 +165,12 @@ describe('getTreeDescription', () => {
 
   // Empty array and object
   it('should return an empty root object if the input JSON is empty', () => {
-    expect(getTreeDescription({})).toStrictEqual({
+    expect(getTreeDescription({})).toMatchObject({
       type: 'object',
       children: [],
     })
 
-    expect(getTreeDescription([])).toStrictEqual({
+    expect(getTreeDescription([])).toMatchObject({
       type: 'array',
       children: [],
     })
@@ -178,7 +178,7 @@ describe('getTreeDescription', () => {
 
   // Simple "map"
   it('should handle a JSON with a single key-value pair', () => {
-    expect(getTreeDescription({ key: 'value' })).toStrictEqual({
+    expect(getTreeDescription({ key: 'value' })).toMatchObject({
       type: 'object',
       children: [
         {
@@ -193,7 +193,7 @@ describe('getTreeDescription', () => {
   it('should handle a JSON with multiple key-value pairs', () => {
     expect(
       getTreeDescription({ key1: 'value', key2: 42, key3: true, key4: null }),
-    ).toStrictEqual({
+    ).toMatchObject({
       type: 'object',
       children: [
         {
@@ -222,7 +222,7 @@ describe('getTreeDescription', () => {
 
   // Simple array JSON
   it('should handle a JSON array with primitive values', () => {
-    expect(getTreeDescription(['value', 'value'])).toStrictEqual({
+    expect(getTreeDescription(['value', 'value'])).toMatchObject({
       type: 'array',
       children: [
         {
@@ -238,7 +238,7 @@ describe('getTreeDescription', () => {
   })
 
   it('should handle a JSON array with mixed primitive types', () => {
-    expect(getTreeDescription(['value', 42, true, null])).toStrictEqual({
+    expect(getTreeDescription(['value', 42, true, null])).toMatchObject({
       type: 'array',
       children: [
         {
@@ -269,7 +269,7 @@ describe('getTreeDescription', () => {
         key2: { key3: 'value2', key4: { key5: 'value3' } },
         key6: 42,
       }),
-    ).toStrictEqual({
+    ).toMatchObject({
       type: 'object',
       children: [
         {
@@ -305,7 +305,7 @@ describe('getTreeDescription', () => {
   it('should handle a JSON array with nested arrays', () => {
     expect(
       getTreeDescription(['value1', [1, true, 'value2', ['value3']], null]),
-    ).toStrictEqual({
+    ).toMatchObject({
       type: 'array',
       children: [
         {
@@ -352,7 +352,7 @@ describe('getTreeDescription', () => {
         key1: [1, { key2: 'value', key3: [true] }],
         key4: null,
       }),
-    ).toStrictEqual({
+    ).toMatchObject({
       type: 'object',
       children: [
         {
@@ -402,7 +402,7 @@ describe('getTreeDescription', () => {
           key3: [42],
         },
       ]),
-    ).toStrictEqual({
+    ).toMatchObject({
       type: 'array',
       children: [
         {
@@ -506,7 +506,7 @@ describe('getTreeDescription', () => {
     expect(
       // @ts-expect-error -- Testing undefined case
       getTreeDescription([undefined, 42, undefined, 'value', undefined]),
-    ).toStrictEqual({
+    ).toMatchObject({
       type: 'array',
       children: [
         {
@@ -523,13 +523,138 @@ describe('getTreeDescription', () => {
     expect(
       // @ts-expect-error -- Testing undefined case
       getTreeDescription({ key1: undefined, key2: 42 }),
-    ).toStrictEqual({
+    ).toMatchObject({
       type: 'object',
       children: [
         {
           type: 'number',
           name: 'key2',
           value: 42,
+        },
+      ],
+    })
+  })
+
+  // Path
+  it('should have an empty path for root element', () => {
+    expect(getTreeDescription(42)).toMatchObject({
+      path: '',
+    })
+    expect(getTreeDescription('')).toMatchObject({
+      path: '',
+    })
+    expect(getTreeDescription(null)).toMatchObject({
+      path: '',
+    })
+    expect(getTreeDescription(true)).toMatchObject({
+      path: '',
+    })
+    expect(getTreeDescription([])).toMatchObject({
+      path: '',
+    })
+    expect(getTreeDescription({})).toMatchObject({
+      path: '',
+    })
+  })
+
+  it('should have an object key as path for object keys', () => {
+    expect(
+      getTreeDescription({ key1: 'value1', key2: 'value2' }),
+    ).toMatchObject({
+      children: [
+        {
+          path: 'key1',
+        },
+        {
+          path: 'key2',
+        },
+      ],
+    })
+  })
+
+  it('should have an index path for array items', () => {
+    expect(getTreeDescription(['value', 42])).toMatchObject({
+      children: [
+        {
+          path: '0',
+        },
+        {
+          path: '1',
+        },
+      ],
+    })
+  })
+
+  it('should indicate nesting with a dot (.) separator for arrays and objects', () => {
+    // Nested objects
+    expect(
+      getTreeDescription({
+        key1: 'value',
+        key2: {
+          key3: 42,
+        },
+      }),
+    ).toMatchObject({
+      children: [
+        {
+          path: 'key1',
+        },
+        {
+          path: 'key2',
+          children: [
+            {
+              path: 'key2.key3',
+            },
+          ],
+        },
+      ],
+    })
+
+    // Nested arrays
+    expect(getTreeDescription([1, [42, [2]]])).toMatchObject({
+      children: [
+        {
+          path: '0',
+        },
+        {
+          path: '1',
+          children: [
+            {
+              path: '1.0',
+            },
+            {
+              path: '1.1',
+              children: [
+                {
+                  path: '1.1.0',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+
+    // Mixed
+    expect(getTreeDescription([{ key1: { key2: [42] } }])).toMatchObject({
+      children: [
+        {
+          path: '0',
+          children: [
+            {
+              path: '0.key1',
+              children: [
+                {
+                  path: '0.key1.key2',
+                  children: [
+                    {
+                      path: '0.key1.key2.0',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
         },
       ],
     })
