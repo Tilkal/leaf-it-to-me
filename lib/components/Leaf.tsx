@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { ReactElement, useEffect, useMemo, useState } from 'react'
 
 import { LeafMode, LeafType, Leaf as ObjectLeaf, Primitive } from '../defs'
 import { classNames } from '../utils/classNames'
@@ -17,6 +17,7 @@ import './leaf.css'
 
 type LeafProps = ObjectLeaf & {
   edit?: boolean
+  addon?: ReactElement | null
 }
 
 type TempValue<T extends Primitive> = {
@@ -31,6 +32,7 @@ export const Leaf: React.FC<LeafProps> = ({
   value: initValue,
   mode = LeafMode.OBJECT,
   readonly,
+  addon,
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(edit)
   const [name, setName] = useState<TempValue<string>>({
@@ -116,58 +118,60 @@ export const Leaf: React.FC<LeafProps> = ({
             error: hasError,
           })}
         >
-          <div className="leaf-input-group">
-            <TypeSelector
-              value={type.tempValue}
-              options={['string', 'boolean', 'number']}
-              onSelect={(value) =>
-                setType((prev) => ({ ...prev, tempValue: value }))
-              }
-            />
-            {mode === LeafMode.OBJECT && (
-              <input
-                className={classNames('leaf-input', 'input-name', {
-                  error: errors.name,
-                  warning: !hasError && warnings.name,
-                })}
-                type="text"
-                value={name.tempValue}
-                onChange={(event) =>
-                  setName((prev) => ({
-                    ...prev,
-                    tempValue: event.target.value,
-                  }))
-                }
-                aria-label="Modifier la clé"
-                placeholder="Key"
-              />
-            )}
-            {['string', 'number'].includes(type.tempValue) && (
-              <input
-                className={classNames('leaf-input', 'input-value', {
-                  error: errors.value,
-                  warning: !hasError && warnings.value,
-                })}
-                type="text"
-                value={value.tempValue}
-                onChange={(event) =>
-                  setValue((prev) => ({
-                    ...prev,
-                    tempValue: event.target.value,
-                  }))
-                }
-                aria-label="Modifier la valeur"
-                placeholder="Value"
-              />
-            )}
-            {type.tempValue === 'boolean' && (
-              <Switch
-                checked={isChecked.tempValue}
-                onChange={(checked) =>
-                  setIsChecked((prev) => ({ ...prev, tempValue: checked }))
+          <div className="leaf-content">
+            <div className="leaf-input-group">
+              <TypeSelector
+                value={type.tempValue}
+                options={['string', 'boolean', 'number']}
+                onSelect={(value) =>
+                  setType((prev) => ({ ...prev, tempValue: value }))
                 }
               />
-            )}
+              {mode === LeafMode.OBJECT && (
+                <input
+                  className={classNames('leaf-input', 'input-name', {
+                    error: errors.name,
+                    warning: !hasError && warnings.name,
+                  })}
+                  type="text"
+                  value={name.tempValue}
+                  onChange={(event) =>
+                    setName((prev) => ({
+                      ...prev,
+                      tempValue: event.target.value,
+                    }))
+                  }
+                  aria-label="Modifier la clé"
+                  placeholder="Key"
+                />
+              )}
+              {['string', 'number'].includes(type.tempValue) && (
+                <input
+                  className={classNames('leaf-input', 'input-value', {
+                    error: errors.value,
+                    warning: !hasError && warnings.value,
+                  })}
+                  type="text"
+                  value={value.tempValue}
+                  onChange={(event) =>
+                    setValue((prev) => ({
+                      ...prev,
+                      tempValue: event.target.value,
+                    }))
+                  }
+                  aria-label="Modifier la valeur"
+                  placeholder="Value"
+                />
+              )}
+              {type.tempValue === 'boolean' && (
+                <Switch
+                  checked={isChecked.tempValue}
+                  onChange={(checked) =>
+                    setIsChecked((prev) => ({ ...prev, tempValue: checked }))
+                  }
+                />
+              )}
+            </div>
           </div>
         </div>
         <div className="leaf-actions expanded">
@@ -209,35 +213,39 @@ export const Leaf: React.FC<LeafProps> = ({
           warning: hasWarning,
         })}
       >
-        <div className={`leaf-type type-${type.value}`}>
-          <TypeTag type={type.value} />
+        <div className="leaf-content">
+          <div className={`leaf-type type-${type.value}`}>
+            <TypeTag type={type.value} />
+          </div>
+          {mode === LeafMode.OBJECT && (
+            <div
+              className={classNames(`leaf-name type-${type.value}`, {
+                ['empty-string']: name.value === '',
+              })}
+            >
+              {name.value !== '' ? name.value : 'empty key'}
+            </div>
+          )}
+          {['string', 'number'].includes(type.value) && (
+            <div
+              className={classNames(`leaf-value type-${type.value}`, {
+                ['empty-string']: value.value === '',
+              })}
+            >
+              {value.value !== '' ? value.value : 'empty value'}
+            </div>
+          )}
+          {['boolean'].includes(type.value) && (
+            <div className={`leaf-value type-${type.value}`}>
+              {Boolean(isChecked.value).toString()}
+            </div>
+          )}
+          {type.value === 'null' && (
+            <div className="leaf-value type-${type.value}">null</div>
+          )}
         </div>
-        {mode === LeafMode.OBJECT && (
-          <div
-            className={classNames(`leaf-name type-${type.value}`, {
-              ['empty-string']: name.value === '',
-            })}
-          >
-            {name.value !== '' ? name.value : 'empty key'}
-          </div>
-        )}
-        {['string', 'number'].includes(type.value) && (
-          <div
-            className={classNames(`leaf-value type-${type.value}`, {
-              ['empty-string']: value.value === '',
-            })}
-          >
-            {value.value !== '' ? value.value : 'empty value'}
-          </div>
-        )}
-        {['boolean'].includes(type.value) && (
-          <div className={`leaf-value type-${type.value}`}>
-            {Boolean(isChecked.value).toString()}
-          </div>
-        )}
-        {type.value === 'null' && (
-          <div className="leaf-value type-${type.value}">null</div>
-        )}
+
+        {addon && <div className="leaf-addon">{addon}</div>}
       </div>
       <div
         className={classNames('leaf-actions', {
