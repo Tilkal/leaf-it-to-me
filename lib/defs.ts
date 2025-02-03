@@ -36,3 +36,15 @@ export type TempValue<T extends Primitive> = {
   value: T
   tempValue: T
 }
+
+export interface AddNodeAction {
+  (parentNode: Node, childNode: Node): void
+}
+
+export interface UpdateNodeAction {
+  (oldNode: Node, newNode: Node): void
+}
+
+export interface DeleteNodeAction {
+  (node: Node): void
+}

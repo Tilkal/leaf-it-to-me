@@ -12,3 +12,16 @@ export const hashCode = (node: Node): number => {
   }
   return hash
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const memoize = <T extends (...args: any[]) => any>(
+  fn: T,
+  hashFn?: (...args: Parameters<T>) => string | number,
+  cache: Map<string | number, ReturnType<T>> = new Map(),
+): ((...args: Parameters<T>) => ReturnType<T>) => {
+  return (...args: Parameters<T>): ReturnType<T> => {
+    const hash = hashFn ? hashFn(...args) : args.join(':')
+    if (!cache.has(hash)) cache.set(hash, fn(...args))
+    return cache.get(hash)!
+  }
+}
