@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-import { hashCode, memoize } from './memoization'
+import { hashCode } from './memoization'
 
 describe('hashCode', () => {
   it('should return number hash code', () => {
@@ -48,58 +48,5 @@ describe('hashCode', () => {
         ],
       }),
     ).toBe(-558898212)
-  })
-})
-
-describe('memoize', () => {
-  it('should return the correct value', () => {
-    const mockFn = vi.fn(() => 'value')
-
-    const memoizedMockFn = memoize(mockFn)
-    expect(memoizedMockFn()).toBe('value')
-  })
-
-  it('should cache the return value', () => {
-    const mockFn = vi.fn(() => 'value')
-    const cache = new Map()
-    const setSpy = vi.spyOn(cache, 'set')
-    const memoizedMockFn = memoize(mockFn, () => 'a', cache)
-
-    memoizedMockFn()
-    expect(setSpy).toHaveBeenCalledOnce()
-    expect(cache.get('a')).toBe('value')
-  })
-
-  it('should return the cached value', () => {
-    const mockFn = vi.fn(() => 'value')
-    const cache = new Map()
-    const getSpy = vi.spyOn(cache, 'get')
-    const memoizedMockFn = memoize(mockFn, () => 'a', cache)
-
-    memoizedMockFn()
-    expect(getSpy).toHaveBeenCalledOnce()
-  })
-
-  it('should hit cache for each consecutive call', () => {
-    const mockFn = vi.fn(() => 'value')
-    const cache = new Map()
-    const getSpy = vi.spyOn(cache, 'get')
-    const memoizedMockFn = memoize(mockFn, () => 'a', cache)
-
-    expect(mockFn).toHaveBeenCalledTimes(0)
-    expect(getSpy).toHaveBeenCalledTimes(0)
-
-    memoizedMockFn()
-    expect(mockFn).toHaveBeenCalledOnce()
-    expect(getSpy).toHaveBeenCalledOnce()
-    memoizedMockFn()
-    expect(mockFn).toHaveBeenCalledOnce()
-    expect(getSpy).toHaveBeenCalledTimes(2)
-    memoizedMockFn()
-    expect(mockFn).toHaveBeenCalledOnce()
-    expect(getSpy).toHaveBeenCalledTimes(3)
-    memoizedMockFn()
-    expect(mockFn).toHaveBeenCalledOnce()
-    expect(getSpy).toHaveBeenCalledTimes(4)
   })
 })

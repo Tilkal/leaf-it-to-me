@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { Dispatch, SetStateAction, createContext, useContext } from 'react'
 
 import {
   AddNodeAction,
@@ -12,6 +12,8 @@ export type TreeContextProps = {
   addNode: AddNodeAction
   updateNode: UpdateNodeAction
   deleteNode: DeleteNodeAction
+  editing: string | null
+  setEditing: Dispatch<SetStateAction<string | null>>
 }
 
 export const TreeContext = createContext<TreeContextProps>(

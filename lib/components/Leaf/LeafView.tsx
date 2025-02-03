@@ -7,6 +7,7 @@ import React, {
   useRef,
 } from 'react'
 
+import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import { LeafMode, Node as LeafNode } from '../../defs'
 import { classNames } from '../../utils/classNames'
 import { ActionButton } from '../ActionButton'
@@ -21,7 +22,6 @@ type LeafViewProps = {
   mode: LeafMode
   hasError: boolean
   hasWarning: boolean
-  setIsEditing: Dispatch<SetStateAction<boolean>>
   addon?: ReactElement | null
   isExpanded: boolean
   setIsExpanded: Dispatch<SetStateAction<boolean>>
@@ -33,11 +33,11 @@ export const LeafView: React.FC<LeafViewProps> = ({
   mode,
   hasError,
   hasWarning,
-  setIsEditing,
   addon,
   isExpanded,
   setIsExpanded,
 }) => {
+  const { deleteNode, setEditing } = useTreeContext()
   const ref = useRef<HTMLButtonElement>(null)
 
   const onClickOutside = useCallback(
@@ -123,7 +123,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
           className={classNames('leaf-action-button button-edit', {
             hidden: !isExpanded,
           })}
-          onClick={() => !readonly && isExpanded && setIsEditing(true)}
+          onClick={() => !readonly && isExpanded && setEditing(node.path)}
           aria-label="Edit"
           icon={<Pencil />}
           disabled={readonly}
@@ -139,6 +139,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
           disabled={readonly}
           tabIndex={isExpanded ? 0 : -1}
           popover={{ content: 'Delete', enabled: !readonly && isExpanded }}
+          onClick={() => deleteNode(node)}
         />
       </div>
     </div>

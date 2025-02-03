@@ -1,12 +1,9 @@
 import { Node } from '../defs'
-import { hashCode, memoize } from './memoization'
 
 export const hasNode = (node: Node, tree: Node): boolean =>
   tree.path === node.path ||
   tree.children?.some((childTree) => hasNode(node, childTree)) ||
   false
-
-const memoizedHasNode = memoize(hasNode, hashCode)
 
 export const addNodeToTree = (
   parentNode: Node,
@@ -14,7 +11,7 @@ export const addNodeToTree = (
   tree: Node,
 ): Node => {
   // Check if parentNode is in tree
-  if (!memoizedHasNode(parentNode, tree))
+  if (!hasNode(parentNode, tree))
     throw new Error(`Parent node with path ${parentNode.path} not found.`)
 
   // Check if childNode path is valid
@@ -44,7 +41,7 @@ export const addNodeToTree = (
     ...tree,
     children: tree.children?.map((childTree) =>
       // Only explore child tree containing the parent node
-      memoizedHasNode(parentNode, childTree)
+      hasNode(parentNode, childTree)
         ? addNodeToTree(parentNode, childNode, childTree)
         : childTree,
     ),
@@ -56,7 +53,7 @@ export const deleteNodeInTree = (node: Node, tree: Node): Node => {
   if (node.path === tree.path) throw new Error('Root node cannot be deleted.')
 
   // Return early if node not found in tree
-  if (!memoizedHasNode(node, tree)) return tree
+  if (!hasNode(node, tree)) return tree
 
   if (tree.children?.some((child) => child.path === node.path)) {
     return {
@@ -84,20 +81,19 @@ export const updateNodeInTree = (
   if (newNode.path === tree.path) return newNode
 
   // Old node must exists in tree
-  if (!memoizedHasNode(oldNode, tree))
+  if (!hasNode(oldNode, tree))
     throw new Error(`Node with path ${oldNode.path} not found.`)
 
   // Cannot replace a different node from the updating one
   if (
-    memoizedHasNode(oldNode, tree) &&
-    memoizedHasNode(newNode, tree) &&
+    hasNode(oldNode, tree) &&
+    hasNode(newNode, tree) &&
     oldNode.path !== newNode.path
   )
     throw new Error(`A node already exists at path ${newNode.path}`)
 
   // If the node change path, remove old one and add new one
   if (oldNode.path !== newNode.path) {
-    const deletedOldNodeTree = deleteNodeInTree(oldNode, tree)
     const newNodePathArray = newNode.path.split('.')
     const newNodeParentPath = newNodePathArray
       .slice(0, newNodePathArray.length - 1)
@@ -108,10 +104,16 @@ export const updateNodeInTree = (
     }
 
     // Check if new node path can reach a real element in tree
-    if (!memoizedHasNode(maybeParentNode, tree))
+    if (!hasNode(maybeParentNode, tree))
       throw new Error(`Updated node has invalid path (${newNode.path}).`)
 
-    return addNodeToTree(maybeParentNode, newNode, deletedOldNodeTree)
+    const deletedOldNodeTree = deleteNodeInTree(oldNode, tree)
+    const updatedTree = addNodeToTree(
+      maybeParentNode,
+      newNode,
+      deletedOldNodeTree,
+    )
+    return updatedTree
   }
 
   if (tree.children?.some((child) => child.path === oldNode.path)) {
@@ -126,7 +128,9 @@ export const updateNodeInTree = (
   return {
     ...tree,
     children: tree.children?.map((childTree) =>
-      updateNodeInTree(oldNode, newNode, childTree),
+      hasNode(oldNode, childTree)
+        ? updateNodeInTree(oldNode, newNode, childTree)
+        : childTree,
     ),
   }
 }

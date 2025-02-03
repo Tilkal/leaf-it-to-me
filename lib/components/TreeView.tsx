@@ -1,5 +1,6 @@
 import React, { memo, useState } from 'react'
 
+import { useTreeContext } from '../contexts/TreeContext/TreeContext'
 import { LeafMode, Node } from '../defs'
 import { classNames } from '../utils/classNames'
 import { hashCode } from '../utils/memoization'
@@ -16,9 +17,9 @@ type TreeProps = {
 }
 
 export const TreeView: React.FC<TreeProps> = memo(
-  ({ node: originalNode, mode }) => {
+  ({ node, mode }) => {
+    const { addNode, setEditing } = useTreeContext()
     const [isExpanded, setIsExpanded] = useState<boolean>(true)
-    const [node, setNode] = useState<Node>(structuredClone(originalNode))
     const readonly = false
 
     return (
@@ -28,7 +29,6 @@ export const TreeView: React.FC<TreeProps> = memo(
         <Leaf
           node={node}
           mode={mode}
-          edit={node.type === 'string' && node.name === '' && node.value === ''}
           addon={
             ['object', 'array'].includes(node.type) && node.children?.length ? (
               <ActionButton
@@ -36,7 +36,7 @@ export const TreeView: React.FC<TreeProps> = memo(
                   expanded: isExpanded,
                 })}
                 aria-label={isExpanded ? 'Collapse' : 'Expand'}
-                role="toggle"
+                aria-expanded={isExpanded}
                 icon={<Chevron />}
                 popover={{ content: isExpanded ? 'Collapse' : 'Expand' }}
                 onClick={() => setIsExpanded((prev) => !prev)}
@@ -62,18 +62,14 @@ export const TreeView: React.FC<TreeProps> = memo(
                   aria-label="Add item"
                   onClick={() => {
                     if (node.children) {
-                      setNode({
-                        ...node,
-                        children: [
-                          ...node.children,
-                          {
-                            type: 'string',
-                            path: `${node.path}.`,
-                            name: '',
-                            value: '',
-                          },
-                        ],
-                      })
+                      const newNode: Node = {
+                        type: 'string',
+                        path: `${node.path}.${node.type === 'array' ? node.children.length : ''}`,
+                        name: '',
+                        value: '',
+                      }
+                      addNode(node, newNode)
+                      setEditing(newNode.path)
                     }
                   }}
                 />

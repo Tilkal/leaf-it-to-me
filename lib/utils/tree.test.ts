@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { Node } from '../defs'
 import {
   addNodeToTree,
   deleteNodeInTree,
@@ -1048,5 +1049,75 @@ describe('updateNodeInTree', () => {
         },
       ),
     ).toThrowError('invalid path')
+  })
+
+  it('should work in succession', () => {
+    const first: Record<string, Node> = {
+      prev: {
+        type: 'object',
+        path: '',
+        children: [
+          {
+            type: 'string',
+            path: 'key',
+            name: 'key',
+            value: 'value',
+          },
+        ],
+      },
+      oldNode: {
+        type: 'string',
+        path: 'key',
+        name: 'key',
+        value: 'value',
+      },
+      newNode: {
+        type: 'string',
+        path: 'key2',
+        name: 'key2',
+        value: 'value',
+      },
+    }
+    const tree1 = updateNodeInTree(first.oldNode, first.newNode, first.prev)
+    const second: Record<string, Node> = {
+      prev: {
+        type: 'object',
+        path: '',
+        children: [
+          {
+            type: 'string',
+            path: 'key2',
+            name: 'key2',
+            value: 'value',
+          },
+        ],
+      },
+      oldNode: {
+        type: 'string',
+        path: 'key2',
+        name: 'key2',
+        value: 'value',
+      },
+      newNode: {
+        type: 'string',
+        path: 'key3',
+        name: 'key3',
+        value: 'value',
+      },
+    }
+    const tree2 = updateNodeInTree(second.oldNode, second.newNode, second.prev)
+    expect(tree1).toMatchObject(second.prev)
+    expect(tree2).toMatchObject({
+      type: 'object',
+      path: '',
+      children: [
+        {
+          type: 'string',
+          path: 'key3',
+          name: 'key3',
+          value: 'value',
+        },
+      ],
+    })
   })
 })

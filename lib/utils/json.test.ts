@@ -572,6 +572,18 @@ describe('getTreeDescription', () => {
     })
   })
 
+  it('should format keys to kebab-case for paths', () => {
+    expect(
+      getTreeDescription({ ['some not kebab cased key']: 'value1' }),
+    ).toMatchObject({
+      children: [
+        {
+          path: 'some-not-kebab-cased-key',
+        },
+      ],
+    })
+  })
+
   it('should have an index path for array items', () => {
     expect(getTreeDescription(['value', 42])).toMatchObject({
       children: [

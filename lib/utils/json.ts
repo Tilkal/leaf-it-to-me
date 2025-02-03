@@ -1,4 +1,5 @@
 import { LeafType, Node, Primitive, Tree } from '../defs'
+import { toKebabCase } from './string'
 
 export const isValidString = (key: string): boolean =>
   /^(?:[^"\\]|\\["\\/bfnrt]|\\u[0-9a-fA-F]{4})*$/.test(key)
@@ -54,7 +55,10 @@ export const getTreeDescription = (
   )
     throw new SyntaxError('invalid JSON string key')
 
-  const newPath = getNewPath(path, nameOrIndex)
+  const newPath = getNewPath(
+    path,
+    typeof nameOrIndex === 'string' ? toKebabCase(nameOrIndex) : nameOrIndex,
+  )
   const node: Node = {
     type: getNodeType(input),
     path: newPath,

@@ -18,6 +18,20 @@ type Story = StoryObj<typeof LeafItToMe>
 
 export const Default: Story = {
   args: {
-    tree: config,
+    tree: {
+      key: 'value',
+      someArray: [
+        42,
+        {
+          key: 'value',
+        },
+      ],
+    },
+  },
+}
+
+export const LargeJSON: Story = {
+  args: {
+    tree: config.themes,
   },
 }

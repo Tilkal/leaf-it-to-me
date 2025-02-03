@@ -1,8 +1,10 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
+import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import { LeafMode, LeafType, Node, Primitive } from '../../defs'
 import { classNames } from '../../utils/classNames'
 import { isValidNumber, isValidString } from '../../utils/json'
+import { toKebabCase } from '../../utils/string'
 import { ActionButton } from '../ActionButton'
 import { Switch } from '../Switch'
 import { TypeSelector } from '../TypeSelector'
@@ -11,7 +13,6 @@ import { X } from '../icons/X'
 
 type LeafEditProps = {
   node: Node
-  setNode: Dispatch<SetStateAction<Node>>
   mode: LeafMode
   errors: Record<string, boolean>
   hasError: boolean
@@ -19,7 +20,6 @@ type LeafEditProps = {
   warnings: Record<string, boolean>
   hasWarning: boolean
   setWarnings: Dispatch<SetStateAction<Record<string, boolean>>>
-  setIsEditing: Dispatch<SetStateAction<boolean>>
 }
 
 const typedValue = (
@@ -41,9 +41,14 @@ const typedValue = (
   }
 }
 
+const updatePath = (oldPath: string, name: string): string => {
+  const parts = oldPath.split('.')
+  parts[parts.length - 1] = toKebabCase(name)
+  return parts.join('.')
+}
+
 export const LeafEdit: React.FC<LeafEditProps> = ({
   node,
-  setNode,
   mode,
   errors,
   warnings,
@@ -51,26 +56,20 @@ export const LeafEdit: React.FC<LeafEditProps> = ({
   hasWarning,
   setErrors,
   setWarnings,
-  setIsEditing,
 }) => {
+  const { updateNode, deleteNode, setEditing } = useTreeContext()
   const [type, setType] = useState<LeafType>(node.type)
   const [name, setName] = useState<string>(node.name ?? '')
   const [value, setValue] = useState<string>(node.value?.toString() ?? '')
   const [isChecked, setIsChecked] = useState<boolean>(
     typeof node.value === 'boolean' ? node.value : false,
   )
-  const [path, setPath] = useState<string>(node.path)
 
   useEffect(() => {
-    if (mode === LeafMode.OBJECT) {
-      const parts = path.split('.')
-      parts[parts.length - 1] = name
-      setPath(parts.join('.'))
-    }
-  }, [name, path, mode])
-
-  useEffect(() => {
-    setErrors((prev) => ({ ...prev, name: !isValidString(name) }))
+    setErrors((prev) => ({
+      ...prev,
+      name: !isValidString(name),
+    }))
     setWarnings((prev) => ({
       ...prev,
       name: mode === LeafMode.OBJECT && name === '',
@@ -108,14 +107,18 @@ export const LeafEdit: React.FC<LeafEditProps> = ({
         if (hasError) {
           console.log({ hasError })
         } else {
-          setNode((prev) => ({
-            ...prev,
+          const updatedNode: Node = {
+            ...node,
             type,
             name,
             value: typedValue(type, value, isChecked),
-            path,
-          }))
-          setIsEditing(false)
+            path:
+              mode === LeafMode.OBJECT
+                ? updatePath(node.path, name)
+                : node.path,
+          }
+          setEditing(null)
+          updateNode(node, updatedNode)
         }
       }}
     >
@@ -178,11 +181,8 @@ export const LeafEdit: React.FC<LeafEditProps> = ({
           className="leaf-action-button button-cancel"
           aria-label="Cancel"
           onClick={() => {
-            setType(node.type)
-            setName(node.name ?? '')
-            setValue(node.value?.toString() ?? '')
-            setPath(node.path)
-            setIsEditing(false)
+            if (node.name === '' && node.value === '') deleteNode(node)
+            setEditing(null)
           }}
           icon={<X />}
           popover={{ content: 'Cancel' }}

@@ -16,6 +16,10 @@
         transform: rotate(90deg);
         transition: transform ease-in 0.1s;
 
+        & svg {
+          opacity: 0.3;
+        }
+
         &.expanded {
           transform: rotate(-90deg);
         }
