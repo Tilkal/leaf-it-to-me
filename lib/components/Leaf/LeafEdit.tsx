@@ -1,7 +1,13 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
-import { LeafMode, LeafType, Node, Primitive } from '../../defs'
+import { ErrorLevel, LeafMode, LeafType, Node, Primitive } from '../../defs'
 import { classNames } from '../../utils/classNames'
 import { isValidNumber, isValidString } from '../../utils/json'
 import { toKebabCase } from '../../utils/string'
@@ -14,12 +20,6 @@ import { X } from '../icons/X'
 type LeafEditProps = {
   node: Node
   mode: LeafMode
-  errors: Record<string, boolean>
-  hasError: boolean
-  setErrors: Dispatch<SetStateAction<Record<string, boolean>>>
-  warnings: Record<string, boolean>
-  hasWarning: boolean
-  setWarnings: Dispatch<SetStateAction<Record<string, boolean>>>
 }
 
 const typedValue = (
@@ -47,16 +47,7 @@ const updatePath = (oldPath: string, name: string): string => {
   return parts.join('.')
 }
 
-export const LeafEdit: React.FC<LeafEditProps> = ({
-  node,
-  mode,
-  errors,
-  warnings,
-  hasError,
-  hasWarning,
-  setErrors,
-  setWarnings,
-}) => {
+export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
   const { updateNode, deleteNode, setEditing } = useTreeContext()
   const [type, setType] = useState<LeafType>(node.type)
   const [name, setName] = useState<string>(node.name ?? '')
@@ -64,40 +55,65 @@ export const LeafEdit: React.FC<LeafEditProps> = ({
   const [isChecked, setIsChecked] = useState<boolean>(
     typeof node.value === 'boolean' ? node.value : false,
   )
+  const [errors, setErrors] = useState<Record<string, ErrorLevel>>({})
+
+  const hasError = useMemo(
+    () => Object.values(errors).some((error) => error === ErrorLevel.ERROR),
+    [errors],
+  )
+
+  const reset = useCallback(
+    (event?: MouseEvent) => {
+      // TODO: refactor
+      if (node.name === '' && node.value === '') deleteNode(node)
+      setType(node.type)
+      setName(node.name ?? '')
+      setValue(node.value?.toString() ?? '')
+      setIsChecked(typeof node.value === 'boolean' ? node.value : false)
+      // Event differentiate if reset is triggered by cancel button or unmount
+      // If cancel button, it stops editing too
+      if (event) setEditing(null)
+    },
+    [deleteNode, node, setEditing],
+  )
+
+  // Editing another node closes the current edit, it must cancel editing on unmount
+  useEffect(() => () => reset(), [reset])
 
   useEffect(() => {
     setErrors((prev) => ({
       ...prev,
-      name: !isValidString(name),
+      name: !isValidString(name)
+        ? ErrorLevel.ERROR
+        : mode === LeafMode.OBJECT && name === ''
+          ? ErrorLevel.WARNING
+          : ErrorLevel.NONE,
     }))
-    setWarnings((prev) => ({
-      ...prev,
-      name: mode === LeafMode.OBJECT && name === '',
-    }))
-  }, [mode, name, setErrors, setWarnings])
+  }, [mode, name, setErrors])
 
   useEffect(() => {
     switch (type) {
       case 'string':
         setErrors((prev) => ({
           ...prev,
-          value: !isValidString(value),
+          value: !isValidString(value)
+            ? ErrorLevel.ERROR
+            : value === ''
+              ? ErrorLevel.WARNING
+              : ErrorLevel.NONE,
         }))
-        setWarnings((prev) => ({ ...prev, value: value === '' }))
         break
       case 'number':
         setErrors((prev) => ({
           ...prev,
-          value: !isValidNumber(value),
+          value: !isValidNumber(value) ? ErrorLevel.ERROR : ErrorLevel.NONE,
         }))
         break
-      case 'boolean':
-        setErrors((prev) => ({ ...prev, value: false }))
-        break
       default:
+        setErrors((prev) => ({ ...prev, value: ErrorLevel.NONE }))
         break
     }
-  }, [type, value, setErrors, setWarnings])
+  }, [type, value, setErrors])
 
   return (
     <form
@@ -105,7 +121,8 @@ export const LeafEdit: React.FC<LeafEditProps> = ({
       onSubmit={(event) => {
         event.preventDefault()
         if (hasError) {
-          console.log({ hasError })
+          // TODO: error message
+          console.log({ errors })
         } else {
           const updatedNode: Node = {
             ...node,
@@ -133,8 +150,8 @@ export const LeafEdit: React.FC<LeafEditProps> = ({
             {mode === LeafMode.OBJECT && (
               <input
                 className={classNames('leaf-input', 'input-name', {
-                  error: errors.name,
-                  warning: !hasError && warnings.name,
+                  error: errors.name === ErrorLevel.ERROR,
+                  warning: errors.name === ErrorLevel.WARNING,
                 })}
                 type="text"
                 value={name}
@@ -146,8 +163,8 @@ export const LeafEdit: React.FC<LeafEditProps> = ({
             {['string', 'number'].includes(type) && (
               <input
                 className={classNames('leaf-input', 'input-value', {
-                  error: errors.value,
-                  warning: !hasError && warnings.value,
+                  error: errors.value === ErrorLevel.ERROR,
+                  warning: errors.value === ErrorLevel.WARNING,
                 })}
                 type="text"
                 value={value}
@@ -169,7 +186,9 @@ export const LeafEdit: React.FC<LeafEditProps> = ({
         <ActionButton
           className={classNames('leaf-action-button button-submit', {
             error: hasError,
-            warning: !hasError && hasWarning,
+            warning:
+              !hasError &&
+              Object.values(errors).some((error) => error === ErrorLevel.ERROR),
           })}
           type="submit"
           aria-label="Save"
@@ -180,10 +199,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({
         <ActionButton
           className="leaf-action-button button-cancel"
           aria-label="Cancel"
-          onClick={() => {
-            if (node.name === '' && node.value === '') deleteNode(node)
-            setEditing(null)
-          }}
+          onClick={reset}
           icon={<X />}
           popover={{ content: 'Cancel' }}
         />

@@ -80,7 +80,8 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
                 { hover: index === selectedIndex },
               )}
               role="option"
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation()
                 setSelectedIndex(index)
                 setIsOpen(false)
                 onSelect(option)

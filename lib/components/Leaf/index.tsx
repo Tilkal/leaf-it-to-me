@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 
 import { useConfigContext } from '../../contexts/ConfigContext/ConfigContext'
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
@@ -22,40 +22,15 @@ export const Leaf: React.FC<LeafProps> = ({
   const { readonly } = useConfigContext()
   const { editing } = useTreeContext()
   const [isExpanded, setIsExpanded] = useState(false)
-  const [errors, setErrors] = useState<Record<string, boolean>>({})
-  const [warnings, setWarnings] = useState<Record<string, boolean>>({})
-
-  const hasError = useMemo(
-    () => Object.values(errors).some((value) => value),
-    [errors],
-  )
-
-  const hasWarning = useMemo(
-    () => Object.values(warnings).some((value) => value),
-    [warnings],
-  )
 
   if (!readonly && editing === node.path) {
-    return (
-      <LeafEdit
-        node={node}
-        mode={mode}
-        errors={errors}
-        warnings={warnings}
-        hasError={hasError}
-        hasWarning={hasWarning}
-        setErrors={setErrors}
-        setWarnings={setWarnings}
-      />
-    )
+    return <LeafEdit node={node} mode={mode} />
   }
 
   return (
     <LeafView
       node={node}
       mode={mode}
-      hasError={hasError}
-      hasWarning={hasWarning}
       addon={addon}
       isExpanded={isExpanded}
       setIsExpanded={setIsExpanded}

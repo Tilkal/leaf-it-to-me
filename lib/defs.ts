@@ -48,3 +48,10 @@ export interface UpdateNodeAction {
 export interface DeleteNodeAction {
   (node: Node): void
 }
+
+export enum ErrorLevel {
+  NONE,
+  INFO,
+  WARNING,
+  ERROR,
+}
