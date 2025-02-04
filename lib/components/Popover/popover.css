@@ -12,10 +12,37 @@
     transform: translate(-50%, 0);
     border-radius: var(--border-radius-2);
     padding: var(--padding-sqr-3);
-    background: var(--transparent-black);
+    background-color: var(--transparent-black);
     backdrop-filter: blur(0.1rem);
     color: var(--white);
     z-index: 2;
+
+    &.info {
+      color: var(--blue-10);
+      background-color: var(--transparent-blue);
+
+      &:after {
+        border-color: var(--transparent-blue) transparent;
+      }
+    }
+
+    &.warning {
+      color: var(--orange-10);
+      background-color: var(--transparent-orange);
+
+      &:after {
+        border-color: var(--transparent-orange) transparent;
+      }
+    }
+
+    &.error {
+      color: var(--red-10);
+      background-color: var(--transparent-red);
+
+      &:after {
+        border-color: var(--transparent-red) transparent;
+      }
+    }
 
     &:after {
       content: '';

@@ -1,7 +1,7 @@
 import { ComponentPropsWithoutRef, ReactElement, forwardRef } from 'react'
 
 import { classNames } from '../utils/classNames'
-import { Popover, PopoverProps } from './Popover'
+import { Popover, PopoverProps } from './Popover/Popover'
 
 import './action-button.css'
 

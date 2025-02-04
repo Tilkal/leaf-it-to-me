@@ -55,3 +55,10 @@ export enum ErrorLevel {
   WARNING,
   ERROR,
 }
+
+export enum VariantState {
+  DEFAULT = 'default',
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+}

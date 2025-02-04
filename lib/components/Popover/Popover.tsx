@@ -1,22 +1,32 @@
 import React, {
   ReactElement,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react'
 
-import { classNames } from '../utils/classNames'
+import { VariantState } from '../../defs'
+import { classNames } from '../../utils/classNames'
 
 import './popover.css'
 
 export type PopoverProps = {
   content: string
+  variant?: VariantState
   enabled?: boolean
+  keepOpen?: boolean
   children: ReactElement
 }
 
 type IsOpen = { isClicked: boolean; isFocused: boolean; isHovered: boolean }
+
+const OPEN_STATE: IsOpen = {
+  isClicked: true,
+  isFocused: true,
+  isHovered: true,
+}
 
 const CLOSED_STATE: IsOpen = {
   isClicked: false,
@@ -26,10 +36,14 @@ const CLOSED_STATE: IsOpen = {
 
 export const Popover: React.FC<PopoverProps> = ({
   content,
-  children,
+  variant = VariantState.DEFAULT,
   enabled = true,
+  keepOpen,
+  children,
 }) => {
-  const [isOpen, setIsOpen] = useState<IsOpen>(CLOSED_STATE)
+  const [isOpen, setIsOpen] = useState<IsOpen>(
+    keepOpen ? OPEN_STATE : CLOSED_STATE,
+  )
 
   const ref = useRef<HTMLDivElement>(null)
 
@@ -38,20 +52,24 @@ export const Popover: React.FC<PopoverProps> = ({
     [isOpen],
   )
 
-  const onClickOutside = (event: Event) => {
-    if (
-      ref &&
-      event.target instanceof Node &&
-      !ref.current?.contains(event.target)
-    ) {
-      setIsOpen(CLOSED_STATE)
-    }
-  }
+  const onClickOutside = useCallback(
+    (event: Event) => {
+      if (
+        ref &&
+        event.target instanceof Node &&
+        !ref.current?.contains(event.target) &&
+        !keepOpen
+      ) {
+        setIsOpen(CLOSED_STATE)
+      }
+    },
+    [keepOpen],
+  )
 
   useEffect(() => {
     document.addEventListener('click', onClickOutside)
     return () => document.removeEventListener('click', onClickOutside)
-  }, [ref])
+  }, [ref, onClickOutside])
 
   return (
     <div
@@ -59,26 +77,35 @@ export const Popover: React.FC<PopoverProps> = ({
       ref={ref}
       onClick={() =>
         enabled &&
+        !keepOpen &&
         setIsOpen((prev) =>
           isActive ? CLOSED_STATE : { ...prev, isClicked: true },
         )
       }
       onMouseEnter={() =>
-        enabled && setIsOpen((prev) => ({ ...prev, isHovered: true }))
+        enabled &&
+        !keepOpen &&
+        setIsOpen((prev) => ({ ...prev, isHovered: true }))
       }
       onMouseLeave={() =>
-        enabled && setIsOpen((prev) => ({ ...prev, isHovered: false }))
+        enabled &&
+        !keepOpen &&
+        setIsOpen((prev) => ({ ...prev, isHovered: false }))
       }
     >
-      <div className={classNames('popover', { active: isActive })}>
+      <div className={classNames('popover', variant, { active: isActive })}>
         {content}
       </div>
       <div className="popover-children">
         {React.cloneElement(children, {
           onFocus: () =>
-            enabled && setIsOpen((prev) => ({ ...prev, isFocused: true })),
+            enabled &&
+            !keepOpen &&
+            setIsOpen((prev) => ({ ...prev, isFocused: true })),
           onBlur: () =>
-            enabled && setIsOpen((prev) => ({ ...prev, isFocused: false })),
+            enabled &&
+            !keepOpen &&
+            setIsOpen((prev) => ({ ...prev, isFocused: false })),
         })}
       </div>
     </div>
