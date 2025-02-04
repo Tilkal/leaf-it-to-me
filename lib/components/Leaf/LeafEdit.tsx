@@ -64,8 +64,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
 
   const reset = useCallback(
     (event?: MouseEvent) => {
-      // TODO: refactor
-      if (node.name === '' && node.value === '') deleteNode(node)
+      if (event && node.name === '' && node.value === '') deleteNode(node)
       setType(node.type)
       setName(node.name ?? '')
       setValue(node.value?.toString() ?? '')

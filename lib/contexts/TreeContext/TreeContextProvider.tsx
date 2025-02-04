@@ -3,7 +3,7 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import {
   AddNodeAction,
   DeleteNodeAction,
-  JSON,
+  JSONType,
   Node,
   UpdateNodeAction,
 } from '../../defs'
@@ -17,7 +17,7 @@ import { TreeContext } from './TreeContext'
 
 type TreeContextProviderProps = PropsWithChildren & {
   tree: Node
-  onChange?: (json: JSON) => void
+  onChange?: (json: JSONType) => void
 }
 
 export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({

@@ -4,15 +4,15 @@ import { TreeRoot } from './components/TreeRoot'
 import { LeafItToMeConfig } from './contexts/ConfigContext/ConfigContext'
 import { ConfigContextProvider } from './contexts/ConfigContext/ConfigContextProvider'
 import { TreeContextProvider } from './contexts/TreeContext/TreeContextProvider'
-import { JSON } from './defs'
+import { JSONType } from './defs'
 import { getJsonDescription } from './utils/json'
 
 import './root.css'
 
-type LeafItToMeProps = {
-  json: JSON
+export type LeafItToMeProps = {
+  json: JSONType
   config?: LeafItToMeConfig
-  onChange?: (json: JSON) => void
+  onChange?: (json: JSONType) => void
 }
 
 export const LeafItToMe: React.FC<LeafItToMeProps> = ({

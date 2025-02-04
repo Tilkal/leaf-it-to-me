@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import React, { useState } from 'react'
 
-import { LeafItToMe } from './LeafItToMe'
+import { LeafItToMe, LeafItToMeProps } from './LeafItToMe'
 import config from './config.json'
+import { JSONType } from './defs'
 
 const meta: Meta<typeof LeafItToMe> = {
   title: 'LeafItToMe',
@@ -30,6 +32,32 @@ export const Default: Story = {
   },
 }
 
+const WithCallbackComponent: React.FC<LeafItToMeProps> = ({ json }) => {
+  const [updatedJson, setJson] = useState<JSONType>(json)
+
+  return (
+    <div>
+      <pre
+        style={{
+          borderRadius: '4px',
+          backgroundColor: '#edede9',
+          padding: '10px',
+        }}
+      >
+        {JSON.stringify(updatedJson, null, 2)}
+      </pre>
+      <LeafItToMe
+        json={json}
+        onChange={(newJson) => {
+          if (JSON.stringify(newJson) !== JSON.stringify(updatedJson)) {
+            setJson(newJson)
+          }
+        }}
+      />
+    </div>
+  )
+}
+
 export const WithCallback: Story = {
   args: {
     json: {
@@ -41,8 +69,8 @@ export const WithCallback: Story = {
         },
       ],
     },
-    onChange: (json) => console.log({ json }),
   },
+  render: ({ json }) => <WithCallbackComponent json={json} />,
 }
 
 export const LargeJSON: Story = {

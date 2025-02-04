@@ -1,4 +1,4 @@
-import { JSON, LeafType, Node, Primitive } from '../defs'
+import { JSONType, LeafType, Node, Primitive } from '../defs'
 import { toKebabCase } from './string'
 
 export const isValidString = (key: string): boolean =>
@@ -13,7 +13,7 @@ const isInvalidValue = (value: unknown): boolean =>
   typeof value === 'bigint' ||
   typeof value === 'symbol'
 
-const getNodeType = (input: JSON): LeafType => {
+const getNodeType = (input: JSONType): LeafType => {
   switch (true) {
     case input === null:
       return 'null'
@@ -26,7 +26,7 @@ const getNodeType = (input: JSON): LeafType => {
   }
 }
 
-const isPrimitive = (input: Primitive | JSON): input is Primitive =>
+const isPrimitive = (input: Primitive | JSONType): input is Primitive =>
   ['string', 'number', 'boolean'].includes(typeof input) || input === null
 
 const getNewPath = (parent: string, child?: string | number): string =>
@@ -34,7 +34,7 @@ const getNewPath = (parent: string, child?: string | number): string =>
 
 // Recursively create the tree description from a given input
 export const getJsonDescription = (
-  input: JSON,
+  input: JSONType,
   path: string = '',
   nameOrIndex?: string | number,
 ): Node => {
@@ -86,7 +86,7 @@ export const getJsonDescription = (
   return node
 }
 
-export const getJsonFromNode = (node: Node): JSON => {
+export const getJsonFromNode = (node: Node): JSONType => {
   switch (node.type) {
     case 'string':
     case 'number':
@@ -98,11 +98,14 @@ export const getJsonFromNode = (node: Node): JSON => {
       return [...(node.children?.map((child) => getJsonFromNode(child)) ?? [])]
     case 'object':
       return (
-        node.children?.reduce((object: Record<string, JSON>, child: Node) => {
-          if (typeof child.name === 'string')
-            object[child.name] = getJsonFromNode(child)
-          return object
-        }, {}) ?? {}
+        node.children?.reduce(
+          (object: Record<string, JSONType>, child: Node) => {
+            if (typeof child.name === 'string')
+              object[child.name] = getJsonFromNode(child)
+            return object
+          },
+          {},
+        ) ?? {}
       )
     default:
       throw new TypeError(

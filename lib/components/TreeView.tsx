@@ -68,7 +68,15 @@ export const TreeView: React.FC<TreeProps> = memo(
                         name: '',
                         value: '',
                       }
-                      addNode(node, newNode)
+                      // Only add new node if an unfinished new one is not present
+                      // Prevent error for duplicate paths
+                      if (
+                        !node.children.some(
+                          (child) => child.path === newNode.path,
+                        )
+                      ) {
+                        addNode(node, newNode)
+                      }
                       setEditing(newNode.path)
                     }
                   }}
