@@ -1,11 +1,11 @@
 export type Primitive = string | number | boolean | null
 
-export type Tree =
+export type JSON =
   | Primitive
   | {
-      [key: string]: Tree
+      [key: string]: JSON
     }
-  | Tree[]
+  | JSON[]
 
 export const LEAF_TYPES = [
   'null',

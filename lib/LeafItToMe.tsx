@@ -4,22 +4,27 @@ import { TreeRoot } from './components/TreeRoot'
 import { LeafItToMeConfig } from './contexts/ConfigContext/ConfigContext'
 import { ConfigContextProvider } from './contexts/ConfigContext/ConfigContextProvider'
 import { TreeContextProvider } from './contexts/TreeContext/TreeContextProvider'
-import { Tree } from './defs'
-import { getTreeDescription } from './utils/json'
+import { JSON } from './defs'
+import { getJsonDescription } from './utils/json'
 
 import './root.css'
 
 type LeafItToMeProps = {
-  tree: Tree
+  json: JSON
   config?: LeafItToMeConfig
+  onChange?: (json: JSON) => void
 }
 
-export const LeafItToMe: React.FC<LeafItToMeProps> = ({ config, tree }) => {
-  const description = getTreeDescription(tree)
+export const LeafItToMe: React.FC<LeafItToMeProps> = ({
+  config,
+  json,
+  onChange,
+}) => {
+  const description = getJsonDescription(json)
 
   return (
     <ConfigContextProvider config={config}>
-      <TreeContextProvider tree={description}>
+      <TreeContextProvider tree={description} onChange={onChange}>
         <TreeRoot />
       </TreeContextProvider>
     </ConfigContextProvider>

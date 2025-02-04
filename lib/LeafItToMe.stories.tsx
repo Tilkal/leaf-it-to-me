@@ -18,7 +18,7 @@ type Story = StoryObj<typeof LeafItToMe>
 
 export const Default: Story = {
   args: {
-    tree: {
+    json: {
       key: 'value',
       someArray: [
         42,
@@ -30,8 +30,23 @@ export const Default: Story = {
   },
 }
 
+export const WithCallback: Story = {
+  args: {
+    json: {
+      key: 'value',
+      someArray: [
+        42,
+        {
+          key: 'value',
+        },
+      ],
+    },
+    onChange: (json) => console.log({ json }),
+  },
+}
+
 export const LargeJSON: Story = {
   args: {
-    tree: config.themes,
+    json: config.themes,
   },
 }

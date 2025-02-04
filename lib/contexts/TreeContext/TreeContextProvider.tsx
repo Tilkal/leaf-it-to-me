@@ -1,11 +1,13 @@
-import React, { PropsWithChildren, useState } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 
 import {
   AddNodeAction,
   DeleteNodeAction,
+  JSON,
   Node,
   UpdateNodeAction,
 } from '../../defs'
+import { getJsonFromNode } from '../../utils/json'
 import {
   addNodeToTree,
   deleteNodeInTree,
@@ -15,10 +17,12 @@ import { TreeContext } from './TreeContext'
 
 type TreeContextProviderProps = PropsWithChildren & {
   tree: Node
+  onChange?: (json: JSON) => void
 }
 
 export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
   tree: originalTree,
+  onChange,
   children,
 }) => {
   const [tree, setTree] = useState<Node>(originalTree)
@@ -32,6 +36,10 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
 
   const deleteNode: DeleteNodeAction = (node) =>
     setTree((prev) => deleteNodeInTree(node, prev))
+
+  useEffect(() => {
+    if (onChange) onChange(getJsonFromNode(tree))
+  }, [tree, onChange])
 
   return (
     <TreeContext.Provider
