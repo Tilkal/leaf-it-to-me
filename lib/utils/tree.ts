@@ -72,13 +72,19 @@ export const deleteNodeInTree = (node: Node, tree: Node): Node => {
   }
 }
 
+const getParentPath = (node: Node): string => {
+  const pathArray = node.path.split('.')
+  const parentPath = pathArray.slice(0, pathArray.length - 1).join('.')
+  return parentPath
+}
+
 export const updateNodeInTree = (
   oldNode: Node,
   newNode: Node,
   tree: Node,
 ): Node => {
   // If replacing root, return early
-  if (newNode.path === tree.path) return newNode
+  if (newNode.path === tree.path && oldNode.path === tree.path) return newNode
 
   // Old node must exists in tree
   if (!hasNode(oldNode, tree))
@@ -92,15 +98,14 @@ export const updateNodeInTree = (
   )
     throw new Error(`A node already exists at path ${newNode.path}`)
 
-  // If the node change path, remove old one and add new one
-  if (oldNode.path !== newNode.path) {
-    const newNodePathArray = newNode.path.split('.')
-    const newNodeParentPath = newNodePathArray
-      .slice(0, newNodePathArray.length - 1)
-      .join('.')
+  const newParentPath = getParentPath(newNode)
+  const oldParentPath = getParentPath(oldNode)
+
+  // If the node change path and nesting (different parent), remove old one and add new one
+  if (oldParentPath !== newParentPath) {
     const maybeParentNode: Node = {
       type: 'object', // Required but has no effect, so 'object' is fine
-      path: newNodeParentPath,
+      path: newParentPath,
     }
 
     // Check if new node path can reach a real element in tree
@@ -116,6 +121,7 @@ export const updateNodeInTree = (
     return updatedTree
   }
 
+  // Replace old node if paths are the same or parent node is the same
   if (tree.children?.some((child) => child.path === oldNode.path)) {
     return {
       ...tree,

@@ -906,6 +906,68 @@ describe('updateNodeInTree', () => {
     })
   })
 
+  it('should keep update node with changed path in the same place if only the last path part changes in objects', () => {
+    expect(
+      updateNodeInTree(
+        {
+          type: 'string',
+          path: 'object.old-key',
+        },
+        {
+          type: 'string',
+          path: 'object.new-key',
+        },
+        {
+          type: 'object',
+          path: '',
+          children: [
+            {
+              type: 'object',
+              path: 'object',
+              children: [
+                {
+                  type: 'number',
+                  path: 'object.number',
+                },
+                {
+                  type: 'string',
+                  path: 'object.old-key',
+                },
+                {
+                  type: 'null',
+                  path: 'object.null',
+                },
+              ],
+            },
+          ],
+        },
+      ),
+    ).toMatchObject({
+      type: 'object',
+      path: '',
+      children: [
+        {
+          type: 'object',
+          path: 'object',
+          children: [
+            {
+              type: 'number',
+              path: 'object.number',
+            },
+            {
+              type: 'string',
+              path: 'object.new-key',
+            },
+            {
+              type: 'null',
+              path: 'object.null',
+            },
+          ],
+        },
+      ],
+    })
+  })
+
   it('should allow to change path of node in tree', () => {
     expect(
       updateNodeInTree(
@@ -1004,10 +1066,33 @@ describe('updateNodeInTree', () => {
   })
 
   it('should throw an error if a node already exists at the updated node path', () => {
+    // Common case
     expect(() =>
       updateNodeInTree(
         { type: 'string', path: 'key1' },
         { type: 'string', path: 'key2' },
+        {
+          type: 'object',
+          path: '',
+          children: [
+            {
+              type: 'string',
+              path: 'key1',
+            },
+            {
+              type: 'string',
+              path: 'key2',
+            },
+          ],
+        },
+      ),
+    ).toThrowError('already exists')
+
+    // Root case
+    expect(() =>
+      updateNodeInTree(
+        { type: 'string', path: 'key1' },
+        { type: 'string', path: '' },
         {
           type: 'object',
           path: '',
