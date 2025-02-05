@@ -78,3 +78,14 @@ export const LargeJSON: Story = {
     json: config.themes,
   },
 }
+
+export const WithError: Story = {
+  args: {
+    json: {
+      key: 'value',
+      key2: {
+        key3: String.raw`value\ `,
+      },
+    },
+  },
+}

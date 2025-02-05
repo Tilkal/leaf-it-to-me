@@ -40,12 +40,13 @@ export const getJsonDescription = (
 ): Node => {
   // JSON only allows a limited type of values, JS objects do not
   // Since we work with JSON, we only allow JSON types
-  if (isInvalidValue(input)) throw new TypeError('invalid JSON value')
+  if (isInvalidValue(input))
+    throw new TypeError(`Invalid JSON value at path "${path}".`)
 
   // JSON strings are double quoted and must escape some chars
   // We check if the given string is valid according to those rules
   if (typeof input === 'string' && !isValidString(input))
-    throw new SyntaxError('invalid JSON string value')
+    throw new SyntaxError(`Invalid JSON value at path "${path}".`)
 
   // The same rule exist for JSON keys
   if (
@@ -53,7 +54,7 @@ export const getJsonDescription = (
     typeof nameOrIndex === 'string' &&
     !isValidString(nameOrIndex)
   )
-    throw new SyntaxError('invalid JSON string key')
+    throw new SyntaxError(`Invalid JSON key at path "${path}".`)
 
   const newPath = getNewPath(
     path,
