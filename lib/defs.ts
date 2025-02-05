@@ -58,6 +58,7 @@ export enum ErrorLevel {
 
 export enum VariantState {
   DEFAULT = 'default',
+  SUCCESS = 'success',
   INFO = 'info',
   WARNING = 'warning',
   ERROR = 'error',

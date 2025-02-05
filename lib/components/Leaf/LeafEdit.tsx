@@ -20,7 +20,7 @@ import { classNames } from '../../utils/classNames'
 import { isValidNumber, isValidString } from '../../utils/json'
 import { toKebabCase } from '../../utils/string'
 import { ActionButton } from '../ActionButton'
-import { Popover } from '../Popover/Popover'
+import { Popover } from '../Popover'
 import { Switch } from '../Switch'
 import { TypeSelector } from '../TypeSelector'
 import { Tick } from '../icons/Tick'
@@ -213,15 +213,19 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
       </div>
       <div className="leaf-actions expanded">
         <ActionButton
-          className={classNames('leaf-action-button button-submit', {
-            error: hasError,
-            warning:
-              !hasError &&
-              Object.values(errors).some((error) => error === ErrorLevel.ERROR),
-          })}
+          className={classNames('leaf-action-button button-submit')}
           type="submit"
           aria-label="Save"
           icon={<Tick />}
+          variant={
+            hasError
+              ? VariantState.ERROR
+              : Object.values(errors).some(
+                    (error) => error === ErrorLevel.WARNING,
+                  )
+                ? VariantState.WARNING
+                : VariantState.SUCCESS
+          }
           disabled={hasError}
           popover={{ content: 'Save', enabled: !hasError }}
         />

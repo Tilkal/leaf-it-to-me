@@ -28,14 +28,22 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
   const [tree, setTree] = useState<Node>(originalTree)
   const [editing, setEditing] = useState<string | null>(null)
 
-  const addNode: AddNodeAction = (parentNode, childNode) =>
-    setTree((prev) => addNodeToTree(parentNode, childNode, prev))
+  // Errors in addNode, updateNode and deleteNode are catched
+  // setTree(prev => action(prev)) will prevent that behavior
+  const addNode: AddNodeAction = (parentNode, childNode) => {
+    const newTree = addNodeToTree(parentNode, childNode, tree)
+    setTree(newTree)
+  }
 
-  const updateNode: UpdateNodeAction = (oldNode, newNode) =>
-    setTree((prev) => updateNodeInTree(oldNode, newNode, prev))
+  const updateNode: UpdateNodeAction = (oldNode, newNode) => {
+    const newTree = updateNodeInTree(oldNode, newNode, tree)
+    setTree(newTree)
+  }
 
-  const deleteNode: DeleteNodeAction = (node) =>
-    setTree((prev) => deleteNodeInTree(node, prev))
+  const deleteNode: DeleteNodeAction = (node) => {
+    const newTree = deleteNodeInTree(node, tree)
+    setTree(newTree)
+  }
 
   useEffect(() => {
     if (onChange) onChange(getJsonFromNode(tree))

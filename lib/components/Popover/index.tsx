@@ -1,5 +1,6 @@
 import React, {
   MutableRefObject,
+  ReactElement,
   useCallback,
   useEffect,
   useMemo,
@@ -12,7 +13,7 @@ import { classNames } from '../../utils/classNames'
 import './popover.css'
 
 export type PopoverProps = {
-  content: string
+  content: string | ReactElement
   variant?: VariantState
   enabled?: boolean
   keepOpen?: boolean

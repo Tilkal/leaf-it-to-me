@@ -2,7 +2,7 @@ import React, { ComponentPropsWithoutRef, useRef } from 'react'
 
 import { ErrorLevel } from '../../defs'
 import { classNames } from '../../utils/classNames'
-import { Popover } from '../Popover/Popover'
+import { Popover } from '../Popover'
 import { getVariantFromError } from './utils'
 
 type LeafInputProps = ComponentPropsWithoutRef<'input'> & {

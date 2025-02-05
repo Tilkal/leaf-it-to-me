@@ -1,7 +1,8 @@
 import React, { memo, useState } from 'react'
 
+import { useConfigContext } from '../contexts/ConfigContext/ConfigContext'
 import { useTreeContext } from '../contexts/TreeContext/TreeContext'
-import { LeafMode, Node } from '../defs'
+import { LeafMode, Node, VariantState } from '../defs'
 import { classNames } from '../utils/classNames'
 import { hashCode } from '../utils/memoization'
 import { ActionButton } from './ActionButton'
@@ -18,9 +19,10 @@ type TreeProps = {
 
 export const TreeView: React.FC<TreeProps> = memo(
   ({ node, mode }) => {
+    const { readonly } = useConfigContext()
     const { addNode, setEditing } = useTreeContext()
     const [isExpanded, setIsExpanded] = useState<boolean>(true)
-    const readonly = false
+    const [addNodeError, setAddNodeError] = useState<string>('')
 
     return (
       <div
@@ -58,8 +60,15 @@ export const TreeView: React.FC<TreeProps> = memo(
                 <ActionButton
                   className="button-add"
                   icon={<X />}
-                  popover={{ content: 'Add item' }}
+                  popover={{
+                    content: addNodeError || 'Add item',
+                    keepOpen: !!addNodeError,
+                    variant: addNodeError
+                      ? VariantState.ERROR
+                      : VariantState.DEFAULT,
+                  }}
                   aria-label="Add item"
+                  disabled={!!addNodeError}
                   onClick={() => {
                     if (node.children) {
                       const newNode: Node = {
@@ -75,7 +84,15 @@ export const TreeView: React.FC<TreeProps> = memo(
                           (child) => child.path === newNode.path,
                         )
                       ) {
-                        addNode(node, newNode)
+                        try {
+                          addNode(node, newNode)
+                        } catch (error) {
+                          if (typeof error === 'string') {
+                            setAddNodeError(error)
+                          } else if (error instanceof Error) {
+                            setAddNodeError(error.message)
+                          }
+                        }
                       }
                       setEditing(newNode.path)
                     }

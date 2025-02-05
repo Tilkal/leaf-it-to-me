@@ -6,14 +6,21 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react'
 
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
-import { ErrorLevel, LeafMode, Node as LeafNode } from '../../defs'
+import {
+  ErrorLevel,
+  LeafMode,
+  Node as LeafNode,
+  VariantState,
+} from '../../defs'
 import { classNames } from '../../utils/classNames'
 import { isValidString } from '../../utils/json'
 import { ActionButton, ActionButtonExternalRef } from '../ActionButton'
-import { Popover } from '../Popover/Popover'
+import { ConfirmAction } from '../ConfirmAction'
+import { Popover } from '../Popover'
 import { TypeTag } from '../TypeTag'
 import { Chevron } from '../icons/Chevron'
 import { Pencil } from '../icons/Pencil'
@@ -54,6 +61,8 @@ export const LeafView: React.FC<LeafViewProps> = ({
   const { deleteNode, setEditing } = useTreeContext()
   const toggleToolbarRef = useRef<ActionButtonExternalRef>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const [deleteNodeError, setDeleteNodeError] = useState<string>('')
+  const [mustConfirm, setMustConfirm] = useState<boolean>(false)
 
   const nodeError = useMemo(() => validateNode(node, mode), [node, mode])
 
@@ -72,6 +81,20 @@ export const LeafView: React.FC<LeafViewProps> = ({
     },
     [setIsExpanded],
   )
+
+  const onDelete = useCallback(() => {
+    try {
+      deleteNode(node)
+    } catch (error) {
+      if (typeof error === 'string') {
+        setDeleteNodeError(error)
+      } else if (error instanceof Error) {
+        setDeleteNodeError(error.message)
+      }
+    } finally {
+      setMustConfirm(false)
+    }
+  }, [deleteNode, node])
 
   useEffect(() => {
     document.addEventListener('click', onClickOutside)
@@ -159,10 +182,28 @@ export const LeafView: React.FC<LeafViewProps> = ({
           })}
           aria-label="Delete"
           icon={<TrashCan />}
-          disabled={readonly}
+          disabled={readonly || !!deleteNodeError}
           tabIndex={isExpanded ? 0 : -1}
-          popover={{ content: 'Delete', enabled: !readonly && isExpanded }}
-          onClick={() => deleteNode(node)}
+          variant={VariantState.ERROR}
+          popover={{
+            content: deleteNodeError ? (
+              deleteNodeError
+            ) : mustConfirm ? (
+              <ConfirmAction
+                onCancel={() => setMustConfirm(false)}
+                onConfirm={onDelete}
+              />
+            ) : (
+              'Delete'
+            ),
+            enabled: !readonly && isExpanded,
+            keepOpen: !!deleteNodeError || mustConfirm,
+            variant:
+              deleteNodeError || mustConfirm
+                ? VariantState.ERROR
+                : VariantState.DEFAULT,
+          }}
+          onClick={() => setMustConfirm((prev) => !prev)}
         />
       </div>
     </div>

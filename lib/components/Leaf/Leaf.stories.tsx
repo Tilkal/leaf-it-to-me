@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Leaf } from '.'
 import { LeafMode } from '../../defs'
+import { Leaf } from './index'
 
 import '../../root.css'
 

@@ -12,7 +12,7 @@ export const addNodeToTree = (
 ): Node => {
   // Check if parentNode is in tree
   if (!hasNode(parentNode, tree))
-    throw new Error(`Parent node with path ${parentNode.path} not found.`)
+    throw new Error(`Parent node at path "${parentNode.path}" not found.`)
 
   // Check if childNode path is valid
   if (
@@ -28,7 +28,7 @@ export const addNodeToTree = (
     // Must not replace existing node
     if (tree.children?.some((child) => child.path === childNode.path))
       throw new Error(
-        `A child node with path ${childNode.path} already exists.`,
+        `A child node at path "${childNode.path}" already exists.`,
       )
 
     return {
@@ -88,7 +88,7 @@ export const updateNodeInTree = (
 
   // Old node must exists in tree
   if (!hasNode(oldNode, tree))
-    throw new Error(`Node with path ${oldNode.path} not found.`)
+    throw new Error(`Node at path "${oldNode.path}" not found.`)
 
   // Cannot replace a different node from the updating one
   if (

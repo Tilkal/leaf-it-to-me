@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { ActionButton } from './ActionButton'
-import { Chevron } from './icons/Chevron'
+import { Chevron } from '../icons/Chevron'
+import { ActionButton } from './index'
 
-import '../root.css'
+import '../../root.css'
 
 const meta: Meta<typeof ActionButton> = {
   title: 'ActionButton',

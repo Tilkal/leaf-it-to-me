@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import React, { useRef } from 'react'
 
 import { VariantState } from '../../defs'
-import { Popover, PopoverProps } from './Popover'
+import { Popover, PopoverProps } from './index'
 
 import '../../root.css'
 
@@ -75,6 +75,44 @@ export const Error: Story = {
   args: {
     content: 'Simple long content popover',
     variant: VariantState.ERROR,
+    keepOpen: true,
+  },
+  render: (props) => <ComponentWithPopover {...props} />,
+}
+
+export const ComponentAsContent: Story = {
+  args: {
+    content: (
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '6px' }}>
+        <div
+          style={{
+            backgroundColor: 'var(--violet-3)',
+            padding: '6px',
+            borderRadius: '3px',
+          }}
+        >
+          Col 1
+        </div>
+        <div
+          style={{
+            backgroundColor: 'var(--blue-3)',
+            padding: '6px',
+            borderRadius: '3px',
+          }}
+        >
+          Col 2
+        </div>
+        <div
+          style={{
+            backgroundColor: 'var(--green-3)',
+            padding: '6px',
+            borderRadius: '3px',
+          }}
+        >
+          Col 3
+        </div>
+      </div>
+    ),
     keepOpen: true,
   },
   render: (props) => <ComponentWithPopover {...props} />,
