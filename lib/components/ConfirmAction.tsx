@@ -19,8 +19,16 @@ export const ConfirmAction: React.FC<ConfirmActionProps> = ({
     <div>This action cannot be undone.</div>
     <div>Do you wish to continue?</div>
     <div className="confirm-action-buttons">
-      <ActionButton icon={<Tick />} onClick={onConfirm} />
-      <ActionButton icon={<X />} onClick={onCancel} />
+      <ActionButton
+        icon={<Tick />}
+        onClick={onConfirm}
+        aria-label="Confirm action"
+      />
+      <ActionButton
+        icon={<X />}
+        onClick={onCancel}
+        aria-label="Cancel action"
+      />
     </div>
   </div>
 )
