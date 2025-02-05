@@ -1,4 +1,5 @@
 .leaf-container {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -11,6 +12,7 @@
   }
 
   .leaf {
+    position: relative;
     background-color: var(--white);
     border-radius: var(--border-radius-4);
     box-shadow: var(--box-shadow);
@@ -25,11 +27,11 @@
     justify-content: space-between;
 
     &.error {
-      outline: 1px solid var(--red-5);
+      outline: 1px solid var(--red-3);
     }
 
     &.warning {
-      outline: 1px solid var(--orange-5);
+      outline: 1px solid var(--orange-3);
     }
 
     .leaf-content {
@@ -84,39 +86,49 @@
       width: 100%;
     }
 
-    .leaf-input {
-      font-size: 1rem;
+    .leaf-input-container {
       position: relative;
-      padding: var(--padding-sqr-4);
-      background: var(--gray-1);
-      border: none;
-      flex-grow: 1;
 
       &:first-child {
-        border-radius: var(--border-radius-h-start-4);
-      }
-
-      &:last-child {
-        border-radius: var(--border-radius-h-end-4);
-      }
-
-      &:only-child {
-        border-radius: var(--border-radius-4);
-      }
-
-      &.error {
-        outline: 1px solid var(--red-5);
-
-        &:focus {
-          outline: 2px solid var(--red-5);
+        .leaf-input {
+          border-radius: var(--border-radius-h-start-4);
         }
       }
 
-      &.warning {
-        outline: 1px solid var(--orange-5);
+      &:last-child {
+        .leaf-input {
+          border-radius: var(--border-radius-h-end-4);
+        }
+      }
 
-        &:focus {
-          outline: 2px solid var(--orange-5);
+      &:only-child {
+        .leaf-input {
+          border-radius: var(--border-radius-4);
+        }
+      }
+
+      .leaf-input {
+        font-size: 1rem;
+        position: relative;
+        padding: var(--padding-sqr-4);
+        background: var(--gray-1);
+        border: none;
+        flex-grow: 1;
+
+        &.error {
+          outline: 1px solid var(--red-5);
+
+          &:focus {
+            outline: 2px solid var(--red-5);
+          }
+        }
+
+        &.warning {
+          outline: 1px solid var(--orange-5);
+
+          &:focus {
+            outline: 2px solid var(--orange-5);
+          }
         }
       }
     }

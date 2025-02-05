@@ -1,4 +1,10 @@
-import { ComponentPropsWithoutRef, ReactElement, forwardRef } from 'react'
+import {
+  ComponentPropsWithoutRef,
+  ReactElement,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 
 import { classNames } from '../utils/classNames'
 import { Popover, PopoverProps } from './Popover/Popover'
@@ -8,34 +14,52 @@ import './action-button.css'
 type ActionButtonProps = ComponentPropsWithoutRef<'button'> & {
   icon: ReactElement
   readonly?: boolean
-  popover?: Omit<PopoverProps, 'children'>
+  popover?: Omit<PopoverProps, 'targetRef'>
 }
 
-export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
-  ({ icon, className, readonly, popover, ...props }, ref) => {
-    if (popover) {
-      return (
-        <Popover {...popover}>
-          <button
-            ref={ref}
-            className={classNames('action-button', className ?? '', {
-              readonly,
-            })}
-            {...props}
-          >
-            {icon}
-          </button>
-        </Popover>
-      )
-    }
+export type ActionButtonExternalRef = {
+  contains: (node: Node | null) => boolean
+}
+
+export const ActionButton = forwardRef<
+  ActionButtonExternalRef,
+  ActionButtonProps
+>(({ icon, className, readonly, popover, ...props }, externalRef) => {
+  const localeRef = useRef<HTMLButtonElement>(null)
+
+  useImperativeHandle(
+    externalRef,
+    () => ({
+      contains: (node) => localeRef?.current?.contains(node) ?? false,
+    }),
+    [],
+  )
+
+  if (popover) {
     return (
+      <div className="action-button-container">
+        <Popover {...popover} targetRef={localeRef} />
+        <button
+          ref={localeRef}
+          className={classNames('action-button', className ?? '', {
+            readonly,
+          })}
+          {...props}
+        >
+          {icon}
+        </button>
+      </div>
+    )
+  }
+  return (
+    <div className="action-button-container">
       <button
-        ref={ref}
+        ref={localeRef}
         className={classNames('action-button', className ?? '', { readonly })}
         {...props}
       >
         {icon}
       </button>
-    )
-  },
-)
+    </div>
+  )
+})

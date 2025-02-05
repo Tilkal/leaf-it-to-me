@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import React, { useRef } from 'react'
 
 import { VariantState } from '../../defs'
-import { Popover } from './Popover'
+import { Popover, PopoverProps } from './Popover'
 
 import '../../root.css'
 
@@ -18,37 +19,38 @@ export default meta
 
 type Story = StoryObj<typeof Popover>
 
-export const Default: Story = {
-  args: {
-    content: 'Simple long content popover',
-    children: (
+const ComponentWithPopover: React.FC<PopoverProps> = (props) => {
+  const ref = useRef<HTMLDivElement>(null)
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <Popover {...props} targetRef={ref} />
       <div
+        ref={ref}
         style={{
           border: '1px solid black',
           padding: '4px 8px',
         }}
       >
-        Children
+        Component with popover
       </div>
-    ),
+    </div>
+  )
+}
+
+export const Default: Story = {
+  args: {
+    content: 'Simple long content popover',
   },
+  render: (props) => <ComponentWithPopover {...props} />,
 }
 
 export const AlwaysVisible: Story = {
   args: {
     content: 'Simple long content popover',
     keepOpen: true,
-    children: (
-      <div
-        style={{
-          border: '1px solid black',
-          padding: '4px 8px',
-        }}
-      >
-        Children
-      </div>
-    ),
   },
+  render: (props) => <ComponentWithPopover {...props} />,
 }
 
 export const Info: Story = {
@@ -56,17 +58,8 @@ export const Info: Story = {
     content: 'Simple long content popover',
     variant: VariantState.INFO,
     keepOpen: true,
-    children: (
-      <div
-        style={{
-          border: '1px solid black',
-          padding: '4px 8px',
-        }}
-      >
-        Children
-      </div>
-    ),
   },
+  render: (props) => <ComponentWithPopover {...props} />,
 }
 
 export const Warning: Story = {
@@ -74,17 +67,8 @@ export const Warning: Story = {
     content: 'Simple long content popover',
     variant: VariantState.WARNING,
     keepOpen: true,
-    children: (
-      <div
-        style={{
-          border: '1px solid black',
-          padding: '4px 8px',
-        }}
-      >
-        Children
-      </div>
-    ),
   },
+  render: (props) => <ComponentWithPopover {...props} />,
 }
 
 export const Error: Story = {
@@ -92,15 +76,6 @@ export const Error: Story = {
     content: 'Simple long content popover',
     variant: VariantState.ERROR,
     keepOpen: true,
-    children: (
-      <div
-        style={{
-          border: '1px solid black',
-          padding: '4px 8px',
-        }}
-      >
-        Children
-      </div>
-    ),
   },
+  render: (props) => <ComponentWithPopover {...props} />,
 }

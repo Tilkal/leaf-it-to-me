@@ -96,7 +96,7 @@ export const updateNodeInTree = (
     hasNode(newNode, tree) &&
     oldNode.path !== newNode.path
   )
-    throw new Error(`A node already exists at path ${newNode.path}`)
+    throw new Error(`A node already exists at path "${newNode.path}"`)
 
   const newParentPath = getParentPath(newNode)
   const oldParentPath = getParentPath(oldNode)

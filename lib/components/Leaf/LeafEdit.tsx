@@ -3,19 +3,29 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
-import { ErrorLevel, LeafMode, LeafType, Node, Primitive } from '../../defs'
+import {
+  ErrorLevel,
+  LeafMode,
+  LeafType,
+  Node,
+  Primitive,
+  VariantState,
+} from '../../defs'
 import { classNames } from '../../utils/classNames'
 import { isValidNumber, isValidString } from '../../utils/json'
 import { toKebabCase } from '../../utils/string'
 import { ActionButton } from '../ActionButton'
+import { Popover } from '../Popover/Popover'
 import { Switch } from '../Switch'
 import { TypeSelector } from '../TypeSelector'
 import { Tick } from '../icons/Tick'
 import { X } from '../icons/X'
+import { LeafInput } from './LeafInput'
 
 type LeafEditProps = {
   node: Node
@@ -56,6 +66,9 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
     typeof node.value === 'boolean' ? node.value : false,
   )
   const [errors, setErrors] = useState<Record<string, ErrorLevel>>({})
+  const [submitError, setSubmitError] = useState<string>('')
+
+  const leafRef = useRef<HTMLDivElement>(null)
 
   const hasError = useMemo(
     () => Object.values(errors).some((error) => error === ErrorLevel.ERROR),
@@ -82,6 +95,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
   useEffect(() => {
     setErrors((prev) => ({
       ...prev,
+      submit: ErrorLevel.NONE,
       name: !isValidString(name)
         ? ErrorLevel.ERROR
         : mode === LeafMode.OBJECT && name === ''
@@ -95,6 +109,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
       case 'string':
         setErrors((prev) => ({
           ...prev,
+          submit: ErrorLevel.NONE,
           value: !isValidString(value)
             ? ErrorLevel.ERROR
             : value === ''
@@ -105,11 +120,16 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
       case 'number':
         setErrors((prev) => ({
           ...prev,
+          submit: ErrorLevel.NONE,
           value: !isValidNumber(value) ? ErrorLevel.ERROR : ErrorLevel.NONE,
         }))
         break
       default:
-        setErrors((prev) => ({ ...prev, value: ErrorLevel.NONE }))
+        setErrors((prev) => ({
+          ...prev,
+          submit: ErrorLevel.NONE,
+          value: ErrorLevel.NONE,
+        }))
         break
     }
   }, [type, value, setErrors])
@@ -119,57 +139,67 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
       className="leaf-container"
       onSubmit={(event) => {
         event.preventDefault()
-        if (hasError) {
-          // TODO: error message
-          console.log({ errors })
-        } else {
-          const updatedNode: Node = {
-            ...node,
-            type,
-            name,
-            value: typedValue(type, value, isChecked),
-            path:
-              mode === LeafMode.OBJECT
-                ? updatePath(node.path, name)
-                : node.path,
+        if (!hasError) {
+          try {
+            const updatedNode: Node = {
+              ...node,
+              type,
+              name,
+              value: typedValue(type, value, isChecked),
+              path:
+                mode === LeafMode.OBJECT
+                  ? updatePath(node.path, name)
+                  : node.path,
+            }
+            updateNode(node, updatedNode)
+            setEditing(null)
+          } catch (error) {
+            setErrors((prev) => ({ ...prev, submit: ErrorLevel.ERROR }))
+            if (typeof error === 'string') {
+              setSubmitError(error)
+            } else if (error instanceof Error) {
+              setSubmitError(error.message)
+            }
           }
-          setEditing(null)
-          updateNode(node, updatedNode)
         }
       }}
     >
       <div
+        ref={leafRef}
         className={classNames('leaf', 'leaf-edit', {
           error: hasError,
         })}
       >
+        <Popover
+          content={submitError}
+          variant={VariantState.ERROR}
+          keepOpen={errors.submit === ErrorLevel.ERROR}
+          enabled={errors.submit === ErrorLevel.ERROR}
+          targetRef={leafRef}
+        />
         <div className="leaf-content">
           <div className="leaf-input-group">
             <TypeSelector value={type} onSelect={(value) => setType(value)} />
             {mode === LeafMode.OBJECT && (
-              <input
-                className={classNames('leaf-input', 'input-name', {
-                  error: errors.name === ErrorLevel.ERROR,
-                  warning: errors.name === ErrorLevel.WARNING,
-                })}
+              <LeafInput
+                className="input-name"
                 type="text"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 aria-label="Modifier la clé"
                 placeholder="Key"
+                error={errors.name}
               />
             )}
             {['string', 'number'].includes(type) && (
-              <input
-                className={classNames('leaf-input', 'input-value', {
-                  error: errors.value === ErrorLevel.ERROR,
-                  warning: errors.value === ErrorLevel.WARNING,
-                })}
+              <LeafInput
+                className="input-value"
                 type="text"
                 value={value}
                 onChange={(event) => setValue(event.target.value)}
                 aria-label="Modifier la valeur"
                 placeholder="Value"
+                error={errors.value}
               />
             )}
             {type === 'boolean' && (
@@ -193,7 +223,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
           aria-label="Save"
           icon={<Tick />}
           disabled={hasError}
-          popover={{ content: 'Save' }}
+          popover={{ content: 'Save', enabled: !hasError }}
         />
         <ActionButton
           className="leaf-action-button button-cancel"

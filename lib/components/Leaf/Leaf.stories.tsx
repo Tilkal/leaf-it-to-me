@@ -95,6 +95,7 @@ export const ArrayElementLeaf: Story = {
   },
 }
 
+// TODO:
 export const Readonly: Story = {
   args: {
     node: {
@@ -103,10 +104,10 @@ export const Readonly: Story = {
       value: 'ipsum',
       path: '',
     },
-    readonly: true,
   },
 }
 
+// TODO:
 export const EditingLeaf: Story = {
   args: {
     node: {
@@ -115,6 +116,5 @@ export const EditingLeaf: Story = {
       value: 'ipsum',
       path: '',
     },
-    edit: true,
   },
 }

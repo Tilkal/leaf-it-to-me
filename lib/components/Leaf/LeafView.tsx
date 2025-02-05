@@ -12,11 +12,13 @@ import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import { ErrorLevel, LeafMode, Node as LeafNode } from '../../defs'
 import { classNames } from '../../utils/classNames'
 import { isValidString } from '../../utils/json'
-import { ActionButton } from '../ActionButton'
+import { ActionButton, ActionButtonExternalRef } from '../ActionButton'
+import { Popover } from '../Popover/Popover'
 import { TypeTag } from '../TypeTag'
 import { Chevron } from '../icons/Chevron'
 import { Pencil } from '../icons/Pencil'
 import { TrashCan } from '../icons/TrashCan'
+import { getVariantFromError } from './utils'
 
 type LeafViewProps = {
   node: LeafNode
@@ -50,19 +52,20 @@ export const LeafView: React.FC<LeafViewProps> = ({
   setIsExpanded,
 }) => {
   const { deleteNode, setEditing } = useTreeContext()
-  const ref = useRef<HTMLButtonElement>(null)
+  const toggleToolbarRef = useRef<ActionButtonExternalRef>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   const nodeError = useMemo(() => validateNode(node, mode), [node, mode])
 
   const onClickOutside = useCallback(
     (event: Event) => {
       if (
-        ref &&
+        toggleToolbarRef &&
         event.target instanceof Node &&
         [...document.querySelectorAll('.button-expand')].some((element) =>
           element.contains(event.target as Node),
         ) &&
-        !ref.current?.contains(event.target)
+        !toggleToolbarRef.current?.contains(event.target)
       ) {
         setIsExpanded(false)
       }
@@ -73,7 +76,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
   useEffect(() => {
     document.addEventListener('click', onClickOutside)
     return () => document.removeEventListener('click', onClickOutside)
-  }, [ref, onClickOutside])
+  }, [toggleToolbarRef, onClickOutside])
 
   return (
     <div className="leaf-container">
@@ -84,7 +87,13 @@ export const LeafView: React.FC<LeafViewProps> = ({
           warning: nodeError === ErrorLevel.WARNING,
         })}
       >
-        <div className="leaf-content">
+        <Popover
+          content="Empty values may cause issues."
+          variant={getVariantFromError(nodeError)}
+          enabled={[ErrorLevel.ERROR, ErrorLevel.WARNING].includes(nodeError)}
+          targetRef={contentRef}
+        />
+        <div className="leaf-content" ref={contentRef}>
           <div className={`leaf-type type-${node.type}`}>
             <TypeTag type={node.type} />
           </div>
@@ -125,7 +134,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
         })}
       >
         <ActionButton
-          ref={ref}
+          ref={toggleToolbarRef}
           className="leaf-action-button button-expand"
           aria-label={isExpanded ? 'Close toolbar' : 'Open toolbar'}
           onClick={() => setIsExpanded((prev) => !prev)}

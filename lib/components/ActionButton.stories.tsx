@@ -21,6 +21,7 @@ type Story = StoryObj<typeof ActionButton>
 export const Default: Story = {
   args: {
     icon: <Chevron />,
+    'aria-label': 'Default button',
   },
 }
 
@@ -28,5 +29,16 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     icon: <Chevron />,
+    'aria-label': 'Disabled button',
+  },
+}
+
+export const ButtonWithPopover: Story = {
+  args: {
+    icon: <Chevron />,
+    'aria-label': 'Button with popover',
+    popover: {
+      content: 'Popover content',
+    },
   },
 }
