@@ -1,4 +1,5 @@
-import { LeafType, Node, Primitive, Tree } from '../defs'
+import { JSONType, LeafType, Node, Primitive } from '../defs'
+import { toKebabCase } from './string'
 
 export const isValidString = (key: string): boolean =>
   /^(?:[^"\\]|\\["\\/bfnrt]|\\u[0-9a-fA-F]{4})*$/.test(key)
@@ -12,7 +13,7 @@ const isInvalidValue = (value: unknown): boolean =>
   typeof value === 'bigint' ||
   typeof value === 'symbol'
 
-const getNodeType = (input: Tree): LeafType => {
+const getNodeType = (input: JSONType): LeafType => {
   switch (true) {
     case input === null:
       return 'null'
@@ -25,15 +26,15 @@ const getNodeType = (input: Tree): LeafType => {
   }
 }
 
-const isPrimitive = (input: Primitive | Tree): input is Primitive =>
+const isPrimitive = (input: Primitive | JSONType): input is Primitive =>
   ['string', 'number', 'boolean'].includes(typeof input) || input === null
 
 const getNewPath = (parent: string, child?: string | number): string =>
   `${parent}${parent !== '' && child !== undefined ? '.' : ''}${child ?? ''}`
 
 // Recursively create the tree description from a given input
-export const getTreeDescription = (
-  input: Tree,
+export const getJsonDescription = (
+  input: JSONType,
   path: string = '',
   nameOrIndex?: string | number,
 ): Node => {
@@ -54,7 +55,10 @@ export const getTreeDescription = (
   )
     throw new SyntaxError('invalid JSON string key')
 
-  const newPath = getNewPath(path, nameOrIndex)
+  const newPath = getNewPath(
+    path,
+    typeof nameOrIndex === 'string' ? toKebabCase(nameOrIndex) : nameOrIndex,
+  )
   const node: Node = {
     type: getNodeType(input),
     path: newPath,
@@ -71,13 +75,41 @@ export const getTreeDescription = (
     node.children = input
       // Remove undefined values in subtree, they are not allowed in JSON
       .filter((value) => value !== undefined)
-      .map((value, index) => getTreeDescription(value, newPath, index))
+      .map((value, index) => getJsonDescription(value, newPath, index))
 
   if (node.type === 'object' && typeof input === 'object' && input !== null)
     node.children = Object.entries(input)
       // Remove undefined values in subtree, they are not allowed in JSON
       .filter(([, value]) => value !== undefined)
-      .map(([key, value]) => getTreeDescription(value, newPath, key))
+      .map(([key, value]) => getJsonDescription(value, newPath, key))
 
   return node
+}
+
+export const getJsonFromNode = (node: Node): JSONType => {
+  switch (node.type) {
+    case 'string':
+    case 'number':
+    case 'boolean':
+      return node.value ?? null // Should not happen in those cases, string, number and boolean should always have a value
+    case 'null':
+      return null // null is null, any other value is invalid and should not happen
+    case 'array':
+      return [...(node.children?.map((child) => getJsonFromNode(child)) ?? [])]
+    case 'object':
+      return (
+        node.children?.reduce(
+          (object: Record<string, JSONType>, child: Node) => {
+            if (typeof child.name === 'string')
+              object[child.name] = getJsonFromNode(child)
+            return object
+          },
+          {},
+        ) ?? {}
+      )
+    default:
+      throw new TypeError(
+        `Node at path ${node.path} has an unsupported type (${node.type}).`,
+      )
+  }
 }

@@ -1,17 +1,32 @@
 import React from 'react'
 
-import { TreeView } from './components/TreeView'
-import { LeafMode, Tree } from './defs'
-import { getTreeDescription } from './utils/json'
+import { TreeRoot } from './components/TreeRoot'
+import { LeafItToMeConfig } from './contexts/ConfigContext/ConfigContext'
+import { ConfigContextProvider } from './contexts/ConfigContext/ConfigContextProvider'
+import { TreeContextProvider } from './contexts/TreeContext/TreeContextProvider'
+import { JSONType } from './defs'
+import { getJsonDescription } from './utils/json'
 
 import './root.css'
 
-type LeafItToMeProps = {
-  tree: Tree
+export type LeafItToMeProps = {
+  json: JSONType
+  config?: LeafItToMeConfig
+  onChange?: (json: JSONType) => void
 }
 
-export const LeafItToMe: React.FC<LeafItToMeProps> = ({ tree }) => {
-  const description = getTreeDescription(tree)
+export const LeafItToMe: React.FC<LeafItToMeProps> = ({
+  config,
+  json,
+  onChange,
+}) => {
+  const description = getJsonDescription(json)
 
-  return <TreeView node={description} mode={LeafMode.ROOT} />
+  return (
+    <ConfigContextProvider config={config}>
+      <TreeContextProvider tree={description} onChange={onChange}>
+        <TreeRoot />
+      </TreeContextProvider>
+    </ConfigContextProvider>
+  )
 }

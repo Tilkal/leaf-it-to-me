@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Leaf } from '.'
 import { LeafMode } from '../../defs'
+import { Leaf } from './index'
 
-import '../root.css'
+import '../../root.css'
 
 const meta: Meta<typeof Leaf> = {
   title: 'Leaf',
@@ -20,74 +20,101 @@ type Story = StoryObj<typeof Leaf>
 
 export const Default: Story = {
   args: {
-    type: 'string',
-    name: 'example',
-    value: 'value',
+    node: {
+      type: 'string',
+      name: 'example',
+      value: 'value',
+      path: '',
+    },
   },
 }
 
 export const StringLeaf: Story = {
   args: {
-    type: 'string',
-    name: 'lorem',
-    value: 'ipsum',
+    node: {
+      type: 'string',
+      name: 'lorem',
+      value: 'ipsum',
+      path: '',
+    },
   },
 }
 
 export const NumberLeaf: Story = {
   args: {
-    type: 'number',
-    name: 'lorem',
-    value: 42,
+    node: {
+      type: 'number',
+      name: 'lorem',
+      value: 42,
+      path: '',
+    },
   },
 }
 
 export const BooleanLeaf: Story = {
   args: {
-    type: 'boolean',
-    name: 'lorem',
-    value: true,
+    node: {
+      type: 'boolean',
+      name: 'lorem',
+      value: true,
+      path: '',
+    },
   },
 }
 
 export const ArrayLeaf: Story = {
   args: {
-    type: 'array',
-    name: 'lorem',
-    value: 'ipsum',
+    node: {
+      type: 'array',
+      name: 'lorem',
+      value: 'ipsum',
+      path: '',
+    },
   },
 }
 
 export const ObjectLeaf: Story = {
   args: {
-    type: 'object',
-    name: 'lorem',
-    value: 'ipsum',
+    node: {
+      type: 'object',
+      name: 'lorem',
+      value: 'ipsum',
+      path: '',
+    },
   },
 }
 
 export const ArrayElementLeaf: Story = {
   args: {
-    type: 'string',
-    value: 'ipsum',
+    node: {
+      type: 'string',
+      value: 'ipsum',
+      path: '',
+    },
     mode: LeafMode.ARRAY,
   },
 }
 
+// TODO:
 export const Readonly: Story = {
   args: {
-    type: 'string',
-    name: 'lorem',
-    value: 'ipsum',
-    readonly: true,
+    node: {
+      type: 'string',
+      name: 'lorem',
+      value: 'ipsum',
+      path: '',
+    },
   },
 }
 
+// TODO:
 export const EditingLeaf: Story = {
   args: {
-    type: 'string',
-    name: 'lorem',
-    value: 'ipsum',
-    edit: true,
+    node: {
+      type: 'string',
+      name: 'lorem',
+      value: 'ipsum',
+      path: '',
+    },
   },
 }

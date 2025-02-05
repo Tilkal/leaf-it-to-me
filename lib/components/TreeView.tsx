@@ -1,6 +1,8 @@
 import React, { memo, useState } from 'react'
 
-import { LeafMode, Node } from '../defs'
+import { useConfigContext } from '../contexts/ConfigContext/ConfigContext'
+import { useTreeContext } from '../contexts/TreeContext/TreeContext'
+import { LeafMode, Node, VariantState } from '../defs'
 import { classNames } from '../utils/classNames'
 import { hashCode } from '../utils/memoization'
 import { ActionButton } from './ActionButton'
@@ -16,22 +18,19 @@ type TreeProps = {
 }
 
 export const TreeView: React.FC<TreeProps> = memo(
-  ({ node: originalNode, mode }) => {
+  ({ node, mode }) => {
+    const { readonly } = useConfigContext()
+    const { addNode, setEditing } = useTreeContext()
     const [isExpanded, setIsExpanded] = useState<boolean>(true)
-    const [node, setNode] = useState<Node>(structuredClone(originalNode))
-    const readonly = false
+    const [addNodeError, setAddNodeError] = useState<string>('')
 
     return (
       <div
         className={classNames('tree-view', { root: mode === LeafMode.ROOT })}
       >
         <Leaf
-          type={node.type}
-          name={node.name}
-          value={node.value}
+          node={node}
           mode={mode}
-          readonly={false}
-          edit={node.type === 'string' && node.name === '' && node.value === ''}
           addon={
             ['object', 'array'].includes(node.type) && node.children?.length ? (
               <ActionButton
@@ -39,7 +38,7 @@ export const TreeView: React.FC<TreeProps> = memo(
                   expanded: isExpanded,
                 })}
                 aria-label={isExpanded ? 'Collapse' : 'Expand'}
-                role="toggle"
+                aria-expanded={isExpanded}
                 icon={<Chevron />}
                 popover={{ content: isExpanded ? 'Collapse' : 'Expand' }}
                 onClick={() => setIsExpanded((prev) => !prev)}
@@ -51,6 +50,7 @@ export const TreeView: React.FC<TreeProps> = memo(
           <>
             {node.children?.map((child) => (
               <TreeView
+                key={hashCode(child)}
                 node={child}
                 mode={node.type === 'array' ? LeafMode.ARRAY : LeafMode.OBJECT}
               />
@@ -60,21 +60,41 @@ export const TreeView: React.FC<TreeProps> = memo(
                 <ActionButton
                   className="button-add"
                   icon={<X />}
-                  popover={{ content: 'Add item' }}
+                  popover={{
+                    content: addNodeError || 'Add item',
+                    keepOpen: !!addNodeError,
+                    variant: addNodeError
+                      ? VariantState.ERROR
+                      : VariantState.DEFAULT,
+                  }}
                   aria-label="Add item"
+                  disabled={!!addNodeError}
                   onClick={() => {
                     if (node.children) {
-                      setNode({
-                        ...node,
-                        children: [
-                          ...node.children,
-                          {
-                            type: 'string',
-                            name: '',
-                            value: '',
-                          },
-                        ],
-                      })
+                      const newNode: Node = {
+                        type: 'string',
+                        path: `${node.path}.${node.type === 'array' ? node.children.length : ''}`,
+                        name: '',
+                        value: '',
+                      }
+                      // Only add new node if an unfinished new one is not present
+                      // Prevent error for duplicate paths
+                      if (
+                        !node.children.some(
+                          (child) => child.path === newNode.path,
+                        )
+                      ) {
+                        try {
+                          addNode(node, newNode)
+                        } catch (error) {
+                          if (typeof error === 'string') {
+                            setAddNodeError(error)
+                          } else if (error instanceof Error) {
+                            setAddNodeError(error.message)
+                          }
+                        }
+                      }
+                      setEditing(newNode.path)
                     }
                   }}
                 />

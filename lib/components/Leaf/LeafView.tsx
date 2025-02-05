@@ -4,57 +4,77 @@ import React, {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
+  useState,
 } from 'react'
 
-import { LeafMode, LeafType, TempValue } from '../../defs'
+import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
+import {
+  ErrorLevel,
+  LeafMode,
+  Node as LeafNode,
+  VariantState,
+} from '../../defs'
 import { classNames } from '../../utils/classNames'
-import { ActionButton } from '../ActionButton'
+import { isValidString } from '../../utils/json'
+import { ActionButton, ActionButtonExternalRef } from '../ActionButton'
+import { ConfirmAction } from '../ConfirmAction'
+import { Popover } from '../Popover'
 import { TypeTag } from '../TypeTag'
 import { Chevron } from '../icons/Chevron'
 import { Pencil } from '../icons/Pencil'
 import { TrashCan } from '../icons/TrashCan'
+import { getVariantFromError } from './utils'
 
 type LeafViewProps = {
+  node: LeafNode
   readonly?: boolean
   mode: LeafMode
-  hasError: boolean
-  hasWarning: boolean
-  name: TempValue<string>
-  value: TempValue<string>
-  isChecked: TempValue<boolean>
-  type: TempValue<LeafType>
-  setIsEditing: Dispatch<SetStateAction<boolean>>
   addon?: ReactElement | null
   isExpanded: boolean
   setIsExpanded: Dispatch<SetStateAction<boolean>>
 }
 
+const validateNode = (node: LeafNode, mode: LeafMode): ErrorLevel => {
+  if (mode === LeafMode.OBJECT) {
+    if (!node.name) return ErrorLevel.WARNING
+    if (!isValidString(node.name)) return ErrorLevel.ERROR
+  }
+
+  if (node.type === 'string' && typeof node.value === 'string') {
+    if (!node.value) return ErrorLevel.WARNING
+    if (!isValidString(node.value)) return ErrorLevel.WARNING
+  }
+
+  return ErrorLevel.NONE
+}
+
 export const LeafView: React.FC<LeafViewProps> = ({
+  node,
   readonly,
   mode,
-  hasError,
-  hasWarning,
-  name,
-  value,
-  isChecked,
-  type,
-  setIsEditing,
   addon,
   isExpanded,
   setIsExpanded,
 }) => {
-  const ref = useRef<HTMLButtonElement>(null)
+  const { deleteNode, setEditing } = useTreeContext()
+  const toggleToolbarRef = useRef<ActionButtonExternalRef>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [deleteNodeError, setDeleteNodeError] = useState<string>('')
+  const [mustConfirm, setMustConfirm] = useState<boolean>(false)
+
+  const nodeError = useMemo(() => validateNode(node, mode), [node, mode])
 
   const onClickOutside = useCallback(
     (event: Event) => {
       if (
-        ref &&
+        toggleToolbarRef &&
         event.target instanceof Node &&
         [...document.querySelectorAll('.button-expand')].some((element) =>
           element.contains(event.target as Node),
         ) &&
-        !ref.current?.contains(event.target)
+        !toggleToolbarRef.current?.contains(event.target)
       ) {
         setIsExpanded(false)
       }
@@ -62,49 +82,69 @@ export const LeafView: React.FC<LeafViewProps> = ({
     [setIsExpanded],
   )
 
+  const onDelete = useCallback(() => {
+    try {
+      deleteNode(node)
+    } catch (error) {
+      if (typeof error === 'string') {
+        setDeleteNodeError(error)
+      } else if (error instanceof Error) {
+        setDeleteNodeError(error.message)
+      }
+    } finally {
+      setMustConfirm(false)
+    }
+  }, [deleteNode, node])
+
   useEffect(() => {
     document.addEventListener('click', onClickOutside)
     return () => document.removeEventListener('click', onClickOutside)
-  }, [ref, onClickOutside])
+  }, [toggleToolbarRef, onClickOutside])
 
   return (
     <div className="leaf-container">
       <div
         className={classNames('leaf', {
           readonly,
-          error: hasError,
-          warning: hasWarning,
+          error: nodeError === ErrorLevel.ERROR,
+          warning: nodeError === ErrorLevel.WARNING,
         })}
       >
-        <div className="leaf-content">
-          <div className={`leaf-type type-${type.value}`}>
-            <TypeTag type={type.value} />
+        <Popover
+          content="Empty values may cause issues."
+          variant={getVariantFromError(nodeError)}
+          enabled={[ErrorLevel.ERROR, ErrorLevel.WARNING].includes(nodeError)}
+          targetRef={contentRef}
+        />
+        <div className="leaf-content" ref={contentRef}>
+          <div className={`leaf-type type-${node.type}`}>
+            <TypeTag type={node.type} />
           </div>
           {mode === LeafMode.OBJECT && (
             <div
-              className={classNames(`leaf-name type-${type.value}`, {
-                ['empty-string']: name.value === '',
+              className={classNames(`leaf-name type-${node.type}`, {
+                ['empty-string']: node.name === '',
               })}
             >
-              {name.value !== '' ? name.value : 'empty key'}
+              {node.name !== '' ? node.name : 'empty key'}
             </div>
           )}
-          {['string', 'number'].includes(type.value) && (
+          {['string', 'number'].includes(node.type) && (
             <div
-              className={classNames(`leaf-value type-${type.value}`, {
-                ['empty-string']: value.value === '',
+              className={classNames(`leaf-value type-${node.type}`, {
+                ['empty-string']: node.value === '',
               })}
             >
-              {value.value !== '' ? value.value : 'empty value'}
+              {node.value !== '' ? node.value : 'empty value'}
             </div>
           )}
-          {['boolean'].includes(type.value) && (
-            <div className={`leaf-value type-${type.value}`}>
-              {Boolean(isChecked.value).toString()}
+          {['boolean'].includes(node.type) && (
+            <div className={`leaf-value type-${node.type}`}>
+              {Boolean(node.value).toString()}
             </div>
           )}
-          {type.value === 'null' && (
-            <div className="leaf-value type-${type.value}">null</div>
+          {node.type === 'null' && (
+            <div className="leaf-value type-${node.type}">null</div>
           )}
         </div>
 
@@ -117,7 +157,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
         })}
       >
         <ActionButton
-          ref={ref}
+          ref={toggleToolbarRef}
           className="leaf-action-button button-expand"
           aria-label={isExpanded ? 'Close toolbar' : 'Open toolbar'}
           onClick={() => setIsExpanded((prev) => !prev)}
@@ -129,7 +169,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
           className={classNames('leaf-action-button button-edit', {
             hidden: !isExpanded,
           })}
-          onClick={() => !readonly && isExpanded && setIsEditing(true)}
+          onClick={() => !readonly && isExpanded && setEditing(node.path)}
           aria-label="Edit"
           icon={<Pencil />}
           disabled={readonly}
@@ -142,9 +182,28 @@ export const LeafView: React.FC<LeafViewProps> = ({
           })}
           aria-label="Delete"
           icon={<TrashCan />}
-          disabled={readonly}
+          disabled={readonly || !!deleteNodeError}
           tabIndex={isExpanded ? 0 : -1}
-          popover={{ content: 'Delete', enabled: !readonly && isExpanded }}
+          variant={VariantState.ERROR}
+          popover={{
+            content: deleteNodeError ? (
+              deleteNodeError
+            ) : mustConfirm ? (
+              <ConfirmAction
+                onCancel={() => setMustConfirm(false)}
+                onConfirm={onDelete}
+              />
+            ) : (
+              'Delete'
+            ),
+            enabled: !readonly && isExpanded,
+            keepOpen: !!deleteNodeError || mustConfirm,
+            variant:
+              deleteNodeError || mustConfirm
+                ? VariantState.ERROR
+                : VariantState.DEFAULT,
+          }}
+          onClick={() => setMustConfirm((prev) => !prev)}
         />
       </div>
     </div>

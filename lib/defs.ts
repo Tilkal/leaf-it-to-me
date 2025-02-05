@@ -1,11 +1,11 @@
 export type Primitive = string | number | boolean | null
 
-export type Tree =
+export type JSONType =
   | Primitive
   | {
-      [key: string]: Tree
+      [key: string]: JSONType
     }
-  | Tree[]
+  | JSONType[]
 
 export const LEAF_TYPES = [
   'null',
@@ -26,11 +26,6 @@ export type Node = {
   children?: Node[]
 }
 
-export type Leaf = Node & {
-  mode?: LeafMode
-  readonly?: boolean
-}
-
 export enum LeafMode {
   OBJECT,
   ARRAY,
@@ -40,4 +35,31 @@ export enum LeafMode {
 export type TempValue<T extends Primitive> = {
   value: T
   tempValue: T
+}
+
+export interface AddNodeAction {
+  (parentNode: Node, childNode: Node): void
+}
+
+export interface UpdateNodeAction {
+  (oldNode: Node, newNode: Node): void
+}
+
+export interface DeleteNodeAction {
+  (node: Node): void
+}
+
+export enum ErrorLevel {
+  NONE,
+  INFO,
+  WARNING,
+  ERROR,
+}
+
+export enum VariantState {
+  DEFAULT = 'default',
+  SUCCESS = 'success',
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
 }

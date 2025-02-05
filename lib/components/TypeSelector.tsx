@@ -8,7 +8,6 @@ import './type-selector.css'
 
 type SelectProps = {
   value: string
-  options: string[]
   onSelect: (value: LeafType) => void
 }
 
@@ -81,10 +80,11 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
                 { hover: index === selectedIndex },
               )}
               role="option"
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation()
                 setSelectedIndex(index)
-                onSelect(option)
                 setIsOpen(false)
+                onSelect(option)
               }}
             >
               <TypeTag type={option} />
