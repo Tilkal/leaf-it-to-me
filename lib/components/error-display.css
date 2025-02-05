@@ -1,0 +1,22 @@
+.error-message {
+  border-radius: var(--border-radius-4);
+  padding: calc(2 * var(--padding-sqr-4));
+  width: 100%;
+  background-color: var(--red-1);
+  font-family: var(--font-family);
+
+  .message-title {
+    color: var(--red-8);
+    font-size: 1.1rem;
+  }
+
+  .message-content {
+    margin-top: 0.5rem;
+    background-color: var(--red-0);
+    padding: var(--padding-rect-4);
+    border-radius: var(--border-radius-4);
+    font-size: 1rem;
+    font-family: monospace;
+    color: var(--gray-9);
+  }
+}

@@ -81,7 +81,7 @@ export const LargeJSON: Story = {
 
 export const WithError: Story = {
   args: {
-    tree: {
+    json: {
       key: 'value',
       key2: {
         key3: String.raw`value\ `,

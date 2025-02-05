@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Error } from './Error'
+import { ErrorDisplay } from './ErrorDisplay'
 
 import '../root.css'
 
-const meta: Meta<typeof Error> = {
+const meta: Meta<typeof ErrorDisplay> = {
   title: 'Error',
-  component: Error,
+  component: ErrorDisplay,
   parameters: {
     layout: 'centered',
   },
@@ -15,12 +15,11 @@ const meta: Meta<typeof Error> = {
 
 export default meta
 
-type Story = StoryObj<typeof Error>
+type Story = StoryObj<typeof ErrorDisplay>
 
 export const Default: Story = {
   args: {
-    type: 'string',
-    name: 'example',
-    value: 'value',
+    message:
+      'Node at path "some.path.for.story" has an unsupported type (bigint).',
   },
 }
