@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { TypeSelector } from './TypeSelector'
+import { TypeSelector } from '.'
 
-import '../root.css'
+import '../../root.css'
 
 const meta: Meta<typeof TypeSelector> = {
   title: 'TypeSelector',
