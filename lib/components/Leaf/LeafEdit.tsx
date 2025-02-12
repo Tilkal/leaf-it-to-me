@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react'
 
+import { useConfigContext } from '../../contexts/ConfigContext/ConfigContext'
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import {
   ErrorLevel,
@@ -60,6 +61,7 @@ const updatePath = (oldPath: string, name: string): string => {
 
 export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
   const { updateNode, deleteNode, setEditing } = useTreeContext()
+  const { disableWarnings } = useConfigContext()
   const [type, setType] = useState<LeafType>(node.type)
   const [name, setName] = useState<string>(node.name ?? '')
   const [value, setValue] = useState<string>(node.value?.toString() ?? '')
@@ -99,11 +101,11 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
       submit: ErrorLevel.NONE,
       name: !isValidString(name)
         ? ErrorLevel.ERROR
-        : mode === LeafMode.OBJECT && name === ''
+        : mode === LeafMode.OBJECT && name === '' && !disableWarnings
           ? ErrorLevel.WARNING
           : ErrorLevel.NONE,
     }))
-  }, [mode, name, setErrors])
+  }, [mode, name, setErrors, disableWarnings])
 
   useEffect(() => {
     switch (type) {
@@ -113,7 +115,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
           submit: ErrorLevel.NONE,
           value: !isValidString(value)
             ? ErrorLevel.ERROR
-            : value === ''
+            : value === '' && !disableWarnings
               ? ErrorLevel.WARNING
               : ErrorLevel.NONE,
         }))
@@ -225,7 +227,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
               ? VariantState.ERROR
               : Object.values(errors).some(
                     (error) => error === ErrorLevel.WARNING,
-                  )
+                  ) && !disableWarnings
                 ? VariantState.WARNING
                 : VariantState.SUCCESS
           }

@@ -9,6 +9,7 @@ import React, {
   useState,
 } from 'react'
 
+import { useConfigContext } from '../../contexts/ConfigContext/ConfigContext'
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import {
   ErrorLevel,
@@ -36,14 +37,18 @@ type LeafViewProps = {
   setIsExpanded: Dispatch<SetStateAction<boolean>>
 }
 
-const validateNode = (node: LeafNode, mode: LeafMode): ErrorLevel => {
+const validateNode = (
+  node: LeafNode,
+  mode: LeafMode,
+  disableWarnings?: boolean,
+): ErrorLevel => {
   if (mode === LeafMode.OBJECT) {
-    if (!node.name) return ErrorLevel.WARNING
-    if (!isValidString(node.name)) return ErrorLevel.ERROR
+    if (!node.name && !disableWarnings) return ErrorLevel.WARNING
+    if (node.name && !isValidString(node.name)) return ErrorLevel.ERROR
   }
 
   if (node.type === 'string' && typeof node.value === 'string') {
-    if (!node.value) return ErrorLevel.WARNING
+    if (!node.value && !disableWarnings) return ErrorLevel.WARNING
     if (!isValidString(node.value)) return ErrorLevel.WARNING
   }
 
@@ -58,13 +63,17 @@ export const LeafView: React.FC<LeafViewProps> = ({
   isExpanded,
   setIsExpanded,
 }) => {
+  const { disableWarnings } = useConfigContext()
   const { deleteNode, setEditing } = useTreeContext()
   const toggleToolbarRef = useRef<ActionButtonExternalRef>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [deleteNodeError, setDeleteNodeError] = useState<string>('')
   const [mustConfirm, setMustConfirm] = useState<boolean>(false)
 
-  const nodeError = useMemo(() => validateNode(node, mode), [node, mode])
+  const nodeError = useMemo(
+    () => validateNode(node, mode, disableWarnings),
+    [node, mode],
+  )
 
   const onClickOutside = useCallback(
     (event: Event) => {

@@ -89,3 +89,20 @@ export const WithError: Story = {
     },
   },
 }
+
+export const WarningsDisabled: Story = {
+  args: {
+    json: {
+      '': 'value',
+      someArray: [
+        42,
+        {
+          '': '',
+        },
+      ],
+    },
+    config: {
+      disableWarnings: true,
+    },
+  },
+}

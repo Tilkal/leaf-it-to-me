@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 
 export type LeafItToMeConfig = {
   readonly?: boolean | RegExp[]
-  showWarnings?: boolean
+  disableWarnings?: boolean
   isExpanded?: boolean
 }
 
