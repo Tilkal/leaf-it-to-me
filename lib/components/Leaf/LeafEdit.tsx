@@ -10,6 +10,7 @@ import React, {
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import {
   ErrorLevel,
+  ErrorMessages,
   LeafMode,
   LeafType,
   Node,
@@ -189,6 +190,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
                 aria-label="Modifier la clé"
                 placeholder="Key"
                 error={errors.name}
+                message={ErrorMessages[type]?.[errors.name]}
               />
             )}
             {['string', 'number'].includes(type) && (
@@ -200,6 +202,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
                 aria-label="Modifier la valeur"
                 placeholder="Value"
                 error={errors.value}
+                message={ErrorMessages[type]?.[errors.value]}
               />
             )}
             {type === 'boolean' && (

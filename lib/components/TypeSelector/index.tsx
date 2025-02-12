@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { LEAF_TYPES, LeafType } from '../defs'
-import { classNames } from '../utils/classNames'
-import { TypeTag } from './TypeTag'
+import { LEAF_TYPES, LeafType } from '../../defs'
+import { classNames } from '../../utils/classNames'
+import { TypeTag } from '../TypeTag'
 
 import './type-selector.css'
 
@@ -54,16 +54,26 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
           event.target === document.activeElement
         ) {
           event.preventDefault()
-          setSelectedIndex((prev) =>
-            prev === LEAF_TYPES.length - 1 ? prev : prev + 1,
-          )
+          const newIndex =
+            selectedIndex === LEAF_TYPES.length - 1
+              ? selectedIndex
+              : selectedIndex + 1
+          setSelectedIndex(newIndex)
+          onSelect(LEAF_TYPES[newIndex])
         }
         if (
           event.key === 'ArrowUp' &&
           event.target === document.activeElement
         ) {
           event.preventDefault()
-          setSelectedIndex((prev) => (prev === 0 ? prev : prev - 1))
+          const newIndex =
+            selectedIndex === 0 ? selectedIndex : selectedIndex - 1
+          setSelectedIndex(newIndex)
+          onSelect(LEAF_TYPES[newIndex])
+        }
+        if (event.key === 'Enter' && event.target === document.activeElement) {
+          event.preventDefault()
+          setIsOpen(false)
         }
       }}
     >

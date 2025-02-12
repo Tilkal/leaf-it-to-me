@@ -69,10 +69,10 @@ export const Popover: React.FC<PopoverProps> = ({
   const onClick = useCallback(() => {
     if (targetRef?.current && enabled && !keepOpen) {
       setIsOpen((prev) =>
-        isActive ? CLOSED_STATE : { ...prev, isClicked: true },
+        prev.isClicked === true ? CLOSED_STATE : { ...prev, isClicked: true },
       )
     }
-  }, [enabled, isActive, keepOpen, targetRef])
+  }, [enabled, keepOpen, targetRef])
 
   const onMouseEnter = useCallback(() => {
     if (targetRef?.current && enabled && !keepOpen) {
@@ -81,8 +81,9 @@ export const Popover: React.FC<PopoverProps> = ({
   }, [enabled, keepOpen, targetRef])
 
   const onMouseLeave = useCallback(() => {
-    if (targetRef?.current && enabled && !keepOpen)
+    if (targetRef?.current && enabled && !keepOpen) {
       setIsOpen((prev) => ({ ...prev, isHovered: false }))
+    }
   }, [enabled, keepOpen, targetRef])
 
   const onFocus = useCallback(() => {
@@ -92,8 +93,9 @@ export const Popover: React.FC<PopoverProps> = ({
   }, [enabled, keepOpen, targetRef])
 
   const onBlur = useCallback(() => {
-    if (targetRef?.current && enabled && !keepOpen)
+    if (targetRef?.current && enabled && !keepOpen) {
       setIsOpen((prev) => ({ ...prev, isFocused: false }))
+    }
   }, [enabled, keepOpen, targetRef])
 
   useEffect(() => {

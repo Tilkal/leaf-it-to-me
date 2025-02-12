@@ -7,10 +7,12 @@ import { getVariantFromError } from './utils'
 
 type LeafInputProps = ComponentPropsWithoutRef<'input'> & {
   error: ErrorLevel
+  message?: string
 }
 
 export const LeafInput: React.FC<LeafInputProps> = ({
   error,
+  message = '',
   className = '',
   ...props
 }) => {
@@ -20,17 +22,7 @@ export const LeafInput: React.FC<LeafInputProps> = ({
     <div className="leaf-input-container">
       <Popover
         targetRef={inputRef}
-        content={
-          error === ErrorLevel.ERROR
-            ? `Value must be a valid JSON string.
-            Some characters are forbidden and must be escaped:
-            - Double quote "
-            - Reverse solidus \\
-            - Unterminated unicode \\u12`
-            : error === ErrorLevel.WARNING
-              ? 'Empty values may cause issues.'
-              : ''
-        }
+        content={message}
         variant={getVariantFromError(error)}
         enabled={[ErrorLevel.WARNING, ErrorLevel.ERROR].includes(error)}
       />
