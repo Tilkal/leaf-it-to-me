@@ -63,3 +63,21 @@ export enum VariantState {
   WARNING = 'warning',
   ERROR = 'error',
 }
+
+export const ErrorMessages: Partial<
+  Record<LeafType, Partial<Record<ErrorLevel, string>>>
+> = {
+  string: {
+    [ErrorLevel.ERROR]: `Value must be a valid JSON string.
+            Some characters are forbidden and must be escaped:
+            - Double quote "
+            - Reverse solidus \\
+            - Unterminated unicode \\u12`,
+    [ErrorLevel.WARNING]: 'Empty values may cause issues.',
+  },
+  number: {
+    [ErrorLevel.ERROR]:
+      'Value must be a valid number. At least one character, numeric only (0..9).',
+    [ErrorLevel.WARNING]: 'Empty values may cause issues.',
+  },
+}
