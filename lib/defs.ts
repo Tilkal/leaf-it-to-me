@@ -88,7 +88,13 @@ export type ReadonlyConfig = boolean | RegExp[]
 
 export type Translator = (path: string) => string
 
-export type Translations = Partial<typeof i18n>
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>
+    }
+  : T
+
+export type Translations = DeepPartial<typeof i18n>
 
 export type LanguageConfig = {
   translator?: Translator
