@@ -81,3 +81,5 @@ export const ErrorMessages: Partial<
     [ErrorLevel.WARNING]: 'Empty values may cause issues.',
   },
 }
+
+export type ReadonlyConfig = boolean | RegExp[]

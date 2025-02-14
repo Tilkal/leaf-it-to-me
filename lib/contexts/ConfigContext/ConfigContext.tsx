@@ -1,7 +1,9 @@
 import { createContext, useContext } from 'react'
 
+import { ReadonlyConfig } from '../../defs'
+
 export type LeafItToMeConfig = {
-  readonly?: boolean | RegExp[]
+  readonly?: ReadonlyConfig
   disableWarnings?: boolean
   isExpanded?: boolean
 }

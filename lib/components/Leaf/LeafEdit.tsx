@@ -135,7 +135,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
         }))
         break
     }
-  }, [type, value, setErrors])
+  }, [type, value, setErrors, disableWarnings])
 
   return (
     <form

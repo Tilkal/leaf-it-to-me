@@ -14,7 +14,6 @@ import './action-button.css'
 
 type ActionButtonProps = ComponentPropsWithoutRef<'button'> & {
   icon: ReactElement
-  readonly?: boolean
   popover?: Omit<PopoverProps, 'targetRef'>
   variant?: VariantState
 }
@@ -28,14 +27,7 @@ export const ActionButton = forwardRef<
   ActionButtonProps
 >(
   (
-    {
-      icon,
-      className,
-      readonly,
-      popover,
-      variant = VariantState.DEFAULT,
-      ...props
-    },
+    { icon, className, popover, variant = VariantState.DEFAULT, ...props },
     externalRef,
   ) => {
     const localeRef = useRef<HTMLButtonElement>(null)
@@ -54,9 +46,7 @@ export const ActionButton = forwardRef<
           <Popover {...popover} targetRef={localeRef} />
           <button
             ref={localeRef}
-            className={classNames('action-button', variant, className ?? '', {
-              readonly,
-            })}
+            className={classNames('action-button', variant, className ?? '')}
             {...props}
           >
             {icon}
@@ -68,9 +58,7 @@ export const ActionButton = forwardRef<
       <div className="action-button-container">
         <button
           ref={localeRef}
-          className={classNames('action-button', variant, className ?? '', {
-            readonly,
-          })}
+          className={classNames('action-button', variant, className ?? '')}
           {...props}
         >
           {icon}

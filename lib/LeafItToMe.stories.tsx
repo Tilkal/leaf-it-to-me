@@ -93,16 +93,59 @@ export const WithError: Story = {
 export const WarningsDisabled: Story = {
   args: {
     json: {
-      '': 'value',
+      key: 'value',
       someArray: [
         42,
         {
-          '': '',
+          key2: '',
+          '': 'value2',
         },
       ],
     },
     config: {
       disableWarnings: true,
+    },
+  },
+}
+
+export const FullReadonly: Story = {
+  args: {
+    json: {
+      key: 'value',
+      someArray: [
+        42,
+        {
+          key2: 'value2',
+          key3: 'value3',
+        },
+      ],
+    },
+    config: {
+      readonly: true,
+    },
+  },
+}
+
+export const PartialReadonly: Story = {
+  args: {
+    json: {
+      key: 'readonly with regex /^key$/',
+      someArray: [
+        42,
+        'readonly with regex /^some-array.1$/',
+        {
+          key2: 'readonly with regex /key[0-9]+$/',
+          key3: 'readonly with regex /key[0-9]+$/',
+          editable: 'not matching regex',
+        },
+      ],
+      readonlyArray: ['readonly with regex /^readonly/', 82],
+      readonlyObject: {
+        key4: 'readonly with regex /^readonly/ and /key[0-9]+$/',
+      },
+    },
+    config: {
+      readonly: [/^key$/, /^some-array.1$/, /key[0-9]+$/, /^readonly/],
     },
   },
 }

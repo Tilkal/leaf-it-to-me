@@ -18,6 +18,7 @@ import {
   VariantState,
 } from '../../defs'
 import { classNames } from '../../utils/classNames'
+import { isReadonly } from '../../utils/config'
 import { isValidString } from '../../utils/json'
 import { ActionButton, ActionButtonExternalRef } from '../ActionButton'
 import { ConfirmAction } from '../ConfirmAction'
@@ -30,7 +31,6 @@ import { getVariantFromError } from './utils'
 
 type LeafViewProps = {
   node: LeafNode
-  readonly?: boolean
   mode: LeafMode
   addon?: ReactElement | null
   isExpanded: boolean
@@ -57,13 +57,12 @@ const validateNode = (
 
 export const LeafView: React.FC<LeafViewProps> = ({
   node,
-  readonly,
   mode,
   addon,
   isExpanded,
   setIsExpanded,
 }) => {
-  const { disableWarnings } = useConfigContext()
+  const { disableWarnings, readonly } = useConfigContext()
   const { deleteNode, setEditing } = useTreeContext()
   const toggleToolbarRef = useRef<ActionButtonExternalRef>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -72,7 +71,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
 
   const nodeError = useMemo(
     () => validateNode(node, mode, disableWarnings),
-    [node, mode],
+    [node, mode, disableWarnings],
   )
 
   const onClickOutside = useCallback(
@@ -114,7 +113,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
     <div className="leaf-container">
       <div
         className={classNames('leaf', {
-          readonly,
+          readonly: isReadonly(readonly, node.path),
           error: nodeError === ErrorLevel.ERROR,
           warning: nodeError === ErrorLevel.WARNING,
         })}
@@ -161,59 +160,63 @@ export const LeafView: React.FC<LeafViewProps> = ({
       </div>
       <div
         className={classNames('leaf-actions', {
-          readonly,
+          readonly: isReadonly(readonly, node.path),
           expanded: isExpanded,
         })}
       >
-        <ActionButton
-          ref={toggleToolbarRef}
-          className="leaf-action-button button-expand"
-          aria-label={isExpanded ? 'Close toolbar' : 'Open toolbar'}
-          onClick={() => setIsExpanded((prev) => !prev)}
-          icon={<Chevron />}
-          disabled={readonly}
-          popover={{ content: isExpanded ? 'Close toolbar' : 'Open toolbar' }}
-        />
-        <ActionButton
-          className={classNames('leaf-action-button button-edit', {
-            hidden: !isExpanded,
-          })}
-          onClick={() => !readonly && isExpanded && setEditing(node.path)}
-          aria-label="Edit"
-          icon={<Pencil />}
-          disabled={readonly}
-          tabIndex={isExpanded ? 0 : -1}
-          popover={{ content: 'Edit', enabled: !readonly && isExpanded }}
-        />
-        <ActionButton
-          className={classNames('leaf-action-button button-delete', {
-            hidden: !isExpanded,
-          })}
-          aria-label="Delete"
-          icon={<TrashCan />}
-          disabled={readonly || !!deleteNodeError}
-          tabIndex={isExpanded ? 0 : -1}
-          variant={VariantState.ERROR}
-          popover={{
-            content: deleteNodeError ? (
-              deleteNodeError
-            ) : mustConfirm ? (
-              <ConfirmAction
-                onCancel={() => setMustConfirm(false)}
-                onConfirm={onDelete}
-              />
-            ) : (
-              'Delete'
-            ),
-            enabled: !readonly && isExpanded,
-            keepOpen: !!deleteNodeError || mustConfirm,
-            variant:
-              deleteNodeError || mustConfirm
-                ? VariantState.ERROR
-                : VariantState.DEFAULT,
-          }}
-          onClick={() => setMustConfirm((prev) => !prev)}
-        />
+        {!isReadonly(readonly, node.path) && (
+          <>
+            <ActionButton
+              ref={toggleToolbarRef}
+              className="leaf-action-button button-expand"
+              aria-label={isExpanded ? 'Close toolbar' : 'Open toolbar'}
+              onClick={() => setIsExpanded((prev) => !prev)}
+              icon={<Chevron />}
+              popover={{
+                content: isExpanded ? 'Close toolbar' : 'Open toolbar',
+              }}
+            />
+            <ActionButton
+              className={classNames('leaf-action-button button-edit', {
+                hidden: !isExpanded,
+              })}
+              onClick={() => isExpanded && setEditing(node.path)}
+              aria-label="Edit"
+              icon={<Pencil />}
+              tabIndex={isExpanded ? 0 : -1}
+              popover={{ content: 'Edit', enabled: isExpanded }}
+            />
+            <ActionButton
+              className={classNames('leaf-action-button button-delete', {
+                hidden: !isExpanded,
+              })}
+              aria-label="Delete"
+              icon={<TrashCan />}
+              disabled={!!deleteNodeError}
+              tabIndex={isExpanded ? 0 : -1}
+              variant={VariantState.ERROR}
+              popover={{
+                content: deleteNodeError ? (
+                  deleteNodeError
+                ) : mustConfirm ? (
+                  <ConfirmAction
+                    onCancel={() => setMustConfirm(false)}
+                    onConfirm={onDelete}
+                  />
+                ) : (
+                  'Delete'
+                ),
+                enabled: isExpanded,
+                keepOpen: !!deleteNodeError || mustConfirm,
+                variant:
+                  deleteNodeError || mustConfirm
+                    ? VariantState.ERROR
+                    : VariantState.DEFAULT,
+              }}
+              onClick={() => setMustConfirm((prev) => !prev)}
+            />
+          </>
+        )}
       </div>
     </div>
   )
