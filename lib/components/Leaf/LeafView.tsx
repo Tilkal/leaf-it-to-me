@@ -9,6 +9,7 @@ import React, {
   useState,
 } from 'react'
 
+import { useConfigContext } from '../../contexts/ConfigContext/ConfigContext'
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import {
   ErrorLevel,
@@ -17,6 +18,7 @@ import {
   VariantState,
 } from '../../defs'
 import { classNames } from '../../utils/classNames'
+import { isReadonly } from '../../utils/config'
 import { isValidString } from '../../utils/json'
 import { ActionButton, ActionButtonExternalRef } from '../ActionButton'
 import { ConfirmAction } from '../ConfirmAction'
@@ -29,21 +31,24 @@ import { getVariantFromError } from './utils'
 
 type LeafViewProps = {
   node: LeafNode
-  readonly?: boolean
   mode: LeafMode
   addon?: ReactElement | null
   isExpanded: boolean
   setIsExpanded: Dispatch<SetStateAction<boolean>>
 }
 
-const validateNode = (node: LeafNode, mode: LeafMode): ErrorLevel => {
+const validateNode = (
+  node: LeafNode,
+  mode: LeafMode,
+  disableWarnings?: boolean,
+): ErrorLevel => {
   if (mode === LeafMode.OBJECT) {
-    if (!node.name) return ErrorLevel.WARNING
-    if (!isValidString(node.name)) return ErrorLevel.ERROR
+    if (!node.name && !disableWarnings) return ErrorLevel.WARNING
+    if (node.name && !isValidString(node.name)) return ErrorLevel.ERROR
   }
 
   if (node.type === 'string' && typeof node.value === 'string') {
-    if (!node.value) return ErrorLevel.WARNING
+    if (!node.value && !disableWarnings) return ErrorLevel.WARNING
     if (!isValidString(node.value)) return ErrorLevel.WARNING
   }
 
@@ -52,19 +57,22 @@ const validateNode = (node: LeafNode, mode: LeafMode): ErrorLevel => {
 
 export const LeafView: React.FC<LeafViewProps> = ({
   node,
-  readonly,
   mode,
   addon,
   isExpanded,
   setIsExpanded,
 }) => {
+  const { disableWarnings, readonly, t } = useConfigContext()
   const { deleteNode, setEditing } = useTreeContext()
   const toggleToolbarRef = useRef<ActionButtonExternalRef>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [deleteNodeError, setDeleteNodeError] = useState<string>('')
   const [mustConfirm, setMustConfirm] = useState<boolean>(false)
 
-  const nodeError = useMemo(() => validateNode(node, mode), [node, mode])
+  const nodeError = useMemo(
+    () => validateNode(node, mode, disableWarnings),
+    [node, mode, disableWarnings],
+  )
 
   const onClickOutside = useCallback(
     (event: Event) => {
@@ -105,13 +113,13 @@ export const LeafView: React.FC<LeafViewProps> = ({
     <div className="leaf-container">
       <div
         className={classNames('leaf', {
-          readonly,
+          readonly: isReadonly(readonly, node.path),
           error: nodeError === ErrorLevel.ERROR,
           warning: nodeError === ErrorLevel.WARNING,
         })}
       >
         <Popover
-          content="Empty values may cause issues."
+          content={t('error.message.string.warning')}
           variant={getVariantFromError(nodeError)}
           enabled={[ErrorLevel.ERROR, ErrorLevel.WARNING].includes(nodeError)}
           targetRef={contentRef}
@@ -126,7 +134,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
                 ['empty-string']: node.name === '',
               })}
             >
-              {node.name !== '' ? node.name : 'empty key'}
+              {node.name !== '' ? node.name : t('leaf.view.field.empty-key')}
             </div>
           )}
           {['string', 'number'].includes(node.type) && (
@@ -135,16 +143,18 @@ export const LeafView: React.FC<LeafViewProps> = ({
                 ['empty-string']: node.value === '',
               })}
             >
-              {node.value !== '' ? node.value : 'empty value'}
+              {node.value !== ''
+                ? node.value
+                : t('leaf.view.field.empty-value')}
             </div>
           )}
           {['boolean'].includes(node.type) && (
-            <div className={`leaf-value type-${node.type}`}>
+            <div className="leaf-value type-boolean">
               {Boolean(node.value).toString()}
             </div>
           )}
           {node.type === 'null' && (
-            <div className="leaf-value type-${node.type}">null</div>
+            <div className="leaf-value type-null">null</div>
           )}
         </div>
 
@@ -152,59 +162,70 @@ export const LeafView: React.FC<LeafViewProps> = ({
       </div>
       <div
         className={classNames('leaf-actions', {
-          readonly,
+          readonly: isReadonly(readonly, node.path),
           expanded: isExpanded,
         })}
       >
-        <ActionButton
-          ref={toggleToolbarRef}
-          className="leaf-action-button button-expand"
-          aria-label={isExpanded ? 'Close toolbar' : 'Open toolbar'}
-          onClick={() => setIsExpanded((prev) => !prev)}
-          icon={<Chevron />}
-          disabled={readonly}
-          popover={{ content: isExpanded ? 'Close toolbar' : 'Open toolbar' }}
-        />
-        <ActionButton
-          className={classNames('leaf-action-button button-edit', {
-            hidden: !isExpanded,
-          })}
-          onClick={() => !readonly && isExpanded && setEditing(node.path)}
-          aria-label="Edit"
-          icon={<Pencil />}
-          disabled={readonly}
-          tabIndex={isExpanded ? 0 : -1}
-          popover={{ content: 'Edit', enabled: !readonly && isExpanded }}
-        />
-        <ActionButton
-          className={classNames('leaf-action-button button-delete', {
-            hidden: !isExpanded,
-          })}
-          aria-label="Delete"
-          icon={<TrashCan />}
-          disabled={readonly || !!deleteNodeError}
-          tabIndex={isExpanded ? 0 : -1}
-          variant={VariantState.ERROR}
-          popover={{
-            content: deleteNodeError ? (
-              deleteNodeError
-            ) : mustConfirm ? (
-              <ConfirmAction
-                onCancel={() => setMustConfirm(false)}
-                onConfirm={onDelete}
-              />
-            ) : (
-              'Delete'
-            ),
-            enabled: !readonly && isExpanded,
-            keepOpen: !!deleteNodeError || mustConfirm,
-            variant:
-              deleteNodeError || mustConfirm
-                ? VariantState.ERROR
-                : VariantState.DEFAULT,
-          }}
-          onClick={() => setMustConfirm((prev) => !prev)}
-        />
+        {!isReadonly(readonly, node.path) && (
+          <>
+            <ActionButton
+              ref={toggleToolbarRef}
+              className="leaf-action-button button-expand"
+              aria-label={t(
+                `leaf.view.action.toolbar.label.${isExpanded ? 'close' : 'open'}`,
+              )}
+              onClick={() => setIsExpanded((prev) => !prev)}
+              icon={<Chevron />}
+              popover={{
+                content: t(
+                  `leaf.view.action.toolbar.label.${isExpanded ? 'close' : 'open'}`,
+                ),
+              }}
+            />
+            <ActionButton
+              className={classNames('leaf-action-button button-edit', {
+                hidden: !isExpanded,
+              })}
+              onClick={() => isExpanded && setEditing(node.path)}
+              aria-label={t('leaf.view.action.edit.label')}
+              icon={<Pencil />}
+              tabIndex={isExpanded ? 0 : -1}
+              popover={{
+                content: t('leaf.view.action.edit.label'),
+                enabled: isExpanded,
+              }}
+            />
+            <ActionButton
+              className={classNames('leaf-action-button button-delete', {
+                hidden: !isExpanded,
+              })}
+              aria-label={t('leaf.view.action.delete.label')}
+              icon={<TrashCan />}
+              disabled={!!deleteNodeError}
+              tabIndex={isExpanded ? 0 : -1}
+              variant={VariantState.ERROR}
+              popover={{
+                content: deleteNodeError ? (
+                  deleteNodeError
+                ) : mustConfirm ? (
+                  <ConfirmAction
+                    onCancel={() => setMustConfirm(false)}
+                    onConfirm={onDelete}
+                  />
+                ) : (
+                  t('leaf.view.action.delete.label')
+                ),
+                enabled: isExpanded,
+                keepOpen: !!deleteNodeError || mustConfirm,
+                variant:
+                  deleteNodeError || mustConfirm
+                    ? VariantState.ERROR
+                    : VariantState.DEFAULT,
+              }}
+              onClick={() => setMustConfirm((prev) => !prev)}
+            />
+          </>
+        )}
       </div>
     </div>
   )

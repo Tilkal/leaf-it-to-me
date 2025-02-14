@@ -464,47 +464,47 @@ describe('getJsonDescription', () => {
   it('should throw a TypeError for invalid JSON input', () => {
     // @ts-expect-error -- Expected invalid type
     expect(() => getJsonDescription({ a: 1n })).toThrowError(
-      'invalid JSON value',
+      'Invalid JSON value at path ""',
     )
 
     // @ts-expect-error -- Expected invalid type
     expect(() => getJsonDescription({ a: () => undefined })).toThrowError(
-      'invalid JSON value',
+      'Invalid JSON value at path ""',
     )
 
     // @ts-expect-error -- Expected invalid type
     expect(() => getJsonDescription(undefined)).toThrowError(
-      'invalid JSON value',
+      'Invalid JSON value at path ""',
     )
 
     // @ts-expect-error -- Expected invalid type
     expect(() => getJsonDescription(function () {})).toThrowError(
-      'invalid JSON value',
+      'Invalid JSON value at path ""',
     )
 
     // @ts-expect-error -- Expected invalid type
     expect(() => getJsonDescription(() => undefined)).toThrowError(
-      'invalid JSON value',
+      'Invalid JSON value at path ""',
     )
 
     // @ts-expect-error -- Expected invalid type
     expect(() => getJsonDescription(Symbol())).toThrowError(
-      'invalid JSON value',
+      'Invalid JSON value at path ""',
     )
   })
 
   it('should throw a SyntaxError for invalid string values', () => {
     expect(() =>
       getJsonDescription({ a: String.raw`unescaped " quote` }),
-    ).toThrowError('invalid JSON string value')
+    ).toThrowError('Invalid JSON value at path ""')
 
     expect(() =>
       getJsonDescription({ a: String.raw`unescaped \ reverse solidus` }),
-    ).toThrowError('invalid JSON string value')
+    ).toThrowError('Invalid JSON value at path ""')
 
     expect(() =>
       getJsonDescription({ a: String.raw`unterminatedKey \u12` }),
-    ).toThrowError('invalid JSON string value')
+    ).toThrowError('Invalid JSON value at path ""')
   })
 
   // undefined case
@@ -536,6 +536,19 @@ describe('getJsonDescription', () => {
           type: 'number',
           name: 'key2',
           value: 42,
+        },
+      ],
+    })
+  })
+
+  it('should keep empty string as key', () => {
+    expect(getJsonDescription({ '': 'value' })).toMatchObject({
+      type: 'object',
+      children: [
+        {
+          type: 'string',
+          name: '',
+          value: 'value',
         },
       ],
     })

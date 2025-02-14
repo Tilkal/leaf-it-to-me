@@ -66,7 +66,8 @@ export const getJsonDescription = (
   }
 
   // The name is optional, since it is only used for subtrees in an object (no primitives nor arrays)
-  if (nameOrIndex && typeof nameOrIndex === 'string') node.name = nameOrIndex
+  if (nameOrIndex !== undefined && typeof nameOrIndex === 'string')
+    node.name = nameOrIndex
 
   // Primitives are final nodes with values
   if (isPrimitive(input)) node.value = input

@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { ConfigContextProvider } from '../../contexts/ConfigContext/ConfigContextProvider'
+import { TreeContextProvider } from '../../contexts/TreeContext/TreeContextProvider'
 import { LeafMode } from '../../defs'
 import { Leaf } from './index'
 
@@ -12,6 +14,15 @@ const meta: Meta<typeof Leaf> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <ConfigContextProvider>
+        <TreeContextProvider tree={{ type: 'null', path: '' }}>
+          <Story />
+        </TreeContextProvider>
+      </ConfigContextProvider>
+    ),
+  ],
 }
 
 export default meta
@@ -92,29 +103,5 @@ export const ArrayElementLeaf: Story = {
       path: '',
     },
     mode: LeafMode.ARRAY,
-  },
-}
-
-// TODO:
-export const Readonly: Story = {
-  args: {
-    node: {
-      type: 'string',
-      name: 'lorem',
-      value: 'ipsum',
-      path: '',
-    },
-  },
-}
-
-// TODO:
-export const EditingLeaf: Story = {
-  args: {
-    node: {
-      type: 'string',
-      name: 'lorem',
-      value: 'ipsum',
-      path: '',
-    },
   },
 }

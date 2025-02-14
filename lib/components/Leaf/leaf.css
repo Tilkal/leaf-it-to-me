@@ -96,8 +96,12 @@
       }
 
       &:last-child {
+        flex: 1 1 auto;
+
         .leaf-input {
           border-radius: var(--border-radius-h-end-4);
+          width: -moz-available;
+          width: -webkit-fill-available;
         }
       }
 
