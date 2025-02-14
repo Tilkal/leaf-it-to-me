@@ -149,3 +149,38 @@ export const PartialReadonly: Story = {
     },
   },
 }
+
+export const Translator: Story = {
+  args: {
+    json: {
+      key: 'value',
+    },
+    config: {
+      language: {
+        translator: (path: string) =>
+          `Custom translator function!\nHere is the original key:\n${path}`,
+      },
+    },
+  },
+}
+
+export const Translations: Story = {
+  args: {
+    json: {
+      key: 'value',
+    },
+    config: {
+      language: {
+        translations: {
+          'tree-view': {
+            action: {
+              add: {
+                label: 'Only one label edited',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}

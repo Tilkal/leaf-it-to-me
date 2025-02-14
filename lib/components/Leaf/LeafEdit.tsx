@@ -11,7 +11,6 @@ import { useConfigContext } from '../../contexts/ConfigContext/ConfigContext'
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import {
   ErrorLevel,
-  ErrorMessages,
   LeafMode,
   LeafType,
   Node,
@@ -61,7 +60,7 @@ const updatePath = (oldPath: string, name: string): string => {
 
 export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
   const { updateNode, deleteNode, setEditing } = useTreeContext()
-  const { disableWarnings } = useConfigContext()
+  const { disableWarnings, t } = useConfigContext()
   const [type, setType] = useState<LeafType>(node.type)
   const [name, setName] = useState<string>(node.name ?? '')
   const [value, setValue] = useState<string>(node.value?.toString() ?? '')
@@ -189,10 +188,10 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
                 type="text"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                aria-label="Modifier la clé"
-                placeholder="Key"
+                aria-label={t('leaf.edit.input.key.label')}
+                placeholder={t('leaf.edit.input.key.placeholder')}
                 error={errors.name}
-                message={ErrorMessages[type]?.[errors.name]}
+                message={t(`error.message.${type}.${errors.name}`)}
               />
             )}
             {['string', 'number'].includes(type) && (
@@ -201,16 +200,17 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
                 type="text"
                 value={value}
                 onChange={(event) => setValue(event.target.value)}
-                aria-label="Modifier la valeur"
-                placeholder="Value"
+                aria-label={t('leaf.edit.input.value.label')}
+                placeholder={t('leaf.edit.input.value.placeholder')}
                 error={errors.value}
-                message={ErrorMessages[type]?.[errors.value]}
+                message={t(`error.message.${type}.${errors.value}`)}
               />
             )}
             {type === 'boolean' && (
               <Switch
                 checked={isChecked}
                 onChange={(checked) => setIsChecked(checked)}
+                aria-label={t('leaf.edit.input.switch.label')}
               />
             )}
           </div>
@@ -220,7 +220,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
         <ActionButton
           className={classNames('leaf-action-button button-submit')}
           type="submit"
-          aria-label="Save"
+          aria-label={t('leaf.edit.input.submit.label')}
           icon={<Tick />}
           variant={
             hasError
@@ -232,14 +232,17 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
                 : VariantState.SUCCESS
           }
           disabled={hasError}
-          popover={{ content: 'Save', enabled: !hasError }}
+          popover={{
+            content: t('leaf.edit.input.submit.label'),
+            enabled: !hasError,
+          }}
         />
         <ActionButton
           className="leaf-action-button button-cancel"
-          aria-label="Cancel"
+          aria-label={t('leaf.edit.input.cancel.label')}
           onClick={reset}
           icon={<X />}
-          popover={{ content: 'Cancel' }}
+          popover={{ content: t('leaf.edit.input.cancel.label') }}
         />
       </div>
     </form>

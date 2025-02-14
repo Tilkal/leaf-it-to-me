@@ -20,7 +20,7 @@ type TreeProps = {
 
 export const TreeView: React.FC<TreeProps> = memo(
   ({ node, mode }) => {
-    const { readonly } = useConfigContext()
+    const { readonly, t } = useConfigContext()
     const { addNode, setEditing } = useTreeContext()
     const [isExpanded, setIsExpanded] = useState<boolean>(true)
     const [addNodeError, setAddNodeError] = useState<string>('')
@@ -38,10 +38,16 @@ export const TreeView: React.FC<TreeProps> = memo(
                 className={classNames('button-toggle', {
                   expanded: isExpanded,
                 })}
-                aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                aria-label={t(
+                  `tree-view.action.toggle.label.${isExpanded ? 'close' : 'open'}`,
+                )}
                 aria-expanded={isExpanded}
                 icon={<Chevron />}
-                popover={{ content: isExpanded ? 'Collapse' : 'Expand' }}
+                popover={{
+                  content: t(
+                    `tree-view.action.toggle.label.${isExpanded ? 'close' : 'open'}`,
+                  ),
+                }}
                 onClick={() => setIsExpanded((prev) => !prev)}
               />
             ) : null
@@ -63,13 +69,13 @@ export const TreeView: React.FC<TreeProps> = memo(
                     className="button-add"
                     icon={<X />}
                     popover={{
-                      content: addNodeError || 'Add item',
+                      content: addNodeError || t('tree-view.action.add.label'),
                       keepOpen: !!addNodeError,
                       variant: addNodeError
                         ? VariantState.ERROR
                         : VariantState.DEFAULT,
                     }}
-                    aria-label="Add item"
+                    aria-label={t('tree-view.action.add.label')}
                     disabled={!!addNodeError}
                     onClick={() => {
                       if (node.children) {

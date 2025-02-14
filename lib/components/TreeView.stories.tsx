@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { ConfigContextProvider } from '../contexts/ConfigContext/ConfigContextProvider'
+import { TreeContextProvider } from '../contexts/TreeContext/TreeContextProvider'
 import { LeafMode } from '../defs'
 import { TreeView } from './TreeView'
 
@@ -90,7 +92,11 @@ export const Default: Story = {
         padding: '20px',
       }}
     >
-      <TreeView {...props} />
+      <ConfigContextProvider>
+        <TreeContextProvider tree={{ type: 'null', path: '' }}>
+          <TreeView {...props} />
+        </TreeContextProvider>
+      </ConfigContextProvider>
     </div>
   ),
 }

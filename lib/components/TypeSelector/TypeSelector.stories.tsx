@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { TypeSelector } from '.'
+import { ConfigContextProvider } from '../../contexts/ConfigContext/ConfigContextProvider'
 
 import '../../root.css'
 
@@ -21,4 +22,9 @@ export const Default: Story = {
   args: {
     value: 'string',
   },
+  render: (props) => (
+    <ConfigContextProvider>
+      <TypeSelector {...props} />
+    </ConfigContextProvider>
+  ),
 }

@@ -1,3 +1,5 @@
+import i18n from './i18n.json'
+
 export type Primitive = string | number | boolean | null
 
 export type JSONType =
@@ -50,10 +52,10 @@ export interface DeleteNodeAction {
 }
 
 export enum ErrorLevel {
-  NONE,
-  INFO,
-  WARNING,
-  ERROR,
+  NONE = 'none',
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
 }
 
 export enum VariantState {
@@ -83,3 +85,12 @@ export const ErrorMessages: Partial<
 }
 
 export type ReadonlyConfig = boolean | RegExp[]
+
+export type Translator = (path: string) => string
+
+export type Translations = Partial<typeof i18n>
+
+export type LanguageConfig = {
+  translator?: Translator
+  translations?: Translations
+}

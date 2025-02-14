@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
+import { useConfigContext } from '../../contexts/ConfigContext/ConfigContext'
 import { LEAF_TYPES, LeafType } from '../../defs'
 import { classNames } from '../../utils/classNames'
 import { TypeTag } from '../TypeTag'
@@ -12,6 +13,7 @@ type SelectProps = {
 }
 
 export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
+  const { t } = useConfigContext()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [selectedIndex, setSelectedIndex] = useState<number>(
     LEAF_TYPES.findIndex((item) => item === value),
@@ -40,6 +42,7 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
       ref={ref}
       tabIndex={0}
       role="select"
+      aria-label={t('type-selector.label')}
       onClick={() => {
         setIsOpen((prev) => !prev)
       }}
@@ -89,6 +92,7 @@ export const TypeSelector: React.FC<SelectProps> = ({ value, onSelect }) => {
                 `type-selector-dropdown-item type-${option}`,
                 { hover: index === selectedIndex },
               )}
+              aria-label={option}
               role="option"
               onClick={(event) => {
                 event.stopPropagation()

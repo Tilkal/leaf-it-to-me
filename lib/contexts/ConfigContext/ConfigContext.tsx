@@ -1,13 +1,16 @@
 import { createContext, useContext } from 'react'
 
-import { ReadonlyConfig } from '../../defs'
+import { ReadonlyConfig, Translator } from '../../defs'
 
-export type LeafItToMeConfig = {
+type ConfigContextProps = {
   readonly?: ReadonlyConfig
   disableWarnings?: boolean
   isExpanded?: boolean
+  t: Translator
 }
 
-export const ConfigContext = createContext<LeafItToMeConfig>({})
+export const ConfigContext = createContext<ConfigContextProps>(
+  {} as ConfigContextProps,
+)
 
 export const useConfigContext = () => useContext(ConfigContext)

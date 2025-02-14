@@ -31,7 +31,7 @@ export const Default: Story = {
 export const Accessible: Story = {
   args: {
     checked: true,
-    ariaLabel: 'Switch element',
+    'aria-label': 'Switch element',
   },
   render: (props) => (
     <div style={{ width: '200px', height: '50px' }}>

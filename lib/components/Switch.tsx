@@ -7,13 +7,13 @@ import './switch.css'
 type SwitchProps = {
   checked?: boolean
   onChange?: (checked: boolean) => void
-  ariaLabel?: string
+  'aria-label'?: string
 }
 
 export const Switch: React.FC<SwitchProps> = ({
   checked,
   onChange,
-  ariaLabel,
+  'aria-label': ariaLabel,
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(Boolean(checked))
   const [isFocused, setIsFocused] = useState<boolean>(false)

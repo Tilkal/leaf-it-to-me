@@ -62,7 +62,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
   isExpanded,
   setIsExpanded,
 }) => {
-  const { disableWarnings, readonly } = useConfigContext()
+  const { disableWarnings, readonly, t } = useConfigContext()
   const { deleteNode, setEditing } = useTreeContext()
   const toggleToolbarRef = useRef<ActionButtonExternalRef>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -119,7 +119,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
         })}
       >
         <Popover
-          content="Empty values may cause issues."
+          content={t('error.message.string.warning')}
           variant={getVariantFromError(nodeError)}
           enabled={[ErrorLevel.ERROR, ErrorLevel.WARNING].includes(nodeError)}
           targetRef={contentRef}
@@ -134,7 +134,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
                 ['empty-string']: node.name === '',
               })}
             >
-              {node.name !== '' ? node.name : 'empty key'}
+              {node.name !== '' ? node.name : t('leaf.view.field.empty-key')}
             </div>
           )}
           {['string', 'number'].includes(node.type) && (
@@ -143,16 +143,18 @@ export const LeafView: React.FC<LeafViewProps> = ({
                 ['empty-string']: node.value === '',
               })}
             >
-              {node.value !== '' ? node.value : 'empty value'}
+              {node.value !== ''
+                ? node.value
+                : t('leaf.view.field.empty-value')}
             </div>
           )}
           {['boolean'].includes(node.type) && (
-            <div className={`leaf-value type-${node.type}`}>
+            <div className="leaf-value type-boolean">
               {Boolean(node.value).toString()}
             </div>
           )}
           {node.type === 'null' && (
-            <div className="leaf-value type-${node.type}">null</div>
+            <div className="leaf-value type-null">null</div>
           )}
         </div>
 
@@ -169,11 +171,15 @@ export const LeafView: React.FC<LeafViewProps> = ({
             <ActionButton
               ref={toggleToolbarRef}
               className="leaf-action-button button-expand"
-              aria-label={isExpanded ? 'Close toolbar' : 'Open toolbar'}
+              aria-label={t(
+                `leaf.view.action.toolbar.label.${isExpanded ? 'close' : 'open'}`,
+              )}
               onClick={() => setIsExpanded((prev) => !prev)}
               icon={<Chevron />}
               popover={{
-                content: isExpanded ? 'Close toolbar' : 'Open toolbar',
+                content: t(
+                  `leaf.view.action.toolbar.label.${isExpanded ? 'close' : 'open'}`,
+                ),
               }}
             />
             <ActionButton
@@ -181,16 +187,19 @@ export const LeafView: React.FC<LeafViewProps> = ({
                 hidden: !isExpanded,
               })}
               onClick={() => isExpanded && setEditing(node.path)}
-              aria-label="Edit"
+              aria-label={t('leaf.view.action.edit.label')}
               icon={<Pencil />}
               tabIndex={isExpanded ? 0 : -1}
-              popover={{ content: 'Edit', enabled: isExpanded }}
+              popover={{
+                content: t('leaf.view.action.edit.label'),
+                enabled: isExpanded,
+              }}
             />
             <ActionButton
               className={classNames('leaf-action-button button-delete', {
                 hidden: !isExpanded,
               })}
-              aria-label="Delete"
+              aria-label={t('leaf.view.action.delete.label')}
               icon={<TrashCan />}
               disabled={!!deleteNodeError}
               tabIndex={isExpanded ? 0 : -1}
@@ -204,7 +213,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
                     onConfirm={onDelete}
                   />
                 ) : (
-                  'Delete'
+                  t('leaf.view.action.delete.label')
                 ),
                 enabled: isExpanded,
                 keepOpen: !!deleteNodeError || mustConfirm,
