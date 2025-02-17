@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 
-import { LanguageConfig, ReadonlyConfig } from '../../defs'
+import { LanguageConfig, ReadonlyConfig, TranslatorPath } from '../../defs'
 import i18n from '../../i18n.json'
 import { t } from '../../utils/i18n'
 import { ConfigContext } from './ConfigContext'
@@ -24,7 +24,7 @@ export const ConfigContextProvider: React.FC<ConfigContextProviderProps> = ({
   config,
   children,
 }) => {
-  const translator = (path: string) => {
+  const translator: TranslatorPath = (path: string) => {
     if (config?.language?.translations) {
       const translation = t(path, config.language.translations)
       if (translation !== path) return translation

@@ -88,6 +88,8 @@ export type ReadonlyConfig = boolean | RegExp[]
 
 export type Translator = (path: string) => string
 
+export type TranslatorPath = (path: Path<typeof i18n>) => string
+
 type DeepPartial<T> = T extends object
   ? {
       [P in keyof T]?: DeepPartial<T[P]>
@@ -100,3 +102,11 @@ export type LanguageConfig = {
   translator?: Translator
   translations?: Translations
 }
+
+export type Path<T, K extends keyof T = keyof T> = K extends string
+  ? T[K] extends string
+    ? K
+    : T[K] extends Record<string, any>
+      ? `${K}.${Path<T[K]>}`
+      : never
+  : never
