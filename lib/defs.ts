@@ -100,3 +100,11 @@ export type LanguageConfig = {
   translator?: Translator
   translations?: Translations
 }
+
+export type Path<T, K extends keyof T = keyof T> = K extends string
+  ? T[K] extends string
+    ? K
+    : T[K] extends Record<string, any>
+      ? `${K}.${Path<T[K]>}`
+      : never
+  : never
