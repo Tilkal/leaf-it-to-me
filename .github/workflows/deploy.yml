@@ -16,4 +16,4 @@ jobs:
     steps:
       - uses: bitovi/github-actions-storybook-to-github-pages@v1.0.3
         with:
-          path: build
+          path: storybook-static
