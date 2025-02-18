@@ -11,6 +11,7 @@ import { useConfigContext } from '../../contexts/ConfigContext/ConfigContext'
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import {
   ErrorLevel,
+  I18NPath,
   LeafMode,
   LeafType,
   Node,
@@ -191,7 +192,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
                 aria-label={t('leaf.edit.input.key.label')}
                 placeholder={t('leaf.edit.input.key.placeholder')}
                 error={errors.name}
-                message={t(`error.message.${type}.${errors.name}`)}
+                message={t(`error.message.${type}.${errors.name}` as I18NPath)}
               />
             )}
             {['string', 'number'].includes(type) && (
@@ -203,7 +204,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
                 aria-label={t('leaf.edit.input.value.label')}
                 placeholder={t('leaf.edit.input.value.placeholder')}
                 error={errors.value}
-                message={t(`error.message.${type}.${errors.value}`)}
+                message={t(`error.message.${type}.${errors.value}` as I18NPath)}
               />
             )}
             {type === 'boolean' && (

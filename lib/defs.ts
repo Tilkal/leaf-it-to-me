@@ -88,7 +88,9 @@ export type ReadonlyConfig = boolean | RegExp[]
 
 export type Translator = (path: string) => string
 
-export type TranslatorPath = (path: Path<typeof i18n>) => string
+export type I18NPath = Path<typeof i18n>
+
+export type TranslatorPath = (path: I18NPath) => string
 
 type DeepPartial<T> = T extends object
   ? {
