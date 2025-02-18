@@ -1,11 +1,8 @@
 name: Publish to npm
 
 on:
-  # release:
-  #   types: [published]
-  push:
-    branches:
-      - chore-publish-package-to-npm
+  release:
+    types: [published]
 
 jobs:
   build:
