@@ -106,7 +106,7 @@ export type LanguageConfig = {
 export type Path<T, K extends keyof T = keyof T> = K extends string
   ? T[K] extends string
     ? K
-    : T[K] extends Record<string, any>
+    : T[K] extends Record<string, unknown>
       ? `${K}.${Path<T[K]>}`
       : never
   : never
