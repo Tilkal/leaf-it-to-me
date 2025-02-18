@@ -1,6 +1,5 @@
 {
   "name": "leaf-it-to-me",
-  "private": true,
   "version": "0.1.0",
   "type": "module",
   "main": "dist/leaf-it-to-me.js",
@@ -11,6 +10,10 @@
   "sideEffects": [
     "**/*.css"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tilkal/leaf-it-to-me.git"
+  },
   "scripts": {
     "lint": "eslint .",
     "storybook": "storybook dev -p 6006",

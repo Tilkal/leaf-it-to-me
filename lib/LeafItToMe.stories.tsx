@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react'
 import React, { useState } from 'react'
 
 import { LeafItToMe, LeafItToMeProps } from './LeafItToMe'
-import config from './config.json'
 import { JSONType } from './defs'
 
 const meta: Meta<typeof LeafItToMe> = {
@@ -71,12 +70,6 @@ export const WithCallback: Story = {
     },
   },
   render: ({ json }) => <WithCallbackComponent json={json} />,
-}
-
-export const LargeJSON: Story = {
-  args: {
-    json: config.themes,
-  },
 }
 
 export const WithError: Story = {
