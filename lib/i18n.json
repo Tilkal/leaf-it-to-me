@@ -1,0 +1,82 @@
+{
+  "tree-view": {
+    "action": {
+      "toggle": {
+        "label": {
+          "open": "Expand",
+          "close": "Collapse"
+        }
+      },
+      "add": {
+        "label": "Add item"
+      }
+    }
+  },
+  "leaf": {
+    "edit": {
+      "input": {
+        "key": {
+          "label": "Update key",
+          "placeholder": "Key"
+        },
+        "value": {
+          "label": "Update value",
+          "placeholder": "Value"
+        },
+        "switch": {
+          "label": "Toggle boolean"
+        },
+        "submit": {
+          "label": "Save"
+        },
+        "cancel": {
+          "label": "Cancel"
+        }
+      }
+    },
+    "view": {
+      "field": {
+        "empty-key": "empty key",
+        "empty-value": "empty value"
+      },
+      "action": {
+        "toolbar": {
+          "label": { "open": "Open toolbar", "close": "Close toolbar" }
+        },
+        "edit": {
+          "label": "Edit"
+        },
+        "delete": {
+          "label": "Delete"
+        }
+      }
+    }
+  },
+  "type-selector": {
+    "label": "Select value type"
+  },
+  "confirm-action": {
+    "message": "This action cannot be undone.\nDo you wish to continue?",
+    "action": {
+      "confirm": {
+        "label": "Confirm action"
+      },
+      "cancel": {
+        "label": "Cancel action"
+      }
+    }
+  },
+  "error": {
+    "title": "An error occured while creating the tree:",
+    "message": {
+      "string": {
+        "error": "Value must be a valid JSON string.\nSome characters are forbidden and must be escaped:\n- Double quote \"\n- Reverse solidus \\\n- Unterminated unicode \\u12",
+        "warning": "Empty values may cause issues."
+      },
+      "number": {
+        "error": "Value must be a valid number. At least one character, numeric only (0..9).",
+        "warning": "Empty values may cause issues."
+      }
+    }
+  }
+}

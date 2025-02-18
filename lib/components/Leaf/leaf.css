@@ -1,0 +1,186 @@
+.leaf-container {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.625rem;
+
+  * {
+    &:focus {
+      outline: 2px solid var(--blue-7);
+    }
+  }
+
+  .leaf {
+    position: relative;
+    background-color: var(--white);
+    border-radius: var(--border-radius-4);
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    max-width: 100%;
+    padding: var(--padding-sqr-4);
+    display: flex;
+    flex-direction: row;
+    gap: var(--gap);
+    font-family: var(--font-family);
+    align-items: center;
+    justify-content: space-between;
+
+    &.error {
+      outline: 1px solid var(--red-3);
+    }
+
+    &.warning {
+      outline: 1px solid var(--orange-3);
+    }
+
+    .leaf-content {
+      display: flex;
+      flex-direction: row;
+      gap: var(--gap);
+      width: 100%;
+      max-width: 100%;
+      align-items: center;
+    }
+
+    .leaf-name {
+      color: var(--gray-7);
+      &.empty-string {
+        color: var(--gray-5);
+        font-size: 0.8rem;
+      }
+    }
+
+    .leaf-value {
+      &.type-string {
+        color: var(--blue-8);
+        &.empty-string {
+          color: var(--gray-5);
+          font-size: 0.8rem;
+        }
+      }
+
+      &.type-number {
+        color: var(--green-9);
+      }
+
+      &.type-boolean {
+        color: var(--orange-10);
+      }
+
+      &.type-null {
+        color: var(--gray-10);
+      }
+    }
+
+    &.leaf-edit {
+      &:hover {
+        background-color: var(--white);
+      }
+    }
+
+    .leaf-input-group {
+      display: flex;
+      flex-direction: row;
+      gap: 3px;
+      width: 100%;
+    }
+
+    .leaf-input-container {
+      position: relative;
+
+      &:first-child {
+        .leaf-input {
+          border-radius: var(--border-radius-h-start-4);
+        }
+      }
+
+      &:last-child {
+        flex: 1 1 auto;
+
+        .leaf-input {
+          border-radius: var(--border-radius-h-end-4);
+          width: -moz-available;
+          width: -webkit-fill-available;
+        }
+      }
+
+      &:only-child {
+        .leaf-input {
+          border-radius: var(--border-radius-4);
+        }
+      }
+
+      .leaf-input {
+        font-size: 1rem;
+        position: relative;
+        padding: var(--padding-sqr-4);
+        background: var(--gray-1);
+        border: none;
+        flex-grow: 1;
+
+        &.error {
+          outline: 1px solid var(--red-5);
+
+          &:focus {
+            outline: 2px solid var(--red-5);
+          }
+        }
+
+        &.warning {
+          outline: 1px solid var(--orange-5);
+
+          &:focus {
+            outline: 2px solid var(--orange-5);
+          }
+        }
+      }
+    }
+
+    .leaf-addon {
+      display: flex;
+      flex-direction: row;
+      gap: var(--gap);
+    }
+  }
+
+  .leaf-actions {
+    width: calc((3 * 1.5rem) + (2 * 8px));
+    min-width: calc((3 * 1.5rem) + (2 * 8px));
+    height: var(--action-button-size);
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    transition: gap ease-in 0.1s;
+
+    .leaf-action-button {
+      opacity: 1;
+      transition:
+        opacity ease-in 0.1s,
+        background-color ease-in 0.1s;
+
+      &.hidden {
+        cursor: default;
+        opacity: 0;
+      }
+    }
+
+    .button-expand {
+      z-index: 1;
+
+      & svg {
+        transition: transform ease-in 0.1s;
+      }
+    }
+
+    &.expanded {
+      gap: 0.5rem;
+
+      .button-expand {
+        & svg {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+}
