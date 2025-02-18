@@ -3,12 +3,22 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "main": "dist/leaf-it-to-me.js",
+  "types": "dist/LeafItToMe.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "lint": "eslint .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build": "tsc -p ./tsconfig.build.json && vite build",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react": "^18.3.1",
@@ -39,6 +49,8 @@
     "globals": "^15.14.0",
     "husky": "^9.1.7",
     "prettier": "^3.4.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "storybook": "^8.4.7",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
