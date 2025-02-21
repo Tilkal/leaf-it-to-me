@@ -42,7 +42,22 @@
       width: 100%;
       max-width: 100%;
       align-items: center;
-      height: var(--action-button-size);
+      min-height: var(--action-button-size);
+      container-name: leaf-content;
+      container-type: inline-size;
+    }
+
+    .leaf-name,
+    .leaf-value {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      /*
+      min-width at 2rem (~length of "key") instead of 0
+      sometimes, a sibling is way to aggressive in expansion and ellipsis needs a minimal space to display correctly
+      */
+      min-width: 2rem;
+      width: auto;
     }
 
     .leaf-name {
@@ -54,10 +69,6 @@
     }
 
     .leaf-value {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      min-width: 0;
       &.type-string {
         color: var(--blue-8);
         &.empty-string {
@@ -94,6 +105,8 @@
 
     .leaf-input-container {
       position: relative;
+      max-width: 100%;
+      min-width: 0;
 
       &:first-child {
         .leaf-input {
@@ -124,6 +137,7 @@
         background: var(--gray-1);
         border: none;
         flex-grow: 1;
+        max-width: calc(100% - (2 * var(--padding-sqr-4)));
 
         &.error {
           outline: 1px solid var(--red-5);
@@ -139,6 +153,46 @@
           &:focus {
             outline: 2px solid var(--orange-5);
           }
+        }
+      }
+    }
+
+    @container leaf-content (width < 200px) {
+      .leaf-input-group {
+        flex-direction: column;
+      }
+
+      .leaf-input-container {
+        &:first-child {
+          .leaf-input {
+            border-radius: var(--border-radius-v-start-4);
+          }
+        }
+
+        &:last-child {
+          .leaf-input {
+            border-radius: var(--border-radius-v-end-4);
+          }
+        }
+
+        &:only-child {
+          .leaf-input {
+            border-radius: var(--border-radius-4);
+          }
+        }
+      }
+
+      .type-selector {
+        &:first-child {
+          border-radius: var(--border-radius-v-start-4);
+        }
+
+        &:last-child {
+          border-radius: var(--border-radius-v-end-4);
+        }
+
+        &:only-child {
+          border-radius: var(--border-radius-4);
         }
       }
     }
