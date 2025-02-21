@@ -177,3 +177,37 @@ export const Translations: Story = {
     },
   },
 }
+
+export const LongText: Story = {
+  args: {
+    json: {
+      lorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      arr: [
+        {
+          key: 'Quisque sed elit vel felis eleifend vehicula at nec ante.',
+        },
+        {
+          nested: {
+            very: {
+              very: {
+                very: {
+                  very: {
+                    deep: 'Phasellus ex lacus, suscipit non est ut, pulvinar accumsan nisl.',
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  },
+  render: (props) => (
+    <div style={{ background: '#eee', width: '500px' }}>
+      <p style={{ fontFamily: 'sans-serif', padding: '10px' }}>
+        Long text and deeply nested long text in small container
+      </p>
+      <LeafItToMe {...props} />
+    </div>
+  ),
+}
