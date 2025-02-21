@@ -21,6 +21,7 @@ export const LEAF_TYPES = [
 export type LeafType = (typeof LEAF_TYPES)[number]
 
 export type Node = {
+  isRoot?: boolean
   type: LeafType
   path: string
   name?: string

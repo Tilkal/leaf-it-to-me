@@ -460,6 +460,86 @@ describe('getJsonDescription', () => {
     })
   })
 
+  // Root
+  it('should have property isRoot on root node only if root is set to true', () => {
+    expect(
+      getJsonDescription({ key: 'value' }, undefined, undefined, true),
+    ).toStrictEqual({
+      type: 'object',
+      isRoot: true,
+      path: '',
+      children: [
+        {
+          type: 'string',
+          name: 'key',
+          value: 'value',
+          path: 'key',
+        },
+      ],
+    })
+  })
+
+  it('should have property isRoot on root node only if root is omited', () => {
+    expect(getJsonDescription({ key: 'value' })).toStrictEqual({
+      type: 'object',
+      isRoot: true,
+      path: '',
+      children: [
+        {
+          type: 'string',
+          name: 'key',
+          value: 'value',
+          path: 'key',
+        },
+      ],
+    })
+  })
+
+  it('should only have isRoot property on root node', () => {
+    expect(
+      getJsonDescription({ key: 'value', a: { b: { c: { d: 'e' } } } }),
+    ).toStrictEqual({
+      type: 'object',
+      isRoot: true,
+      path: '',
+      children: [
+        {
+          type: 'string',
+          name: 'key',
+          value: 'value',
+          path: 'key',
+        },
+        {
+          type: 'object',
+          name: 'a',
+          path: 'a',
+          children: [
+            {
+              type: 'object',
+              name: 'b',
+              path: 'a.b',
+              children: [
+                {
+                  type: 'object',
+                  name: 'c',
+                  path: 'a.b.c',
+                  children: [
+                    {
+                      type: 'string',
+                      name: 'd',
+                      path: 'a.b.c.d',
+                      value: 'e',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+  })
+
   // Error cases
   it('should throw a TypeError for invalid JSON input', () => {
     // @ts-expect-error -- Expected invalid type

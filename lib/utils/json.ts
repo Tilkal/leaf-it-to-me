@@ -37,6 +37,7 @@ export const getJsonDescription = (
   input: JSONType,
   path: string = '',
   nameOrIndex?: string | number,
+  isRoot?: boolean,
 ): Node => {
   // JSON only allows a limited type of values, JS objects do not
   // Since we work with JSON, we only allow JSON types
@@ -65,6 +66,8 @@ export const getJsonDescription = (
     path: newPath,
   }
 
+  if (isRoot || isRoot === undefined) node.isRoot = true
+
   // The name is optional, since it is only used for subtrees in an object (no primitives nor arrays)
   if (nameOrIndex !== undefined && typeof nameOrIndex === 'string')
     node.name = nameOrIndex
@@ -77,13 +80,13 @@ export const getJsonDescription = (
     node.children = input
       // Remove undefined values in subtree, they are not allowed in JSON
       .filter((value) => value !== undefined)
-      .map((value, index) => getJsonDescription(value, newPath, index))
+      .map((value, index) => getJsonDescription(value, newPath, index, false))
 
   if (node.type === 'object' && typeof input === 'object' && input !== null)
     node.children = Object.entries(input)
       // Remove undefined values in subtree, they are not allowed in JSON
       .filter(([, value]) => value !== undefined)
-      .map(([key, value]) => getJsonDescription(value, newPath, key))
+      .map(([key, value]) => getJsonDescription(value, newPath, key, false))
 
   return node
 }

@@ -641,16 +641,16 @@ describe('deleteNodeInTree', () => {
     // Empty path
     expect(() =>
       deleteNodeInTree(
-        { type: 'object', path: '' },
-        { type: 'object', path: '' },
+        { type: 'object', path: '', isRoot: true },
+        { type: 'object', path: '', isRoot: true },
       ),
     ).toThrowError('cannot be deleted')
 
     // Not empty path
     expect(() =>
       deleteNodeInTree(
-        { type: 'object', path: 'a' },
-        { type: 'object', path: 'a' },
+        { type: 'object', path: 'a', isRoot: true },
+        { type: 'object', path: 'a', isRoot: true },
       ),
     ).toThrowError('cannot be deleted')
   })

@@ -152,6 +152,7 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
                   ? updatePath(node.path, name)
                   : node.path,
             }
+            if (node.isRoot) updatedNode.isRoot = node.isRoot
             if (['array', 'object'].includes(type))
               updatedNode.children = node.children ?? []
             if (['string', 'number', 'boolean', 'null'].includes(type))
