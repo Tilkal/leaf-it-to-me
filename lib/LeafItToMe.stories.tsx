@@ -185,6 +185,8 @@ export const LongText: Story = {
       arr: [
         {
           key: 'Quisque sed elit vel felis eleifend vehicula at nec ante.',
+          ['Quisque sed elit vel felis eleifend vehicula at nec ante.']:
+            'value',
         },
         {
           nested: {
@@ -193,6 +195,8 @@ export const LongText: Story = {
                 very: {
                   very: {
                     deep: 'Phasellus ex lacus, suscipit non est ut, pulvinar accumsan nisl.',
+                    ['Phasellus ex lacus, suscipit non est ut, pulvinar accumsan nisl.']:
+                      'value',
                   },
                 },
               },
