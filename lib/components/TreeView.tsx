@@ -25,6 +25,7 @@ export const TreeView: React.FC<TreeProps> = memo(
     const [isExpanded, setIsExpanded] = useState<boolean>(true)
     const [addNodeError, setAddNodeError] = useState<string>('')
 
+    console.log(node.path, { node })
     return (
       <div
         className={classNames('tree-view', { root: mode === LeafMode.ROOT })}
@@ -81,9 +82,10 @@ export const TreeView: React.FC<TreeProps> = memo(
                       if (node.children) {
                         const newNode: Node = {
                           type: 'string',
-                          path: `${node.path}.${node.type === 'array' ? node.children.length : ''}`,
+                          path: `${node.path}${node.path ? '.' : ''}${node.type === 'array' ? node.children.length : ''}`,
                           name: '',
                           value: '',
+                          children: [],
                         }
                         // Only add new node if an unfinished new one is not present
                         // Prevent error for duplicate paths

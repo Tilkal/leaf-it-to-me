@@ -17,7 +17,8 @@
     border-radius: var(--border-radius-4);
     box-shadow: var(--box-shadow);
     width: 100%;
-    max-width: 100%;
+    min-width: 0;
+    flex: 1 1 0;
     padding: var(--padding-sqr-4);
     display: flex;
     flex-direction: row;
@@ -41,6 +42,7 @@
       width: 100%;
       max-width: 100%;
       align-items: center;
+      height: var(--action-button-size);
     }
 
     .leaf-name {
@@ -52,6 +54,10 @@
     }
 
     .leaf-value {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
       &.type-string {
         color: var(--blue-8);
         &.empty-string {

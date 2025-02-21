@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 
 import { ErrorDisplay } from './components/ErrorDisplay'
 import { TreeRoot } from './components/TreeRoot'
@@ -18,6 +18,12 @@ export type LeafItToMeProps = {
   onChange?: (json: JSONType) => void
 }
 
+const ConfigApp: React.FC<
+  Pick<LeafItToMeProps, 'config'> & PropsWithChildren
+> = ({ config, children }) => (
+  <ConfigContextProvider config={config}>{children}</ConfigContextProvider>
+)
+
 export const LeafItToMe: React.FC<LeafItToMeProps> = ({
   config,
   json,
@@ -28,7 +34,7 @@ export const LeafItToMe: React.FC<LeafItToMeProps> = ({
 
   useEffect(() => {
     try {
-      setDescription(getJsonDescription(json))
+      setDescription(getJsonDescription(json, undefined, undefined, true))
     } catch (error) {
       if (typeof error === 'string') {
         setError(error)
@@ -38,13 +44,21 @@ export const LeafItToMe: React.FC<LeafItToMeProps> = ({
     }
   }, [json])
 
+  if (error) {
+    return (
+      <ConfigApp config={config}>
+        <ErrorDisplay message={error} />
+      </ConfigApp>
+    )
+  }
+
   if (description === null) return null
 
   return (
-    <ConfigContextProvider config={config}>
+    <ConfigApp config={config}>
       <TreeContextProvider tree={description} onChange={onChange}>
-        {error ? <ErrorDisplay message={error} /> : <TreeRoot />}
+        <TreeRoot />
       </TreeContextProvider>
-    </ConfigContextProvider>
+    </ConfigApp>
   )
 }

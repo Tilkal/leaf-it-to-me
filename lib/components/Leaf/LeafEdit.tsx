@@ -145,15 +145,18 @@ export const LeafEdit: React.FC<LeafEditProps> = ({ node, mode }) => {
         if (!hasError) {
           try {
             const updatedNode: Node = {
-              ...node,
               type,
               name,
-              value: typedValue(type, value, isChecked),
               path:
                 mode === LeafMode.OBJECT
                   ? updatePath(node.path, name)
                   : node.path,
             }
+            if (node.isRoot) updatedNode.isRoot = node.isRoot
+            if (['array', 'object'].includes(type))
+              updatedNode.children = node.children ?? []
+            if (['string', 'number', 'boolean', 'null'].includes(type))
+              updatedNode.value = typedValue(type, value, isChecked)
             updateNode(node, updatedNode)
             setEditing(null)
           } catch (error) {

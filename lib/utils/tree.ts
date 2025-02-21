@@ -48,18 +48,27 @@ export const addNodeToTree = (
   }
 }
 
+// Creating a node on root object/array without name will result in the path being identical
+// We can cancel and delete the empty node to prevent clutter
+// In this case, path is not enough to check if node is root
+// So we add the "isRoot" property, only defined on node root in any case, to be certain it is the real root
 export const deleteNodeInTree = (node: Node, tree: Node): Node => {
   // Must not delete the root tree
-  if (node.path === tree.path) throw new Error('Root node cannot be deleted.')
+  if (node.path === tree.path && node.isRoot)
+    throw new Error('Root node cannot be deleted.')
 
   // Return early if node not found in tree
   if (!hasNode(node, tree)) return tree
 
-  if (tree.children?.some((child) => child.path === node.path)) {
+  if (
+    tree.children?.some(
+      (child) => child.path === node.path && child.isRoot === node.isRoot,
+    )
+  ) {
     return {
       ...tree,
       children: tree.children.filter(
-        (childNode) => childNode.path !== node.path,
+        (childNode) => childNode.path !== node.path || childNode.isRoot,
       ),
     }
   }

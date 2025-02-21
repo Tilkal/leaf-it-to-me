@@ -1,6 +1,7 @@
 .type-tag {
   border-radius: 6px;
   height: 0.9rem;
+  line-height: 0.9rem;
   font-size: 0.7rem;
   width: fit-content;
   padding: var(--padding-rect-1);
