@@ -2,7 +2,7 @@ import { JSONType, LeafType, Node, Primitive } from '../defs'
 import { toKebabCase } from './string'
 
 export const isValidString = (key: string): boolean =>
-  /^(?:[^"\\]|\\["\\/bfnrt]|\\u[0-9a-fA-F]{4})*$/.test(key)
+  /^(?:[^\\]|\\[^u]|\\u[0-9a-fA-F]{4})*$/.test(key)
 
 export const isValidNumber = (input: string): boolean =>
   /^-{0,1}[0-9]+\.{0,1}[0-9]*([eE]{1}[+-]{1}[0-9]+){0,1}$/.test(input)
@@ -46,8 +46,9 @@ export const getJsonDescription = (
 
   // JSON strings are double quoted and must escape some chars
   // We check if the given string is valid according to those rules
-  if (typeof input === 'string' && !isValidString(input))
+  if (typeof input === 'string' && !isValidString(input)) {
     throw new SyntaxError(`Invalid JSON value at path "${path}".`)
+  }
 
   // The same rule exist for JSON keys
   if (
