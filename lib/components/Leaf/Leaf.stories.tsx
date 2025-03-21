@@ -16,11 +16,19 @@ const meta: Meta<typeof Leaf> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <ConfigContextProvider>
-        <TreeContextProvider tree={{ type: 'null', path: '' }}>
-          <Story />
-        </TreeContextProvider>
-      </ConfigContextProvider>
+      <div
+        style={{
+          height: '100%',
+          width: '700px',
+          padding: '20px',
+        }}
+      >
+        <ConfigContextProvider>
+          <TreeContextProvider tree={{ type: 'null', path: '' }}>
+            <Story />
+          </TreeContextProvider>
+        </ConfigContextProvider>
+      </div>
     ),
   ],
 }

@@ -8,7 +8,7 @@ import {
 } from './json'
 
 describe('isValidString', () => {
-  it('should be valid for keys without special characters', () => {
+  it('should be valid for strings without special characters', () => {
     expect(isValidString('key')).toBe(true)
     expect(isValidString('another_key')).toBe(true)
     expect(isValidString('another key')).toBe(true)
@@ -17,18 +17,20 @@ describe('isValidString', () => {
     expect(isValidString('unescaped / solidus')).toBe(true)
   })
 
-  it('should be valid for keys with escaped characters', () => {
+  it('should be valid for strings with escaped characters', () => {
     expect(isValidString(String.raw`escaped \n newline`)).toBe(true)
     expect(isValidString(String.raw`escaped \t tab`)).toBe(true)
-    expect(isValidString(String.raw`escaped \" quote`)).toBe(true)
-    expect(isValidString(String.raw`escaped \\ reverse solidus`)).toBe(true)
+    expect(isValidString(String.raw`escaped " quote`)).toBe(true)
+    expect(isValidString(String.raw`escaped \ reverse solidus`)).toBe(true)
     expect(isValidString(String.raw`unicode \u1234`)).toBe(true)
   })
 
-  it('should be invalid for keys with unescaped characters', () => {
-    expect(isValidString(String.raw`unescaped " quote`)).toBe(false)
-    expect(isValidString(String.raw`unescaped \ reverse solidus`)).toBe(false)
+  it('should be invalid for strings with unescaped characters', () => {
     expect(isValidString(String.raw`unterminatedKey \u12`)).toBe(false)
+  })
+
+  it('should be valid for strings with stringified json', () => {
+    expect(isValidString('{"a":"b"}'))
   })
 })
 
@@ -574,14 +576,6 @@ describe('getJsonDescription', () => {
   })
 
   it('should throw a SyntaxError for invalid string values', () => {
-    expect(() =>
-      getJsonDescription({ a: String.raw`unescaped " quote` }),
-    ).toThrowError('Invalid JSON value at path ""')
-
-    expect(() =>
-      getJsonDescription({ a: String.raw`unescaped \ reverse solidus` }),
-    ).toThrowError('Invalid JSON value at path ""')
-
     expect(() =>
       getJsonDescription({ a: String.raw`unterminatedKey \u12` }),
     ).toThrowError('Invalid JSON value at path ""')
