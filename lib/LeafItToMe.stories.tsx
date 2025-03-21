@@ -11,6 +11,19 @@ const meta: Meta<typeof LeafItToMe> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <div
+        style={{
+          height: '100%',
+          width: '700px',
+          padding: '20px',
+        }}
+      >
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export default meta
