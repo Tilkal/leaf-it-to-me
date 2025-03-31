@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react'
 
-import { LanguageConfig, ReadonlyConfig, TranslatorPath } from '../../defs'
+import { ExpandedConfig, LanguageConfig, ReadonlyConfig, TranslatorPath } from '../../defs'
 import i18n from '../../i18n.json'
 import { t } from '../../utils/i18n'
 import { ConfigContext } from './ConfigContext'
@@ -8,7 +8,7 @@ import { ConfigContext } from './ConfigContext'
 export type LeafItToMeConfig = {
   readonly?: ReadonlyConfig
   disableWarnings?: boolean
-  isExpanded?: boolean
+  isExpanded?: ExpandedConfig
   language?: LanguageConfig
 }
 

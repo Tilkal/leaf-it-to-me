@@ -4,7 +4,7 @@ import { useConfigContext } from '../contexts/ConfigContext/ConfigContext'
 import { useTreeContext } from '../contexts/TreeContext/TreeContext'
 import { LeafMode, Node, VariantState } from '../defs'
 import { classNames } from '../utils/classNames'
-import { isReadonly } from '../utils/config'
+import { isReadonly, shouldExpand } from '../utils/config'
 import { hashCode } from '../utils/memoization'
 import { ActionButton } from './ActionButton'
 import { Leaf } from './Leaf'
@@ -20,9 +20,9 @@ type TreeProps = {
 
 export const TreeView: React.FC<TreeProps> = memo(
   ({ node, mode }) => {
-    const { readonly, t } = useConfigContext()
+    const { readonly, t, isExpanded: expandedConfig } = useConfigContext()
     const { addNode, setEditing } = useTreeContext()
-    const [isExpanded, setIsExpanded] = useState<boolean>(true)
+    const [isExpanded, setIsExpanded] = useState<boolean>(shouldExpand(expandedConfig, node.path))
     const [addNodeError, setAddNodeError] = useState<string>('')
 
     console.log(node.path, { node })

@@ -1,11 +1,11 @@
 import { createContext, useContext } from 'react'
 
-import { ReadonlyConfig, Translator, TranslatorPath } from '../../defs'
+import { ExpandedConfig, ReadonlyConfig, Translator, TranslatorPath } from '../../defs'
 
 type ConfigContextProps = {
   readonly?: ReadonlyConfig
   disableWarnings?: boolean
-  isExpanded?: boolean
+  isExpanded?: ExpandedConfig
   t: Translator | TranslatorPath
 }
 

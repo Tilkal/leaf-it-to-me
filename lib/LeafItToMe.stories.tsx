@@ -191,6 +191,31 @@ export const Translations: Story = {
   },
 }
 
+export const ExpandedConfig: Story = {
+  args: {
+    json: {
+      key: 'readonly with regex /^key$/',
+      someArray: [
+        42,
+        'readonly with regex /^some-array.1$/',
+        {
+          key2: 'readonly with regex /key[0-9]+$/',
+          key3: 'readonly with regex /key[0-9]+$/',
+          editable: 'not matching regex',
+        },
+      ],
+      readonlyArray: ['readonly with regex /^readonly/', 82],
+      readonlyObject: {
+        key4: 'readonly with regex /^readonly/ and /key[0-9]+$/',
+      },
+    },
+    config: {
+      isExpanded: [/^some-array$/],
+    },
+  }
+}
+
+
 export const LongText: Story = {
   args: {
     json: {
