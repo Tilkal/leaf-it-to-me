@@ -34,7 +34,7 @@ export const TreeView: React.FC<TreeProps> = memo(
           node={node}
           mode={mode}
           addon={
-            ['object', 'array'].includes(node.type) && node.children?.length ? (
+            ['object', 'array'].includes(node.type) && (!readonly || node.children?.length) ? (
               <ActionButton
                 className={classNames('button-toggle', {
                   expanded: isExpanded,
