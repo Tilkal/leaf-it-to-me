@@ -37,6 +37,12 @@ export const Default: Story = {
           type: 'array',
           name: 'key2',
           path: 'key2',
+          children: []
+        },
+        {
+          type: 'array',
+          name: 'key2',
+          path: 'key2',
           children: [
             {
               type: 'string',
