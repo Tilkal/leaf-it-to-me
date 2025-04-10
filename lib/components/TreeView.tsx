@@ -22,10 +22,11 @@ export const TreeView: React.FC<TreeProps> = memo(
   ({ node, mode }) => {
     const { readonly, t, isExpanded: expandedConfig } = useConfigContext()
     const { addNode, setEditing } = useTreeContext()
-    const [isExpanded, setIsExpanded] = useState<boolean>(shouldExpand(expandedConfig, node.path))
+    const [isExpanded, setIsExpanded] = useState<boolean>(
+      shouldExpand(expandedConfig, node.path),
+    )
     const [addNodeError, setAddNodeError] = useState<string>('')
 
-    console.log(node.path, { node })
     return (
       <div
         className={classNames('tree-view', { root: mode === LeafMode.ROOT })}
@@ -34,7 +35,8 @@ export const TreeView: React.FC<TreeProps> = memo(
           node={node}
           mode={mode}
           addon={
-            ['object', 'array'].includes(node.type) && (!readonly || node.children?.length) ? (
+            ['object', 'array'].includes(node.type) &&
+            (!readonly || node.children?.length) ? (
               <ActionButton
                 className={classNames('button-toggle', {
                   expanded: isExpanded,
