@@ -36,10 +36,7 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
   const [expandedList, setExpandedList] = useState<Record<string, boolean>>({})
 
   const isExpanded = (path: string) => {
-    if (path in expandedList) {
-      return expandedList[path]
-    }
-    return shouldExpand(expandConfig, path)
+    return expandedList[path] ?? shouldExpand(expandConfig, path)
   }
   const setIsExpanded = (path: string, expanded: boolean) => {
     setExpandedList(prev => ({

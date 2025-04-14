@@ -23,6 +23,7 @@ export const TreeView: React.FC<TreeProps> = memo(
     const { readonly, t } = useConfigContext()
     const { addNode, setEditing, isExpanded, setIsExpanded } = useTreeContext()
     const [addNodeError, setAddNodeError] = useState<string>('')
+    const expanded = isExpanded(node.path)
 
     return (
       <div
@@ -36,24 +37,24 @@ export const TreeView: React.FC<TreeProps> = memo(
             (!readonly || node.children?.length) ? (
               <ActionButton
                 className={classNames('button-toggle', {
-                  expanded: isExpanded(node.path),
+                  expanded: expanded,
                 })}
                 aria-label={t(
-                  `tree-view.action.toggle.label.${isExpanded(node.path) ? 'close' : 'open'}`,
+                  `tree-view.action.toggle.label.${expanded ? 'close' : 'open'}`,
                 )}
-                aria-expanded={isExpanded(node.path)}
+                aria-expanded={expanded}
                 icon={<Chevron />}
                 popover={{
                   content: t(
-                    `tree-view.action.toggle.label.${isExpanded(node.path) ? 'close' : 'open'}`,
+                    `tree-view.action.toggle.label.${expanded ? 'close' : 'open'}`,
                   ),
                 }}
-                onClick={() => setIsExpanded(node.path, !isExpanded(node.path))}
+                onClick={() => setIsExpanded(node.path, !expanded)}
               />
             ) : null
           }
         />
-        {isExpanded(node.path) && (
+        {expanded && (
           <>
             {node.children?.map((child) => (
               <TreeView
