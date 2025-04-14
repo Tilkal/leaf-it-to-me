@@ -4,7 +4,7 @@ import { useConfigContext } from '../contexts/ConfigContext/ConfigContext'
 import { useTreeContext } from '../contexts/TreeContext/TreeContext'
 import { LeafMode, Node, VariantState } from '../defs'
 import { classNames } from '../utils/classNames'
-import { isReadonly, shouldExpand } from '../utils/config'
+import { isReadonly } from '../utils/config'
 import { hashCode } from '../utils/memoization'
 import { ActionButton } from './ActionButton'
 import { Leaf } from './Leaf'
@@ -20,11 +20,8 @@ type TreeProps = {
 
 export const TreeView: React.FC<TreeProps> = memo(
   ({ node, mode }) => {
-    const { readonly, t, isExpanded: expandedConfig } = useConfigContext()
-    const { addNode, setEditing } = useTreeContext()
-    const [isExpanded, setIsExpanded] = useState<boolean>(
-      shouldExpand(expandedConfig, node.path),
-    )
+    const { readonly, t } = useConfigContext()
+    const { addNode, setEditing, isExpanded, setIsExpanded } = useTreeContext()
     const [addNodeError, setAddNodeError] = useState<string>('')
 
     return (
@@ -39,24 +36,24 @@ export const TreeView: React.FC<TreeProps> = memo(
             (!readonly || node.children?.length) ? (
               <ActionButton
                 className={classNames('button-toggle', {
-                  expanded: isExpanded,
+                  expanded: isExpanded(node.path),
                 })}
                 aria-label={t(
-                  `tree-view.action.toggle.label.${isExpanded ? 'close' : 'open'}`,
+                  `tree-view.action.toggle.label.${isExpanded(node.path) ? 'close' : 'open'}`,
                 )}
-                aria-expanded={isExpanded}
+                aria-expanded={isExpanded(node.path)}
                 icon={<Chevron />}
                 popover={{
                   content: t(
-                    `tree-view.action.toggle.label.${isExpanded ? 'close' : 'open'}`,
+                    `tree-view.action.toggle.label.${isExpanded(node.path) ? 'close' : 'open'}`,
                   ),
                 }}
-                onClick={() => setIsExpanded((prev) => !prev)}
+                onClick={() => setIsExpanded(node.path, !isExpanded(node.path))}
               />
             ) : null
           }
         />
-        {isExpanded && (
+        {isExpanded(node.path) && (
           <>
             {node.children?.map((child) => (
               <TreeView

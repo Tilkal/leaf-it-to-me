@@ -14,6 +14,8 @@ export type TreeContextProps = {
   deleteNode: DeleteNodeAction
   editing: string | null
   setEditing: Dispatch<SetStateAction<string | null>>
+  isExpanded: (path: string) => boolean
+  setIsExpanded: (path: string, expanded: boolean) => void
 }
 
 export const TreeContext = createContext<TreeContextProps>(

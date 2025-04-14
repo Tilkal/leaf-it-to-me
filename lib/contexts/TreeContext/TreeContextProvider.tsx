@@ -3,11 +3,12 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import {
   AddNodeAction,
   DeleteNodeAction,
+  ExpandedConfig,
   JSONType,
   Node,
   UpdateNodeAction,
 } from '../../defs'
-import { isReadonly } from '../../utils/config'
+import { isReadonly, shouldExpand } from '../../utils/config'
 import { getJsonFromNode } from '../../utils/json'
 import {
   addNodeToTree,
@@ -20,16 +21,33 @@ import { TreeContext } from './TreeContext'
 type TreeContextProviderProps = PropsWithChildren & {
   tree: Node
   onChange?: (json: JSONType) => void
+  expandConfig?: ExpandedConfig
 }
 
 export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
   tree: originalTree,
   onChange,
+  expandConfig,
   children,
 }) => {
   const { readonly } = useConfigContext()
   const [tree, setTree] = useState<Node>(originalTree)
   const [editing, setEditing] = useState<string | null>(null)
+  const [expandedList, setExpandedList] = useState<Record<string, boolean>>({})
+
+  const isExpanded = (path: string) => {
+    if (path in expandedList) {
+      return expandedList[path]
+    }
+    return shouldExpand(expandConfig, path)
+  }
+  const setIsExpanded = (path: string, expanded: boolean) => {
+    setExpandedList(prev => ({
+      ...prev,
+      [path]: expanded
+    }))
+  }
+
 
   // Errors in addNode, updateNode and deleteNode are catched
   // setTree(prev => action(prev)) will prevent that behavior
@@ -64,7 +82,7 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
 
   return (
     <TreeContext.Provider
-      value={{ tree, addNode, updateNode, deleteNode, editing, setEditing }}
+      value={{ tree, addNode, updateNode, deleteNode, editing, setEditing, isExpanded, setIsExpanded }}
     >
       {children}
     </TreeContext.Provider>
