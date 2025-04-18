@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import React, { useState } from 'react'
 
 import { LeafItToMe, LeafItToMeProps } from './LeafItToMe'
-import { JSONType } from './defs'
+import { ErrorLevel, JSONType } from './defs'
 
 const meta: Meta<typeof LeafItToMe> = {
   title: 'LeafItToMe',
@@ -212,9 +212,8 @@ export const ExpandedConfig: Story = {
     config: {
       isExpanded: [/^some-array$/],
     },
-  }
+  },
 }
-
 
 export const LongText: Story = {
   args: {
@@ -252,4 +251,35 @@ export const LongText: Story = {
       <LeafItToMe {...props} />
     </div>
   ),
+}
+
+export const CustomType: Story = {
+  args: {
+    json: {
+      key: 'value',
+      someArray: [
+        42,
+        {
+          key: 'value',
+          custom: 'Hello world!',
+        },
+      ],
+    },
+    config: {
+      plugins: [
+        {
+          type: 'helloworld',
+          color: 'cyan',
+          checker: (value) => value === 'Hello world!',
+          validator: (value) =>
+            value === 'Hello world!' ? ErrorLevel.NONE : ErrorLevel.ERROR,
+          errorMessages: {
+            [ErrorLevel.ERROR]: 'Should be Hello world!',
+          },
+          parser: (value) => value,
+          nested: false,
+        },
+      ],
+    },
+  },
 }

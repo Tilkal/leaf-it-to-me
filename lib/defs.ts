@@ -1,3 +1,5 @@
+import { ReactElement } from 'react'
+
 import i18n from './i18n.json'
 
 export type Primitive = string | number | boolean | null
@@ -115,3 +117,15 @@ export type Path<T, K extends keyof T = keyof T> = K extends string
       ? `${K}.${Path<T[K]>}`
       : never
   : never
+
+export type Plugin = {
+  type: string
+  color: string
+  checker: (value: unknown) => boolean
+  validator: (value: unknown) => ErrorLevel
+  errorMessages?: Partial<Record<ErrorLevel, string>>
+  parser: (value: Primitive) => JSONType
+  nested: 'object' | 'array' | false
+  input?: ReactElement
+  viewer?: ReactElement
+}

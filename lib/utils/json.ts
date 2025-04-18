@@ -1,4 +1,4 @@
-import { JSONType, LeafType, Node, Primitive } from '../defs'
+import { JSONType, LeafType, Node, Plugin, Primitive } from '../defs'
 import { toKebabCase } from './string'
 
 export const isValidString = (key: string): boolean =>
@@ -13,8 +13,11 @@ const isInvalidValue = (value: unknown): boolean =>
   typeof value === 'bigint' ||
   typeof value === 'symbol'
 
-const getNodeType = (input: JSONType): LeafType => {
+const getNodeType = (input: JSONType, plugins?: Plugin[]): LeafType => {
   switch (true) {
+    case plugins && plugins.length !== 0:
+      return (plugins.find((plugin) => plugin.checker(input))?.type ??
+        getNodeType(input)) as LeafType
     case input === null:
       return 'null'
     case Array.isArray(input):
@@ -32,21 +35,30 @@ const isPrimitive = (input: Primitive | JSONType): input is Primitive =>
 const getNewPath = (parent: string, child?: string | number): string =>
   `${parent}${parent !== '' && child !== undefined ? '.' : ''}${child ?? ''}`
 
+type JsonDescriptionParameters = {
+  json: JSONType
+  path?: string
+  nameOrIndex?: string | number
+  isRoot?: boolean
+  plugins?: Plugin[]
+}
+
 // Recursively create the tree description from a given input
-export const getJsonDescription = (
-  input: JSONType,
-  path: string = '',
-  nameOrIndex?: string | number,
-  isRoot?: boolean,
-): Node => {
+export const getJsonDescription = ({
+  json,
+  path = '',
+  nameOrIndex,
+  isRoot,
+  plugins,
+}: JsonDescriptionParameters): Node => {
   // JSON only allows a limited type of values, JS objects do not
   // Since we work with JSON, we only allow JSON types
-  if (isInvalidValue(input))
+  if (isInvalidValue(json))
     throw new TypeError(`Invalid JSON value at path "${path}".`)
 
   // JSON strings are double quoted and must escape some chars
   // We check if the given string is valid according to those rules
-  if (typeof input === 'string' && !isValidString(input)) {
+  if (typeof json === 'string' && !isValidString(json)) {
     throw new SyntaxError(`Invalid JSON value at path "${path}".`)
   }
 
@@ -62,8 +74,9 @@ export const getJsonDescription = (
     path,
     typeof nameOrIndex === 'string' ? toKebabCase(nameOrIndex) : nameOrIndex,
   )
+
   const node: Node = {
-    type: getNodeType(input),
+    type: getNodeType(json, plugins),
     path: newPath,
   }
 
@@ -74,20 +87,49 @@ export const getJsonDescription = (
     node.name = nameOrIndex
 
   // Primitives are final nodes with values
-  if (isPrimitive(input)) node.value = input
+  if (isPrimitive(json)) node.value = json
 
-  // Arrays and objects have children
-  if (node.type === 'array' && Array.isArray(input))
-    node.children = input
+  const nodePlugin: Plugin | undefined = plugins?.find(
+    (plugin) => plugin.type === node.type,
+  )
+
+  // Arrays, objects and custom nested have children
+  if (
+    (node.type === 'array' || nodePlugin?.nested === 'array') &&
+    Array.isArray(json)
+  ) {
+    node.children = json
       // Remove undefined values in subtree, they are not allowed in JSON
       .filter((value) => value !== undefined)
-      .map((value, index) => getJsonDescription(value, newPath, index, false))
+      .map((value, index) =>
+        getJsonDescription({
+          json: value,
+          path: newPath,
+          nameOrIndex: index,
+          isRoot: false,
+          plugins,
+        }),
+      )
+  }
 
-  if (node.type === 'object' && typeof input === 'object' && input !== null)
-    node.children = Object.entries(input)
+  if (
+    (node.type === 'object' || nodePlugin?.nested === 'object') &&
+    typeof json === 'object' &&
+    json !== null
+  ) {
+    node.children = Object.entries(json)
       // Remove undefined values in subtree, they are not allowed in JSON
       .filter(([, value]) => value !== undefined)
-      .map(([key, value]) => getJsonDescription(value, newPath, key, false))
+      .map(([key, value]) =>
+        getJsonDescription({
+          json: value,
+          path: newPath,
+          nameOrIndex: key,
+          isRoot: false,
+          plugins,
+        }),
+      )
+  }
 
   return node
 }

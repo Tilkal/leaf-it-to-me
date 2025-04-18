@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { ErrorLevel } from '../defs'
 import {
   getJsonDescription,
   getJsonFromNode,
@@ -78,75 +79,75 @@ describe('isValidNumber', () => {
 describe('getJsonDescription', () => {
   // Node types
   it('should include the type of a node', () => {
-    expect(getJsonDescription('')).toMatchObject({
+    expect(getJsonDescription({ json: '' })).toMatchObject({
       type: 'string',
     })
   })
 
   it('should correctly identify a string and have a value', () => {
-    expect(getJsonDescription('')).toMatchObject({
+    expect(getJsonDescription({ json: '' })).toMatchObject({
       type: 'string',
       value: '',
     })
 
-    expect(getJsonDescription('not empty string')).toMatchObject({
+    expect(getJsonDescription({ json: 'not empty string' })).toMatchObject({
       type: 'string',
       value: 'not empty string',
     })
   })
 
   it('should correctly identify a number and have a value', () => {
-    expect(getJsonDescription(0)).toMatchObject({
+    expect(getJsonDescription({ json: 0 })).toMatchObject({
       type: 'number',
       value: 0,
     })
 
-    expect(getJsonDescription(42)).toMatchObject({
+    expect(getJsonDescription({ json: 42 })).toMatchObject({
       type: 'number',
       value: 42,
     })
 
-    expect(getJsonDescription(-42)).toMatchObject({
+    expect(getJsonDescription({ json: -42 })).toMatchObject({
       type: 'number',
       value: -42,
     })
   })
 
   it('should correctly identify a boolean and have a value', () => {
-    expect(getJsonDescription(true)).toMatchObject({
+    expect(getJsonDescription({ json: true })).toMatchObject({
       type: 'boolean',
       value: true,
     })
 
-    expect(getJsonDescription(false)).toMatchObject({
+    expect(getJsonDescription({ json: false })).toMatchObject({
       type: 'boolean',
       value: false,
     })
   })
 
   it('should correctly identify a null and have null as value', () => {
-    expect(getJsonDescription(null)).toMatchObject({
+    expect(getJsonDescription({ json: null })).toMatchObject({
       type: 'null',
       value: null,
     })
   })
 
   it('should correctly identify an array and have children', () => {
-    expect(getJsonDescription([])).toMatchObject({
+    expect(getJsonDescription({ json: [] })).toMatchObject({
       type: 'array',
       children: [],
     })
   })
 
   it('should correctly identify an object and have children', () => {
-    expect(getJsonDescription({})).toMatchObject({
+    expect(getJsonDescription({ json: {} })).toMatchObject({
       type: 'object',
       children: [],
     })
   })
 
   it('should correctly identify values of an array as nodes with value but no name', () => {
-    expect(getJsonDescription([42])).toMatchObject({
+    expect(getJsonDescription({ json: [42] })).toMatchObject({
       type: 'array',
       children: [
         {
@@ -158,7 +159,7 @@ describe('getJsonDescription', () => {
   })
 
   it('should correctly identify values of an object as nodes with value and name', () => {
-    expect(getJsonDescription({ key: 'value' })).toMatchObject({
+    expect(getJsonDescription({ json: { key: 'value' } })).toMatchObject({
       type: 'object',
       children: [
         {
@@ -172,12 +173,12 @@ describe('getJsonDescription', () => {
 
   // Empty array and object
   it('should return an empty root object if the input JSON is empty', () => {
-    expect(getJsonDescription({})).toMatchObject({
+    expect(getJsonDescription({ json: {} })).toMatchObject({
       type: 'object',
       children: [],
     })
 
-    expect(getJsonDescription([])).toMatchObject({
+    expect(getJsonDescription({ json: [] })).toMatchObject({
       type: 'array',
       children: [],
     })
@@ -185,7 +186,7 @@ describe('getJsonDescription', () => {
 
   // Simple "map"
   it('should handle a JSON with a single key-value pair', () => {
-    expect(getJsonDescription({ key: 'value' })).toMatchObject({
+    expect(getJsonDescription({ json: { key: 'value' } })).toMatchObject({
       type: 'object',
       children: [
         {
@@ -199,7 +200,9 @@ describe('getJsonDescription', () => {
 
   it('should handle a JSON with multiple key-value pairs', () => {
     expect(
-      getJsonDescription({ key1: 'value', key2: 42, key3: true, key4: null }),
+      getJsonDescription({
+        json: { key1: 'value', key2: 42, key3: true, key4: null },
+      }),
     ).toMatchObject({
       type: 'object',
       children: [
@@ -229,7 +232,7 @@ describe('getJsonDescription', () => {
 
   // Simple array JSON
   it('should handle a JSON array with primitive values', () => {
-    expect(getJsonDescription(['value', 'value'])).toMatchObject({
+    expect(getJsonDescription({ json: ['value', 'value'] })).toMatchObject({
       type: 'array',
       children: [
         {
@@ -245,7 +248,9 @@ describe('getJsonDescription', () => {
   })
 
   it('should handle a JSON array with mixed primitive types', () => {
-    expect(getJsonDescription(['value', 42, true, null])).toMatchObject({
+    expect(
+      getJsonDescription({ json: ['value', 42, true, null] }),
+    ).toMatchObject({
       type: 'array',
       children: [
         {
@@ -272,9 +277,11 @@ describe('getJsonDescription', () => {
   it('should handle a JSON object with nested objects', () => {
     expect(
       getJsonDescription({
-        key1: 'value',
-        key2: { key3: 'value2', key4: { key5: 'value3' } },
-        key6: 42,
+        json: {
+          key1: 'value',
+          key2: { key3: 'value2', key4: { key5: 'value3' } },
+          key6: 42,
+        },
       }),
     ).toMatchObject({
       type: 'object',
@@ -311,7 +318,9 @@ describe('getJsonDescription', () => {
 
   it('should handle a JSON array with nested arrays', () => {
     expect(
-      getJsonDescription(['value1', [1, true, 'value2', ['value3']], null]),
+      getJsonDescription({
+        json: ['value1', [1, true, 'value2', ['value3']], null],
+      }),
     ).toMatchObject({
       type: 'array',
       children: [
@@ -356,8 +365,10 @@ describe('getJsonDescription', () => {
   it('should handle a JSON object with mixed nested objects and arrays', () => {
     expect(
       getJsonDescription({
-        key1: [1, { key2: 'value', key3: [true] }],
-        key4: null,
+        json: {
+          key1: [1, { key2: 'value', key3: [true] }],
+          key4: null,
+        },
       }),
     ).toMatchObject({
       type: 'object',
@@ -403,13 +414,15 @@ describe('getJsonDescription', () => {
 
   it('should handle a JSON array with mixed nested objects and arrays', () => {
     expect(
-      getJsonDescription([
-        [1, { key1: 'value', key2: [true] }],
-        null,
-        {
-          key3: [42],
-        },
-      ]),
+      getJsonDescription({
+        json: [
+          [1, { key1: 'value', key2: [true] }],
+          null,
+          {
+            key3: [42],
+          },
+        ],
+      }),
     ).toMatchObject({
       type: 'array',
       children: [
@@ -465,7 +478,7 @@ describe('getJsonDescription', () => {
   // Root
   it('should have property isRoot on root node only if root is set to true', () => {
     expect(
-      getJsonDescription({ key: 'value' }, undefined, undefined, true),
+      getJsonDescription({ json: { key: 'value' }, isRoot: true }),
     ).toStrictEqual({
       type: 'object',
       isRoot: true,
@@ -482,7 +495,7 @@ describe('getJsonDescription', () => {
   })
 
   it('should have property isRoot on root node only if root is omited', () => {
-    expect(getJsonDescription({ key: 'value' })).toStrictEqual({
+    expect(getJsonDescription({ json: { key: 'value' } })).toStrictEqual({
       type: 'object',
       isRoot: true,
       path: '',
@@ -499,7 +512,9 @@ describe('getJsonDescription', () => {
 
   it('should only have isRoot property on root node', () => {
     expect(
-      getJsonDescription({ key: 'value', a: { b: { c: { d: 'e' } } } }),
+      getJsonDescription({
+        json: { key: 'value', a: { b: { c: { d: 'e' } } } },
+      }),
     ).toStrictEqual({
       type: 'object',
       isRoot: true,
@@ -545,47 +560,49 @@ describe('getJsonDescription', () => {
   // Error cases
   it('should throw a TypeError for invalid JSON input', () => {
     // @ts-expect-error -- Expected invalid type
-    expect(() => getJsonDescription({ a: 1n })).toThrowError(
+    expect(() => getJsonDescription({ json: { a: 1n } })).toThrowError(
+      'Invalid JSON value at path ""',
+    )
+
+    expect(() =>
+      // @ts-expect-error -- Expected invalid type
+      getJsonDescription({ json: { a: () => undefined } }),
+    ).toThrowError('Invalid JSON value at path ""')
+
+    // @ts-expect-error -- Expected invalid type
+    expect(() => getJsonDescription({ json: undefined })).toThrowError(
       'Invalid JSON value at path ""',
     )
 
     // @ts-expect-error -- Expected invalid type
-    expect(() => getJsonDescription({ a: () => undefined })).toThrowError(
+    expect(() => getJsonDescription({ json: function () {} })).toThrowError(
       'Invalid JSON value at path ""',
     )
 
     // @ts-expect-error -- Expected invalid type
-    expect(() => getJsonDescription(undefined)).toThrowError(
+    expect(() => getJsonDescription({ json: () => undefined })).toThrowError(
       'Invalid JSON value at path ""',
     )
 
     // @ts-expect-error -- Expected invalid type
-    expect(() => getJsonDescription(function () {})).toThrowError(
-      'Invalid JSON value at path ""',
-    )
-
-    // @ts-expect-error -- Expected invalid type
-    expect(() => getJsonDescription(() => undefined)).toThrowError(
-      'Invalid JSON value at path ""',
-    )
-
-    // @ts-expect-error -- Expected invalid type
-    expect(() => getJsonDescription(Symbol())).toThrowError(
+    expect(() => getJsonDescription({ json: Symbol() })).toThrowError(
       'Invalid JSON value at path ""',
     )
   })
 
   it('should throw a SyntaxError for invalid string values', () => {
     expect(() =>
-      getJsonDescription({ a: String.raw`unterminatedKey \u12` }),
+      getJsonDescription({ json: { a: String.raw`unterminatedKey \u12` } }),
     ).toThrowError('Invalid JSON value at path ""')
   })
 
   // undefined case
   it('should ignore undefined values', () => {
     expect(
-      // @ts-expect-error -- Testing undefined case
-      getJsonDescription([undefined, 42, undefined, 'value', undefined]),
+      getJsonDescription({
+        // @ts-expect-error -- Testing undefined case
+        json: [undefined, 42, undefined, 'value', undefined],
+      }),
     ).toMatchObject({
       type: 'array',
       children: [
@@ -602,7 +619,7 @@ describe('getJsonDescription', () => {
 
     expect(
       // @ts-expect-error -- Testing undefined case
-      getJsonDescription({ key1: undefined, key2: 42 }),
+      getJsonDescription({ json: { key1: undefined, key2: 42 } }),
     ).toMatchObject({
       type: 'object',
       children: [
@@ -616,7 +633,7 @@ describe('getJsonDescription', () => {
   })
 
   it('should keep empty string as key', () => {
-    expect(getJsonDescription({ '': 'value' })).toMatchObject({
+    expect(getJsonDescription({ json: { '': 'value' } })).toMatchObject({
       type: 'object',
       children: [
         {
@@ -630,29 +647,29 @@ describe('getJsonDescription', () => {
 
   // Path
   it('should have an empty path for root element', () => {
-    expect(getJsonDescription(42)).toMatchObject({
+    expect(getJsonDescription({ json: 42 })).toMatchObject({
       path: '',
     })
-    expect(getJsonDescription('')).toMatchObject({
+    expect(getJsonDescription({ json: '' })).toMatchObject({
       path: '',
     })
-    expect(getJsonDescription(null)).toMatchObject({
+    expect(getJsonDescription({ json: null })).toMatchObject({
       path: '',
     })
-    expect(getJsonDescription(true)).toMatchObject({
+    expect(getJsonDescription({ json: true })).toMatchObject({
       path: '',
     })
-    expect(getJsonDescription([])).toMatchObject({
+    expect(getJsonDescription({ json: [] })).toMatchObject({
       path: '',
     })
-    expect(getJsonDescription({})).toMatchObject({
+    expect(getJsonDescription({ json: {} })).toMatchObject({
       path: '',
     })
   })
 
   it('should have an object key as path for object keys', () => {
     expect(
-      getJsonDescription({ key1: 'value1', key2: 'value2' }),
+      getJsonDescription({ json: { key1: 'value1', key2: 'value2' } }),
     ).toMatchObject({
       children: [
         {
@@ -667,7 +684,7 @@ describe('getJsonDescription', () => {
 
   it('should format keys to kebab-case for paths', () => {
     expect(
-      getJsonDescription({ ['some not kebab cased key']: 'value1' }),
+      getJsonDescription({ json: { ['some not kebab cased key']: 'value1' } }),
     ).toMatchObject({
       children: [
         {
@@ -678,7 +695,7 @@ describe('getJsonDescription', () => {
   })
 
   it('should have an index path for array items', () => {
-    expect(getJsonDescription(['value', 42])).toMatchObject({
+    expect(getJsonDescription({ json: ['value', 42] })).toMatchObject({
       children: [
         {
           path: '0',
@@ -694,9 +711,11 @@ describe('getJsonDescription', () => {
     // Nested objects
     expect(
       getJsonDescription({
-        key1: 'value',
-        key2: {
-          key3: 42,
+        json: {
+          key1: 'value',
+          key2: {
+            key3: 42,
+          },
         },
       }),
     ).toMatchObject({
@@ -716,7 +735,7 @@ describe('getJsonDescription', () => {
     })
 
     // Nested arrays
-    expect(getJsonDescription([1, [42, [2]]])).toMatchObject({
+    expect(getJsonDescription({ json: [1, [42, [2]]] })).toMatchObject({
       children: [
         {
           path: '0',
@@ -741,7 +760,9 @@ describe('getJsonDescription', () => {
     })
 
     // Mixed
-    expect(getJsonDescription([{ key1: { key2: [42] } }])).toMatchObject({
+    expect(
+      getJsonDescription({ json: [{ key1: { key2: [42] } }] }),
+    ).toMatchObject({
       children: [
         {
           path: '0',
@@ -758,6 +779,86 @@ describe('getJsonDescription', () => {
                   ],
                 },
               ],
+            },
+          ],
+        },
+      ],
+    })
+  })
+
+  // Plugins
+  it('should find a custom type', () => {
+    expect(
+      getJsonDescription({
+        json: 'potatoe',
+        plugins: [
+          {
+            type: 'potatoe',
+            checker: (value) => value === 'potatoe',
+            color: 'cyan',
+            nested: false,
+            parser: (value) => value,
+            validator: () => ErrorLevel.NONE,
+          },
+        ],
+      }),
+    ).toMatchObject({
+      type: 'potatoe',
+      value: 'potatoe',
+    })
+  })
+
+  it('should have children for custom nested type', () => {
+    type Potatoe = {
+      type: 'potatoe'
+      values: string[]
+    }
+
+    const isPotatoe = (json: unknown): json is Potatoe =>
+      typeof json === 'object' &&
+      Object.hasOwn(json as object, 'type') &&
+      (json as { type: string }).type === 'potatoe'
+
+    expect(
+      getJsonDescription({
+        json: {
+          type: 'potatoe',
+          values: ['agata', 'balmoral', 'coliban'],
+        },
+        plugins: [
+          {
+            type: 'potatoe',
+            checker: isPotatoe,
+            color: 'cyan',
+            nested: 'object',
+            parser: (value) => value,
+            validator: () => ErrorLevel.NONE,
+          },
+        ],
+      }),
+    ).toMatchObject({
+      type: 'potatoe',
+      children: [
+        {
+          type: 'string',
+          name: 'type',
+          value: 'potatoe',
+        },
+        {
+          type: 'array',
+          name: 'values',
+          children: [
+            {
+              type: 'string',
+              value: 'agata',
+            },
+            {
+              type: 'string',
+              value: 'balmoral',
+            },
+            {
+              type: 'string',
+              value: 'coliban',
             },
           ],
         },

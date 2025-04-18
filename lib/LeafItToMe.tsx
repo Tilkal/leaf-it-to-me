@@ -34,7 +34,7 @@ export const LeafItToMe: React.FC<LeafItToMeProps> = ({
 
   useEffect(() => {
     try {
-      setDescription(getJsonDescription(json, undefined, undefined, true))
+      setDescription(getJsonDescription({ json, isRoot: true }))
     } catch (error) {
       if (typeof error === 'string') {
         setError(error)
