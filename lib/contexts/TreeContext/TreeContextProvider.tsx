@@ -35,16 +35,19 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
   const [editing, setEditing] = useState<string | null>(null)
   const [expandedList, setExpandedList] = useState<Record<string, boolean>>({})
 
+  useEffect(() => {
+    setTree(originalTree)
+  }, [originalTree])
+
   const isExpanded = (path: string) => {
     return expandedList[path] ?? shouldExpand(expandConfig, path)
   }
   const setIsExpanded = (path: string, expanded: boolean) => {
-    setExpandedList(prev => ({
+    setExpandedList((prev) => ({
       ...prev,
-      [path]: expanded
+      [path]: expanded,
     }))
   }
-
 
   // Errors in addNode, updateNode and deleteNode are catched
   // setTree(prev => action(prev)) will prevent that behavior
@@ -79,7 +82,16 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
 
   return (
     <TreeContext.Provider
-      value={{ tree, addNode, updateNode, deleteNode, editing, setEditing, isExpanded, setIsExpanded }}
+      value={{
+        tree,
+        addNode,
+        updateNode,
+        deleteNode,
+        editing,
+        setEditing,
+        isExpanded,
+        setIsExpanded,
+      }}
     >
       {children}
     </TreeContext.Provider>
