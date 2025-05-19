@@ -33,8 +33,8 @@ type LeafViewProps = {
   node: LeafNode
   mode: LeafMode
   addon?: ReactElement | null
-  isCollapsed: boolean
-  setIsCollapsed: Dispatch<SetStateAction<boolean>>
+  isExpanded: boolean
+  setIsExpanded: Dispatch<SetStateAction<boolean>>
 }
 
 const validateNode = (
@@ -59,8 +59,8 @@ export const LeafView: React.FC<LeafViewProps> = ({
   node,
   mode,
   addon,
-  isCollapsed,
-  setIsCollapsed,
+  isExpanded,
+  setIsExpanded,
 }) => {
   const { disableWarnings, readonly, t } = useConfigContext()
   const { deleteNode, setEditing } = useTreeContext()
@@ -84,10 +84,10 @@ export const LeafView: React.FC<LeafViewProps> = ({
         ) &&
         !toggleToolbarRef.current?.contains(event.target)
       ) {
-        setIsCollapsed(true)
+        setIsExpanded(false)
       }
     },
-    [setIsCollapsed],
+    [setIsExpanded],
   )
 
   const onDelete = useCallback(() => {
@@ -163,7 +163,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
       <div
         className={classNames('leaf-actions', {
           readonly: isReadonly(readonly, node.path),
-          expanded: !isCollapsed,
+          expanded: isExpanded,
         })}
       >
         {!isReadonly(readonly, node.path) && (
@@ -172,37 +172,37 @@ export const LeafView: React.FC<LeafViewProps> = ({
               ref={toggleToolbarRef}
               className="leaf-action-button button-expand"
               aria-label={t(
-                `leaf.view.action.toolbar.label.${!isCollapsed ? 'close' : 'open'}`,
+                `leaf.view.action.toolbar.label.${isExpanded ? 'close' : 'open'}`,
               )}
-              onClick={() => setIsCollapsed((prev) => !prev)}
+              onClick={() => setIsExpanded((prev) => !prev)}
               icon={<Chevron />}
               popover={{
                 content: t(
-                  `leaf.view.action.toolbar.label.${!isCollapsed ? 'close' : 'open'}`,
+                  `leaf.view.action.toolbar.label.${isExpanded ? 'close' : 'open'}`,
                 ),
               }}
             />
             <ActionButton
               className={classNames('leaf-action-button button-edit', {
-                hidden: isCollapsed,
+                hidden: !isExpanded,
               })}
-              onClick={() => !isCollapsed && setEditing(node.path)}
+              onClick={() => isExpanded && setEditing(node.path)}
               aria-label={t('leaf.view.action.edit.label')}
               icon={<Pencil />}
-              tabIndex={!isCollapsed ? 0 : -1}
+              tabIndex={isExpanded ? 0 : -1}
               popover={{
                 content: t('leaf.view.action.edit.label'),
-                enabled: !isCollapsed,
+                enabled: isExpanded,
               }}
             />
             <ActionButton
               className={classNames('leaf-action-button button-delete', {
-                hidden: isCollapsed,
+                hidden: !isExpanded,
               })}
               aria-label={t('leaf.view.action.delete.label')}
               icon={<TrashCan />}
               disabled={!!deleteNodeError}
-              tabIndex={!isCollapsed ? 0 : -1}
+              tabIndex={isExpanded ? 0 : -1}
               variant={VariantState.ERROR}
               popover={{
                 content: deleteNodeError ? (
@@ -215,14 +215,14 @@ export const LeafView: React.FC<LeafViewProps> = ({
                 ) : (
                   t('leaf.view.action.delete.label')
                 ),
-                enabled: !isCollapsed,
+                enabled: isExpanded,
                 keepOpen: !!deleteNodeError || mustConfirm,
                 variant:
                   deleteNodeError || mustConfirm
                     ? VariantState.ERROR
                     : VariantState.DEFAULT,
               }}
-              onClick={() => setMustConfirm((prev) => !prev)}
+              onClick={() => isExpanded && setMustConfirm((prev) => !prev)}
             />
           </>
         )}
