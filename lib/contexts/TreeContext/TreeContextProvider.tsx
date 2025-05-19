@@ -77,8 +77,9 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
   }
 
   useEffect(() => {
+    if (JSON.stringify(originalTree) === JSON.stringify(tree)) return
     if (onChange) onChange(getJsonFromNode(tree))
-  }, [tree, onChange])
+  }, [tree, onChange, originalTree])
 
   return (
     <TreeContext.Provider

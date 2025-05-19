@@ -58,14 +58,7 @@ const WithCallbackComponent: React.FC<LeafItToMeProps> = ({ json }) => {
       >
         {JSON.stringify(updatedJson, null, 2)}
       </pre>
-      <LeafItToMe
-        json={json}
-        onChange={(newJson) => {
-          if (JSON.stringify(newJson) !== JSON.stringify(updatedJson)) {
-            setJson(newJson)
-          }
-        }}
-      />
+      <LeafItToMe json={json} onChange={setJson} />
     </div>
   )
 }
@@ -75,6 +68,18 @@ export const WithCallback: Story = {
     json: {
       key: 'value',
       someArray: [
+        42,
+        {
+          key: 'value',
+        },
+      ],
+      someArray2: [
+        42,
+        {
+          key: 'value',
+        },
+      ],
+      someArray3: [
         42,
         {
           key: 'value',

@@ -22,7 +22,7 @@ export const Leaf: React.FC<LeafProps> = ({
 }) => {
   const { readonly } = useConfigContext()
   const { editing } = useTreeContext()
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   if (!isReadonly(readonly, node.path) && editing === node.path) {
     return <LeafEdit node={node} mode={mode} />
@@ -33,8 +33,8 @@ export const Leaf: React.FC<LeafProps> = ({
       node={node}
       mode={mode}
       addon={addon}
-      isCollapsed={isCollapsed}
-      setIsCollapsed={setIsCollapsed}
+      isExpanded={isExpanded}
+      setIsExpanded={setIsExpanded}
     />
   )
 }
