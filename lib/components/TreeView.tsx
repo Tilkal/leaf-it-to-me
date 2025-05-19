@@ -21,9 +21,10 @@ type TreeProps = {
 export const TreeView: React.FC<TreeProps> = memo(
   ({ node, mode }) => {
     const { readonly, t } = useConfigContext()
-    const { addNode, setEditing, isExpanded, setIsExpanded } = useTreeContext()
+    const { addNode, setEditing, isCollapsed, setIsCollapsed } =
+      useTreeContext()
     const [addNodeError, setAddNodeError] = useState<string>('')
-    const expanded = isExpanded(node.path)
+    const collapsed = isCollapsed(node.path)
 
     return (
       <div
@@ -37,24 +38,24 @@ export const TreeView: React.FC<TreeProps> = memo(
             (!readonly || node.children?.length) ? (
               <ActionButton
                 className={classNames('button-toggle', {
-                  expanded: expanded,
+                  expanded: !collapsed,
                 })}
                 aria-label={t(
-                  `tree-view.action.toggle.label.${expanded ? 'close' : 'open'}`,
+                  `tree-view.action.toggle.label.${!collapsed ? 'close' : 'open'}`,
                 )}
-                aria-expanded={expanded}
+                aria-expanded={!collapsed}
                 icon={<Chevron />}
                 popover={{
                   content: t(
-                    `tree-view.action.toggle.label.${expanded ? 'close' : 'open'}`,
+                    `tree-view.action.toggle.label.${!collapsed ? 'close' : 'open'}`,
                   ),
                 }}
-                onClick={() => setIsExpanded(node.path, !expanded)}
+                onClick={() => setIsCollapsed(node.path, !collapsed)}
               />
             ) : null
           }
         />
-        {expanded && (
+        {!collapsed && (
           <>
             {node.children?.map((child) => (
               <TreeView

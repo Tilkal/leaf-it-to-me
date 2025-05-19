@@ -1,4 +1,4 @@
-import { ExpandedConfig, ReadonlyConfig } from '../defs'
+import { CollapsedConfig, ReadonlyConfig } from '../defs'
 
 export const isReadonly = (readonly?: ReadonlyConfig, path?: string): boolean =>
   (typeof readonly === 'boolean' && readonly === true) ||
@@ -6,10 +6,13 @@ export const isReadonly = (readonly?: ReadonlyConfig, path?: string): boolean =>
     typeof path === 'string' &&
     readonly.some((regex) => regex.test(path)))
 
+export const shouldCollapse = (
+  isCollapsed?: CollapsedConfig,
+  path?: string,
+): boolean => {
+  if (typeof isCollapsed === 'boolean') return isCollapsed
+  if (Array.isArray(isCollapsed) && path)
+    return isCollapsed.some((regex) => regex.test(path))
 
-export const shouldExpand = (isExpanded?: ExpandedConfig, path?: string): boolean => {
-  if (typeof isExpanded === 'boolean') return isExpanded
-  if (Array.isArray(isExpanded) && path) return isExpanded.some((regex) => regex.test(path))
-
-  return true
+  return false
 }

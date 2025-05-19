@@ -191,30 +191,49 @@ export const Translations: Story = {
   },
 }
 
-export const ExpandedConfig: Story = {
+export const Collapsed: Story = {
   args: {
     json: {
-      key: 'readonly with regex /^key$/',
+      key: 'value',
       someArray: [
         42,
-        'readonly with regex /^some-array.1$/',
+        'value',
         {
-          key2: 'readonly with regex /key[0-9]+$/',
-          key3: 'readonly with regex /key[0-9]+$/',
-          editable: 'not matching regex',
+          key2: 'value',
+          key3: 'value',
         },
       ],
-      readonlyArray: ['readonly with regex /^readonly/', 82],
-      readonlyObject: {
-        key4: 'readonly with regex /^readonly/ and /key[0-9]+$/',
+      someObject: {
+        key4: 'value',
       },
     },
     config: {
-      isExpanded: [/^some-array$/],
+      collapsed: true,
     },
-  }
+  },
 }
 
+export const CollapsedConfig: Story = {
+  args: {
+    json: {
+      key: 'value',
+      someArray: [
+        42,
+        'value',
+        {
+          key2: 'value',
+          key3: 'value',
+        },
+      ],
+      someObject: {
+        key4: 'value',
+      },
+    },
+    config: {
+      collapsed: [/^some-array.2$/, /^some-object$/],
+    },
+  },
+}
 
 export const LongText: Story = {
   args: {
