@@ -3,12 +3,11 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import {
   AddNodeAction,
   DeleteNodeAction,
-  ExpandedConfig,
   JSONType,
   Node,
   UpdateNodeAction,
 } from '../../defs'
-import { isReadonly, shouldExpand } from '../../utils/config'
+import { isReadonly, shouldCollapse } from '../../utils/config'
 import { getJsonFromNode } from '../../utils/json'
 import {
   addNodeToTree,
@@ -21,31 +20,32 @@ import { TreeContext } from './TreeContext'
 type TreeContextProviderProps = PropsWithChildren & {
   tree: Node
   onChange?: (json: JSONType) => void
-  expandConfig?: ExpandedConfig
 }
 
 export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
   tree: originalTree,
   onChange,
-  expandConfig,
   children,
 }) => {
-  const { readonly } = useConfigContext()
+  const { readonly, collapsed } = useConfigContext()
   const [tree, setTree] = useState<Node>(originalTree)
   const [editing, setEditing] = useState<string | null>(null)
-  const [expandedList, setExpandedList] = useState<Record<string, boolean>>({})
+  const [collapsedList, setCollapsedList] = useState<Record<string, boolean>>(
+    {},
+  )
 
   useEffect(() => {
     setTree(originalTree)
   }, [originalTree])
 
-  const isExpanded = (path: string) => {
-    return expandedList[path] ?? shouldExpand(expandConfig, path)
+  const isCollapsed = (path: string) => {
+    return collapsedList[path] ?? shouldCollapse(collapsed, path)
   }
-  const setIsExpanded = (path: string, expanded: boolean) => {
-    setExpandedList((prev) => ({
+
+  const setIsCollapsed = (path: string, collapsed: boolean) => {
+    setCollapsedList((prev) => ({
       ...prev,
-      [path]: expanded,
+      [path]: collapsed,
     }))
   }
 
@@ -89,8 +89,8 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
         deleteNode,
         editing,
         setEditing,
-        isExpanded,
-        setIsExpanded,
+        isCollapsed,
+        setIsCollapsed,
       }}
     >
       {children}

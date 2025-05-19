@@ -87,7 +87,7 @@ export const ErrorMessages: Partial<
 
 export type ReadonlyConfig = boolean | RegExp[]
 
-export type ExpandedConfig = boolean | RegExp[]
+export type CollapsedConfig = boolean | RegExp[]
 
 export type Translator = (path: string) => string
 
