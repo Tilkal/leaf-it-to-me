@@ -5,6 +5,7 @@ import {
   DeleteNodeAction,
   JSONType,
   Node,
+  PasteNodeAction,
   UpdateNodeAction,
 } from '../../defs'
 import { isReadonly, shouldCollapse } from '../../utils/config'
@@ -13,6 +14,7 @@ import {
   addNodeToTree,
   deleteNodeInTree,
   updateNodeInTree,
+  updateNodePath,
 } from '../../utils/tree'
 import { useConfigContext } from '../ConfigContext/ConfigContext'
 import { TreeContext } from './TreeContext'
@@ -80,6 +82,14 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
     if (onChange) onChange(getJsonFromNode(newTree))
   }
 
+  const pasteNode: PasteNodeAction = (parentNode, childNode) => {
+    if (isReadonly(readonly, parentNode.path)) return
+    const updatedChildNode = updateNodePath(parentNode, childNode)
+    const newTree = addNodeToTree(parentNode, updatedChildNode, tree)
+    setTree(newTree)
+    if (onChange) onChange(getJsonFromNode(newTree))
+  }
+
   return (
     <TreeContext.Provider
       value={{
@@ -87,6 +97,7 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
         addNode,
         updateNode,
         deleteNode,
+        pasteNode,
         editing,
         setEditing,
         isCollapsed,

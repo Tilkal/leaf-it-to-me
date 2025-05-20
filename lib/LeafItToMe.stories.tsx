@@ -40,6 +40,9 @@ export const Default: Story = {
           key: 'value',
         },
       ],
+      someObject: {
+        some: 'value',
+      },
     },
   },
 }
