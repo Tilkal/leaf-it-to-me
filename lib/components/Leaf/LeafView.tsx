@@ -10,6 +10,7 @@ import React, {
 } from 'react'
 
 import { useConfigContext } from '../../contexts/ConfigContext/ConfigContext'
+import { useCopyContext } from '../../contexts/CopyContext/CopyContext'
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import {
   ErrorLevel,
@@ -25,6 +26,7 @@ import { ConfirmAction } from '../ConfirmAction'
 import { Popover } from '../Popover'
 import { TypeTag } from '../TypeTag'
 import { Chevron } from '../icons/Chevron'
+import { Copy } from '../icons/Copy'
 import { Pencil } from '../icons/Pencil'
 import { TrashCan } from '../icons/TrashCan'
 import { getVariantFromError } from './utils'
@@ -64,6 +66,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
 }) => {
   const { disableWarnings, readonly, t } = useConfigContext()
   const { deleteNode, setEditing } = useTreeContext()
+  const { copy } = useCopyContext()
   const toggleToolbarRef = useRef<ActionButtonExternalRef>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [deleteNodeError, setDeleteNodeError] = useState<string>('')
@@ -192,6 +195,18 @@ export const LeafView: React.FC<LeafViewProps> = ({
               tabIndex={isExpanded ? 0 : -1}
               popover={{
                 content: t('leaf.view.action.edit.label'),
+                enabled: isExpanded,
+              }}
+            />
+            <ActionButton
+              className={classNames('leaf-action-button button-test', {
+                hidden: !isExpanded,
+              })}
+              icon={<Copy />}
+              onClick={() => copy(node)}
+              tabIndex={isExpanded ? 0 : -1}
+              popover={{
+                content: t('leaf.view.action.copy.label'),
                 enabled: isExpanded,
               }}
             />

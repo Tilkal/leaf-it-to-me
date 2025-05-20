@@ -1,0 +1,19 @@
+.raw-json-input {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+
+  & textarea {
+    min-width: 200px;
+    min-height: 80px;
+  }
+
+  & .confirm-action-buttons {
+    margin: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--gap);
+  }
+}

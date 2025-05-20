@@ -6,6 +6,7 @@ import {
   ConfigContextProvider,
   LeafItToMeConfig,
 } from './contexts/ConfigContext/ConfigContextProvider'
+import { CopyContextProvider } from './contexts/CopyContext/CopyContextProvider'
 import { TreeContextProvider } from './contexts/TreeContext/TreeContextProvider'
 import { JSONType, Node } from './defs'
 import { getJsonDescription } from './utils/json'
@@ -57,7 +58,9 @@ export const LeafItToMe: React.FC<LeafItToMeProps> = ({
   return (
     <ConfigApp config={config}>
       <TreeContextProvider tree={description} onChange={onChange}>
-        <TreeRoot />
+        <CopyContextProvider>
+          <TreeRoot />
+        </CopyContextProvider>
       </TreeContextProvider>
     </ConfigApp>
   )

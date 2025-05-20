@@ -149,3 +149,33 @@ export const updateNodeInTree = (
     ),
   }
 }
+
+// Update child path to be descendent of the new parent
+export const updateNodePath = (
+  parentNode: Node,
+  childNode: Node,
+  index?: number,
+): Node => {
+  const updatedChildNode = structuredClone(childNode)
+
+  // If parent doesn't have children, it can't work
+  if (!parentNode.children) {
+    throw new Error(
+      `Parent node must accept children but parent is of type ${parentNode.type}.`,
+    )
+  }
+
+  // If parent is root, no dot is added
+  // If parent is array, use index
+  // Else, use name of childNode if exists
+  updatedChildNode.path = `${parentNode.path}${parentNode.path ? '.' : ''}${parentNode.type === 'array' ? index : (childNode.name ?? '')}`
+
+  // Recursively update children
+  if (updatedChildNode.children) {
+    updatedChildNode.children = updatedChildNode.children.map((child, index) =>
+      updateNodePath(updatedChildNode, child, index),
+    )
+  }
+
+  return updatedChildNode
+}

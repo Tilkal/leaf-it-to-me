@@ -52,6 +52,10 @@ export interface DeleteNodeAction {
   (node: Node): void
 }
 
+export interface PasteNodeAction {
+  (parentNode: Node, childNode: Node): void
+}
+
 export enum ErrorLevel {
   NONE = 'none',
   INFO = 'info',

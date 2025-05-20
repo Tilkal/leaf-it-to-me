@@ -1,14 +1,20 @@
 import React, { memo, useState } from 'react'
 
 import { useConfigContext } from '../contexts/ConfigContext/ConfigContext'
+import { useCopyContext } from '../contexts/CopyContext/CopyContext'
 import { useTreeContext } from '../contexts/TreeContext/TreeContext'
 import { LeafMode, Node, VariantState } from '../defs'
 import { classNames } from '../utils/classNames'
 import { isReadonly } from '../utils/config'
+import { getJsonDescription } from '../utils/json'
 import { hashCode } from '../utils/memoization'
+import { hasNode, updateNodePath } from '../utils/tree'
 import { ActionButton } from './ActionButton'
 import { Leaf } from './Leaf'
+import { RawJsonInput } from './RawJsonInput'
 import { Chevron } from './icons/Chevron'
+import { Copy } from './icons/Copy'
+import { CurlyBraces } from './icons/CurlyBraces'
 import { X } from './icons/X'
 
 import './tree-view.css'
@@ -21,10 +27,42 @@ type TreeProps = {
 export const TreeView: React.FC<TreeProps> = memo(
   ({ node, mode }) => {
     const { readonly, t } = useConfigContext()
-    const { addNode, setEditing, isCollapsed, setIsCollapsed } =
+    const { clipboard, clear } = useCopyContext()
+    const { addNode, setEditing, isCollapsed, setIsCollapsed, pasteNode } =
       useTreeContext()
     const [addNodeError, setAddNodeError] = useState<string>('')
+    const [isRawJsonOpen, setIsRawJsonOpen] = useState<boolean>(false)
+    const [rawJsonError, setRawJsonError] = useState<string | undefined>()
     const collapsed = isCollapsed(node.path)
+
+    const handleRawJson = (value: string, mode: 'add' | 'merge') => {
+      try {
+        const rawJsonNode = getJsonDescription(
+          JSON.parse(value),
+          node.path,
+          node.type === 'array' ? node.children?.length : '',
+          false,
+        )
+        switch (mode) {
+          case 'add':
+            addNode(node, rawJsonNode)
+            break
+          case 'merge':
+            rawJsonNode.children?.forEach((child) => pasteNode(node, child))
+            break
+          default:
+            break
+        }
+        setIsRawJsonOpen(false)
+        setRawJsonError(undefined)
+      } catch (error) {
+        if (typeof error === 'string') {
+          setRawJsonError(error)
+        } else if (error instanceof Error) {
+          setRawJsonError(error.message)
+        }
+      }
+    }
 
     return (
       <div
@@ -109,6 +147,44 @@ export const TreeView: React.FC<TreeProps> = memo(
                       }
                     }}
                   />
+                  <ActionButton
+                    className="button-raw-json"
+                    icon={<CurlyBraces />}
+                    popover={{
+                      content: isRawJsonOpen ? (
+                        <RawJsonInput
+                          error={rawJsonError}
+                          onAdd={(value) => handleRawJson(value, 'add')}
+                          onMerge={(value) => handleRawJson(value, 'merge')}
+                          onCancel={() => {
+                            setIsRawJsonOpen(false)
+                            setRawJsonError(undefined)
+                          }}
+                        />
+                      ) : (
+                        t('tree-view.action.raw-json.label')
+                      ),
+                      keepOpen: isRawJsonOpen,
+                      variant: rawJsonError
+                        ? VariantState.ERROR
+                        : VariantState.DEFAULT,
+                    }}
+                    onClick={() => {
+                      setIsRawJsonOpen((prev) => !prev)
+                    }}
+                  />
+                  {clipboard &&
+                    !hasNode(updateNodePath(node, clipboard), node) && (
+                      <ActionButton
+                        className="button-paste"
+                        icon={<Copy />}
+                        popover={{ content: t('tree-view.action.paste.label') }}
+                        onClick={() => {
+                          pasteNode(node, clipboard)
+                          clear()
+                        }}
+                      />
+                    )}
                 </div>
               )}
           </>

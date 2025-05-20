@@ -4,6 +4,7 @@ import {
   AddNodeAction,
   DeleteNodeAction,
   Node,
+  PasteNodeAction,
   UpdateNodeAction,
 } from '../../defs'
 
@@ -12,6 +13,7 @@ export type TreeContextProps = {
   addNode: AddNodeAction
   updateNode: UpdateNodeAction
   deleteNode: DeleteNodeAction
+  pasteNode: PasteNodeAction
   editing: string | null
   setEditing: Dispatch<SetStateAction<string | null>>
   isCollapsed: (path: string) => boolean

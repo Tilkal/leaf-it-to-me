@@ -51,6 +51,9 @@
   }
 
   & .tree-view-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
     position: relative;
     margin-left: calc(var(--tree-v-padding) / 2);
     padding-left: calc(var(--tree-v-padding) / 2);

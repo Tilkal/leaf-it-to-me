@@ -9,6 +9,12 @@
       },
       "add": {
         "label": "Add item"
+      },
+      "paste": {
+        "label": "Paste item"
+      },
+      "raw-json": {
+        "label": "Add or merge raw json"
       }
     }
   },
@@ -48,6 +54,9 @@
         },
         "delete": {
           "label": "Delete"
+        },
+        "copy": {
+          "label": "Copy"
         }
       }
     }
@@ -78,5 +87,8 @@
         "warning": "Empty values may cause issues."
       }
     }
+  },
+  "raw-json-input": {
+    "title": "Add raw or merge json"
   }
 }
