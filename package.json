@@ -1,6 +1,6 @@
 {
   "name": "leaf-it-to-me",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "type": "module",
   "main": "dist/leaf-it-to-me.js",
   "types": "dist/LeafItToMe.d.ts",
