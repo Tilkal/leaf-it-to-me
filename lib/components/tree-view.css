@@ -79,4 +79,21 @@
       width: calc(var(--tree-v-padding) / 4);
     }
   }
+
+  &:hover:not(:has(.tree-view:hover)) > .tree-view {
+    border-color: var(--gray-5);
+  }
+
+  &:hover:not(:has(.tree-view:hover)) > .tree-view-actions {
+    border-image: linear-gradient(
+        to bottom,
+        var(--gray-5) calc(50% + var(--tree-h-padding) / 2),
+        transparent 50%
+      )
+      1 100%;
+
+    &:before {
+      border-color: var(--gray-5);
+    }
+  }
 }
