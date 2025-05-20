@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { LeafItToMe, LeafItToMeProps } from './LeafItToMe'
 import { JSONType } from './defs'
@@ -88,6 +88,38 @@ export const WithCallback: Story = {
     },
   },
   render: ({ json }) => <WithCallbackComponent json={json} />,
+}
+
+const WithAsyncComponent = () => {
+  const [json, setJson] = useState<JSONType>({})
+
+  useEffect(() => {
+    setTimeout(() => {
+      setJson({
+        some: 'json',
+      })
+    }, 1000)
+  }, [])
+
+  return (
+    <div>
+      <pre
+        style={{
+          borderRadius: '4px',
+          backgroundColor: '#edede9',
+          padding: '10px',
+        }}
+      >
+        {JSON.stringify(json, null, 2)}
+      </pre>
+      <LeafItToMe json={json} onChange={setJson} />
+    </div>
+  )
+}
+
+export const AsyncJson: Story = {
+  args: {},
+  render: () => <WithAsyncComponent />,
 }
 
 export const WithError: Story = {

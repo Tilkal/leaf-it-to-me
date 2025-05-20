@@ -56,6 +56,7 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
     if (isReadonly(readonly, parentNode.path)) return
     const newTree = addNodeToTree(parentNode, childNode, tree)
     setTree(newTree)
+    if (onChange) onChange(getJsonFromNode(newTree))
   }
 
   const updateNode: UpdateNodeAction = (oldNode, newNode) => {
@@ -63,10 +64,12 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
     if (
       isReadonly(readonly, oldNode.path) ||
       isReadonly(readonly, newNode.path)
-    )
+    ) {
       return
+    }
     const newTree = updateNodeInTree(oldNode, newNode, tree)
     setTree(newTree)
+    if (onChange) onChange(getJsonFromNode(newTree))
   }
 
   const deleteNode: DeleteNodeAction = (node) => {
@@ -74,12 +77,8 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
     if (isReadonly(readonly, node.path)) return
     const newTree = deleteNodeInTree(node, tree)
     setTree(newTree)
+    if (onChange) onChange(getJsonFromNode(newTree))
   }
-
-  useEffect(() => {
-    if (JSON.stringify(originalTree) === JSON.stringify(tree)) return
-    if (onChange) onChange(getJsonFromNode(tree))
-  }, [tree, onChange, originalTree])
 
   return (
     <TreeContext.Provider
