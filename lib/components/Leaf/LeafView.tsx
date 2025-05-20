@@ -144,7 +144,12 @@ export const LeafView: React.FC<LeafViewProps> = ({
             <div
               className={classNames(`leaf-value type-${node.type}`, {
                 ['empty-string']: node.value === '',
+                copy: typeof node.value === 'string',
               })}
+              onClick={() =>
+                typeof node.value === 'string' &&
+                navigator.clipboard.writeText(node.value)
+              }
             >
               {node.value !== ''
                 ? node.value
