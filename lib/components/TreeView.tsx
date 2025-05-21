@@ -48,7 +48,7 @@ export const TreeView: React.FC<TreeProps> = memo(
             addNode(node, rawJsonNode)
             break
           case 'merge':
-            rawJsonNode.children?.forEach((child) => pasteNode(node, child))
+            pasteNode(node, rawJsonNode, true)
             break
           default:
             break

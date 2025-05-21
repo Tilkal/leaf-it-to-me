@@ -53,7 +53,7 @@ export interface DeleteNodeAction {
 }
 
 export interface PasteNodeAction {
-  (parentNode: Node, childNode: Node): void
+  (parentNode: Node, childNode: Node, merge?: boolean): void
 }
 
 export enum ErrorLevel {

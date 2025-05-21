@@ -82,10 +82,19 @@ export const TreeContextProvider: React.FC<TreeContextProviderProps> = ({
     if (onChange) onChange(getJsonFromNode(newTree))
   }
 
-  const pasteNode: PasteNodeAction = (parentNode, childNode) => {
+  const pasteNode: PasteNodeAction = (parentNode, childNode, merge = false) => {
+    // Can't add element to readonly
     if (isReadonly(readonly, parentNode.path)) return
-    const updatedChildNode = updateNodePath(parentNode, childNode)
-    const newTree = addNodeToTree(parentNode, updatedChildNode, tree)
+    let newTree: Node = structuredClone(tree)
+    if (merge && childNode.children) {
+      childNode.children.forEach((child) => {
+        const updatedChildNode = updateNodePath(parentNode, child)
+        newTree = addNodeToTree(parentNode, updatedChildNode, newTree)
+      })
+    } else {
+      const updatedChildNode = updateNodePath(parentNode, childNode)
+      newTree = addNodeToTree(parentNode, updatedChildNode, tree)
+    }
     setTree(newTree)
     if (onChange) onChange(getJsonFromNode(newTree))
   }
