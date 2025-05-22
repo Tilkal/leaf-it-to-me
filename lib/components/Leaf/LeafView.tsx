@@ -208,7 +208,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
                 hidden: !isExpanded,
               })}
               icon={<Copy />}
-              onClick={() => copy(node)}
+              onClick={() => isExpanded && copy(node)}
               tabIndex={isExpanded ? 0 : -1}
               popover={{
                 content: t('leaf.view.action.copy.label'),
