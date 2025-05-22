@@ -117,3 +117,48 @@ export const ComponentAsContent: Story = {
   },
   render: (props) => <ComponentWithPopover {...props} />,
 }
+
+export const Top: Story = {
+  args: {
+    content: 'Position top',
+    keepOpen: true,
+    position: 'top',
+  },
+  render: (props) => <ComponentWithPopover {...props} />,
+}
+
+export const Bottom: Story = {
+  args: {
+    content: 'Position bottom',
+    keepOpen: true,
+    position: 'bottom',
+  },
+  render: (props) => <ComponentWithPopover {...props} />,
+}
+
+export const Left: Story = {
+  args: {
+    content: 'Position left',
+    keepOpen: true,
+    position: 'left',
+  },
+  render: (props) => <ComponentWithPopover {...props} />,
+}
+
+export const Right: Story = {
+  args: {
+    content: 'Position right',
+    keepOpen: true,
+    position: 'right',
+  },
+  render: (props) => <ComponentWithPopover {...props} />,
+}
+
+export const PositionAuto: Story = {
+  args: {
+    content: 'Position auto',
+    keepOpen: true,
+    position: 'auto',
+  },
+  render: (props) => <ComponentWithPopover {...props} />,
+}

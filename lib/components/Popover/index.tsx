@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 
@@ -18,6 +19,7 @@ export type PopoverProps = {
   enabled?: boolean
   keepOpen?: boolean
   targetRef: MutableRefObject<HTMLElement | undefined | null>
+  position?: 'top' | 'bottom' | 'left' | 'right' | 'auto'
 }
 
 type IsOpen = { isClicked: boolean; isFocused: boolean; isHovered: boolean }
@@ -40,7 +42,10 @@ export const Popover: React.FC<PopoverProps> = ({
   enabled = true,
   keepOpen,
   targetRef,
+  position = 'auto',
 }) => {
+  const ref = useRef<HTMLDivElement>(null)
+
   const [isOpen, setIsOpen] = useState<IsOpen>(
     keepOpen ? OPEN_STATE : CLOSED_STATE,
   )
@@ -128,8 +133,54 @@ export const Popover: React.FC<PopoverProps> = ({
     onBlur,
   ])
 
+  const getPopoverPosition = useCallback((): Omit<
+    PopoverProps['position'],
+    'auto'
+  > => {
+    const spacing = 8
+    const height = window.innerHeight
+    const width = window.innerWidth
+    const targetRect = targetRef.current?.getBoundingClientRect()
+    const popoverRect = ref.current?.getBoundingClientRect()
+    if (!targetRect || !popoverRect) return 'top'
+
+    const centerX = targetRect.right - targetRect.width / 2
+    const centerY = targetRect.bottom - targetRect.height / 2
+
+    switch (true) {
+      case targetRect.top - popoverRect.height - spacing >= 0 &&
+        centerX - popoverRect.width / 2 - spacing >= 0 &&
+        centerX + popoverRect.width / 2 + spacing <= width:
+        return 'top'
+      case targetRect.bottom + popoverRect.height + spacing <= height &&
+        centerX - popoverRect.width / 2 - spacing >= 0 &&
+        centerX + popoverRect.width / 2 + spacing <= width:
+        return 'bottom'
+      case targetRect.right + popoverRect.width + spacing <= width &&
+        centerY - popoverRect.height / 2 - spacing >= 0 &&
+        centerY + popoverRect.height / 2 + spacing <= height:
+        return 'right'
+      case targetRect.left >= popoverRect.width + spacing &&
+        centerY - popoverRect.height / 2 - spacing >= 0 &&
+        centerY + popoverRect.height / 2 + spacing <= height:
+        return 'left'
+      default:
+        return 'top'
+    }
+  }, [targetRef, ref])
+
   return (
-    <div className={classNames('popover', variant, { active: isActive })}>
+    <div
+      ref={ref}
+      className={classNames(
+        'popover',
+        variant,
+        position === 'auto' ? getPopoverPosition() : position,
+        {
+          active: isActive,
+        },
+      )}
+    >
       {content}
     </div>
   )
