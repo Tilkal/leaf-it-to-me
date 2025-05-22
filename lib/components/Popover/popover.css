@@ -13,16 +13,26 @@
   color: var(--white);
   z-index: 2;
 
+  &.full-width {
+    padding: 4px 0;
+  }
+
   &:hover {
     z-index: 3;
   }
 
   &.info {
-    color: var(--blue-10);
-    background-color: var(--transparent-blue);
+    color: var(--gray-10);
+    background-color: var(--white);
+    box-shadow: var(--box-shadow);
 
     &:after {
-      border-color: var(--transparent-blue) transparent;
+      border-color: var(--white) transparent;
+    }
+
+    &.left:after,
+    &.right:after {
+      border-color: transparent var(--white);
     }
   }
 
@@ -33,6 +43,11 @@
     &:after {
       border-color: var(--transparent-orange) transparent;
     }
+
+    &.left:after,
+    &.right:after {
+      border-color: transparent var(--transparent-orange);
+    }
   }
 
   &.error {
@@ -41,6 +56,11 @@
 
     &:after {
       border-color: var(--transparent-red) transparent;
+    }
+
+    &.left:after,
+    &.right:after {
+      border-color: transparent var(--transparent-red);
     }
   }
 

@@ -24,9 +24,11 @@ import { isValidString } from '../../utils/json'
 import { ActionButton, ActionButtonExternalRef } from '../ActionButton'
 import { ConfirmAction } from '../ConfirmAction'
 import { Popover } from '../Popover'
+import { Toolbar } from '../Toolbar'
+import { ToolbarItem } from '../Toolbar/ToolbarItem'
 import { TypeTag } from '../TypeTag'
-import { Chevron } from '../icons/Chevron'
 import { Copy } from '../icons/Copy'
+import { Dots } from '../icons/Dots'
 import { Pencil } from '../icons/Pencil'
 import { TrashCan } from '../icons/TrashCan'
 import { getVariantFromError } from './utils'
@@ -183,66 +185,48 @@ export const LeafView: React.FC<LeafViewProps> = ({
                 `leaf.view.action.toolbar.label.${isExpanded ? 'close' : 'open'}`,
               )}
               onClick={() => setIsExpanded((prev) => !prev)}
-              icon={<Chevron />}
+              icon={<Dots />}
               popover={{
-                content: t(
-                  `leaf.view.action.toolbar.label.${isExpanded ? 'close' : 'open'}`,
-                ),
-              }}
-            />
-            <ActionButton
-              className={classNames('leaf-action-button button-edit', {
-                hidden: !isExpanded,
-              })}
-              onClick={() => isExpanded && setEditing(node.path)}
-              aria-label={t('leaf.view.action.edit.label')}
-              icon={<Pencil />}
-              tabIndex={isExpanded ? 0 : -1}
-              popover={{
-                content: t('leaf.view.action.edit.label'),
-                enabled: isExpanded,
-              }}
-            />
-            <ActionButton
-              className={classNames('leaf-action-button button-test', {
-                hidden: !isExpanded,
-              })}
-              icon={<Copy />}
-              onClick={() => isExpanded && copy(node)}
-              tabIndex={isExpanded ? 0 : -1}
-              popover={{
-                content: t('leaf.view.action.copy.label'),
-                enabled: isExpanded,
-              }}
-            />
-            <ActionButton
-              className={classNames('leaf-action-button button-delete', {
-                hidden: !isExpanded,
-              })}
-              aria-label={t('leaf.view.action.delete.label')}
-              icon={<TrashCan />}
-              disabled={!!deleteNodeError}
-              tabIndex={isExpanded ? 0 : -1}
-              variant={VariantState.ERROR}
-              popover={{
-                content: deleteNodeError ? (
-                  deleteNodeError
-                ) : mustConfirm ? (
-                  <ConfirmAction
-                    onCancel={() => setMustConfirm(false)}
-                    onConfirm={onDelete}
-                  />
-                ) : (
-                  t('leaf.view.action.delete.label')
-                ),
-                enabled: isExpanded,
-                keepOpen: !!deleteNodeError || mustConfirm,
-                variant:
-                  deleteNodeError || mustConfirm
+                fullWidth: isExpanded,
+                variant: isExpanded
+                  ? mustConfirm
                     ? VariantState.ERROR
-                    : VariantState.DEFAULT,
+                    : VariantState.INFO
+                  : VariantState.DEFAULT,
+                keepOpen: mustConfirm || isExpanded,
+                content: isExpanded ? (
+                  mustConfirm ? (
+                    <ConfirmAction
+                      onCancel={() => setMustConfirm(false)}
+                      onConfirm={onDelete}
+                    />
+                  ) : (
+                    <Toolbar>
+                      <ToolbarItem
+                        icon={<Pencil />}
+                        onClick={() => setEditing(node.path)}
+                      >
+                        {t('leaf.view.action.edit.label')}
+                      </ToolbarItem>
+                      <ToolbarItem icon={<Copy />} onClick={() => copy(node)}>
+                        {t('leaf.view.action.copy.label')}
+                      </ToolbarItem>
+                      {!node.isRoot && (
+                        <ToolbarItem
+                          icon={<TrashCan />}
+                          onClick={() => setMustConfirm((prev) => !prev)}
+                          variant={VariantState.ERROR}
+                        >
+                          {deleteNodeError ||
+                            t('leaf.view.action.delete.label')}
+                        </ToolbarItem>
+                      )}
+                    </Toolbar>
+                  )
+                ) : (
+                  t(`leaf.view.action.toolbar.label.open`)
+                ),
               }}
-              onClick={() => isExpanded && setMustConfirm((prev) => !prev)}
             />
           </>
         )}

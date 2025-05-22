@@ -209,42 +209,11 @@
   }
 
   .leaf-actions {
-    width: calc((3 * 1.5rem) + (2 * 8px));
-    min-width: calc((3 * 1.5rem) + (2 * 8px));
+    width: calc((2 * 1.5rem) + 8px);
+    min-width: calc((2 * 1.5rem) + 8px);
     height: var(--action-button-size);
     display: flex;
     flex-direction: row;
-    gap: 0;
-    transition: gap ease-in 0.1s;
-
-    .leaf-action-button {
-      opacity: 1;
-      transition:
-        opacity ease-in 0.1s,
-        background-color ease-in 0.1s;
-
-      &.hidden {
-        cursor: default;
-        opacity: 0;
-      }
-    }
-
-    .button-expand {
-      z-index: 1;
-
-      & svg {
-        transition: transform ease-in 0.1s;
-      }
-    }
-
-    &.expanded {
-      gap: 0.5rem;
-
-      .button-expand {
-        & svg {
-          transform: rotate(180deg);
-        }
-      }
-    }
+    gap: 0.5rem;
   }
 }

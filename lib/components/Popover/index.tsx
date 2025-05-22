@@ -20,6 +20,7 @@ export type PopoverProps = {
   keepOpen?: boolean
   targetRef: MutableRefObject<HTMLElement | undefined | null>
   position?: 'top' | 'bottom' | 'left' | 'right' | 'auto'
+  fullWidth?: boolean
 }
 
 type IsOpen = { isClicked: boolean; isFocused: boolean; isHovered: boolean }
@@ -43,6 +44,7 @@ export const Popover: React.FC<PopoverProps> = ({
   keepOpen,
   targetRef,
   position = 'auto',
+  fullWidth,
 }) => {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -178,6 +180,7 @@ export const Popover: React.FC<PopoverProps> = ({
         position === 'auto' ? getPopoverPosition() : position,
         {
           active: isActive,
+          ['full-width']: fullWidth,
         },
       )}
     >
