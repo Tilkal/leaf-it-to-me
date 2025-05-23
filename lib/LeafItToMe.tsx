@@ -1,12 +1,15 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 
+import { Container } from './components/Container'
 import { ErrorDisplay } from './components/ErrorDisplay'
+import { SearchInput } from './components/SearchInput'
 import { TreeRoot } from './components/TreeRoot'
 import {
   ConfigContextProvider,
   LeafItToMeConfig,
 } from './contexts/ConfigContext/ConfigContextProvider'
 import { CopyContextProvider } from './contexts/CopyContext/CopyContextProvider'
+import { SearchContextProvider } from './contexts/SearchContext/SearchContextProvider'
 import { TreeContextProvider } from './contexts/TreeContext/TreeContextProvider'
 import { JSONType, Node } from './defs'
 import { getJsonDescription } from './utils/json'
@@ -57,11 +60,16 @@ export const LeafItToMe: React.FC<LeafItToMeProps> = ({
 
   return (
     <ConfigApp config={config}>
-      <TreeContextProvider tree={description} onChange={onChange}>
-        <CopyContextProvider>
-          <TreeRoot />
-        </CopyContextProvider>
-      </TreeContextProvider>
+      <SearchContextProvider>
+        <TreeContextProvider tree={description} onChange={onChange}>
+          <CopyContextProvider>
+            <Container>
+              <SearchInput />
+              <TreeRoot />
+            </Container>
+          </CopyContextProvider>
+        </TreeContextProvider>
+      </SearchContextProvider>
     </ConfigApp>
   )
 }
