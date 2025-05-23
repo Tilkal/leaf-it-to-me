@@ -2,13 +2,14 @@ import React, { memo, useState } from 'react'
 
 import { useConfigContext } from '../contexts/ConfigContext/ConfigContext'
 import { useCopyContext } from '../contexts/CopyContext/CopyContext'
+import { useSearchContext } from '../contexts/SearchContext/SearchContext'
 import { useTreeContext } from '../contexts/TreeContext/TreeContext'
 import { LeafMode, Node, VariantState } from '../defs'
 import { classNames } from '../utils/classNames'
 import { isReadonly } from '../utils/config'
 import { getJsonDescription } from '../utils/json'
 import { hashCode } from '../utils/memoization'
-import { hasNode, updateNodePath } from '../utils/tree'
+import { hasNode, updateNodePath, hasMatchingNode } from '../utils/tree'
 import { ActionButton } from './ActionButton'
 import { Leaf } from './Leaf'
 import { RawJsonInput } from './RawJsonInput'
@@ -33,7 +34,9 @@ export const TreeView: React.FC<TreeProps> = memo(
     const [addNodeError, setAddNodeError] = useState<string>('')
     const [isRawJsonOpen, setIsRawJsonOpen] = useState<boolean>(false)
     const [rawJsonError, setRawJsonError] = useState<string | undefined>()
-    const collapsed = isCollapsed(node.path)
+    const { matchSearch } = useSearchContext()
+    const collapsed =
+      isCollapsed(node.path) && !hasMatchingNode(node, matchSearch)
 
     const handleRawJson = (value: string, mode: 'add' | 'merge') => {
       try {

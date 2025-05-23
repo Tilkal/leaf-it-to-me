@@ -35,6 +35,22 @@
       outline: 1px solid var(--orange-3);
     }
 
+    &.highlight::after {
+      content: '';
+      background-color: var(--yellow-10);
+      width: 4px;
+      height: 20px;
+      position: absolute;
+      border-radius: 2px;
+      top: 50%;
+      left: -2px;
+      transform: translateY(-50%);
+    }
+
+    &:focus.highlight::after {
+      background-color: var(--orange-3);
+    }
+
     .leaf-content {
       display: flex;
       flex-direction: row;

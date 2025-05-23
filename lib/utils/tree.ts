@@ -179,3 +179,17 @@ export const updateNodePath = (
 
   return updatedChildNode
 }
+
+export const hasMatchingNode = (
+  node: Node,
+  search: (node: Node) => boolean,
+) => {
+  if (search(node)) return true
+  if (
+    node.children &&
+    node.children.some((child) => hasMatchingNode(child, search))
+  )
+    return true
+
+  return false
+}

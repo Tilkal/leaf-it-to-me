@@ -1,4 +1,11 @@
 {
+  "search": {
+    "placeholder": "Key and value search",
+    "action": {
+      "button-up": "Previous result",
+      "button-down": "Next result"
+    }
+  },
   "tree-view": {
     "action": {
       "toggle": {
@@ -47,7 +54,10 @@
       },
       "action": {
         "toolbar": {
-          "label": { "open": "Open toolbar", "close": "Close toolbar" }
+          "label": {
+            "open": "Open toolbar",
+            "close": "Close toolbar"
+          }
         },
         "edit": {
           "label": "Edit"
