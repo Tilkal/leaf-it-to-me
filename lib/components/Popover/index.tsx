@@ -10,6 +10,7 @@ import React, {
 
 import { VariantState } from '../../defs'
 import { classNames } from '../../utils/classNames'
+import { isValid } from '../../utils/position'
 
 import './popover.css'
 
@@ -63,6 +64,9 @@ export const Popover: React.FC<PopoverProps> = ({
   const [isOpen, setIsOpen] = useState<IsOpen>(
     keepOpen ? OPEN_STATE : CLOSED_STATE,
   )
+
+  const [computedPosition, setComputedPosition] =
+    useState<Omit<PopoverProps['position'], 'auto'>>(position)
 
   const isActive = useMemo(
     () =>
@@ -172,56 +176,55 @@ export const Popover: React.FC<PopoverProps> = ({
     onBlur,
   ])
 
-  const getPopoverPosition = useCallback((): Omit<
-    PopoverProps['position'],
-    'auto'
-  > => {
-    const spacing = 8
+  useEffect(() => {
+    const offset = 8
     const height = window.innerHeight
     const width = window.innerWidth
     const targetRect = targetRef.current?.getBoundingClientRect()
     const popoverRect = ref.current?.getBoundingClientRect()
-    if (!targetRect || !popoverRect) return 'top'
-
-    const centerX = targetRect.right - targetRect.width / 2
-    const centerY = targetRect.bottom - targetRect.height / 2
+    const containerRect = {
+      x: 0,
+      y: 0,
+      width,
+      height,
+    }
+    if (!targetRect || !popoverRect) {
+      return
+    }
 
     switch (true) {
-      case targetRect.top - popoverRect.height - spacing >= 0 &&
-        centerX - popoverRect.width / 2 - spacing >= 0 &&
-        centerX + popoverRect.width / 2 + spacing <= width:
-        return 'top'
-      case targetRect.bottom + popoverRect.height + spacing <= height &&
-        centerX - popoverRect.width / 2 - spacing >= 0 &&
-        centerX + popoverRect.width / 2 + spacing <= width:
-        return 'bottom'
-      case targetRect.right + popoverRect.width + spacing <= width &&
-        centerY - popoverRect.height / 2 - spacing >= 0 &&
-        centerY + popoverRect.height / 2 + spacing <= height:
-        return 'right'
-      case targetRect.left >= popoverRect.width + spacing &&
-        centerY - popoverRect.height / 2 - spacing >= 0 &&
-        centerY + popoverRect.height / 2 + spacing <= height:
-        return 'left'
+      case position &&
+        position !== 'auto' &&
+        isValid[position](containerRect, targetRect, popoverRect, offset):
+        setComputedPosition(position)
+        break
+      case isValid.top(containerRect, targetRect, popoverRect, offset):
+        setComputedPosition('top')
+        break
+      case isValid.bottom(containerRect, targetRect, popoverRect, offset):
+        setComputedPosition('bottom')
+        break
+      case isValid.right(containerRect, targetRect, popoverRect, offset):
+        setComputedPosition('right')
+        break
+      case isValid.left(containerRect, targetRect, popoverRect, offset):
+        setComputedPosition('left')
+        break
       default:
-        return 'top'
+        setComputedPosition(position !== 'auto' ? position : 'top')
+        break
     }
-  }, [targetRef, ref])
+  }, [targetRef, ref, position])
 
   if (!content) return null
 
   return (
     <div
       ref={ref}
-      className={classNames(
-        'popover',
-        variant,
-        position === 'auto' ? getPopoverPosition() : position,
-        {
-          active: isActive,
-          ['full-width']: fullWidth,
-        },
-      )}
+      className={classNames('popover', variant, computedPosition ?? '', {
+        active: isActive,
+        ['full-width']: fullWidth,
+      })}
     >
       {content}
     </div>
