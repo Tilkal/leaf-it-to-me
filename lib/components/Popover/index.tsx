@@ -13,22 +13,25 @@ import { classNames } from '../../utils/classNames'
 
 import './popover.css'
 
+export type PopoverTrigger = 'focus' | 'hover' | 'click'
+
 export type PopoverProps = {
-  content: string | ReactElement
+  content: string | ReactElement | null
   variant?: VariantState
   enabled?: boolean
   keepOpen?: boolean
   targetRef: MutableRefObject<HTMLElement | undefined | null>
   position?: 'top' | 'bottom' | 'left' | 'right' | 'auto'
   fullWidth?: boolean
+  trigger?: PopoverTrigger | PopoverTrigger[]
 }
 
 type IsOpen = { isClicked: boolean; isFocused: boolean; isHovered: boolean }
 
 const OPEN_STATE: IsOpen = {
   isClicked: true,
-  isFocused: true,
-  isHovered: true,
+  isFocused: false,
+  isHovered: false,
 }
 
 const CLOSED_STATE: IsOpen = {
@@ -36,6 +39,14 @@ const CLOSED_STATE: IsOpen = {
   isFocused: false,
   isHovered: false,
 }
+
+const shouldTrigger = (
+  action: PopoverTrigger,
+  mode?: PopoverTrigger | PopoverTrigger[],
+) =>
+  mode &&
+  ((typeof mode === 'string' && mode === action) ||
+    (Array.isArray(mode) && mode.includes(action)))
 
 export const Popover: React.FC<PopoverProps> = ({
   content,
@@ -45,6 +56,7 @@ export const Popover: React.FC<PopoverProps> = ({
   targetRef,
   position = 'auto',
   fullWidth,
+  trigger = ['focus', 'hover', 'click'],
 }) => {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -74,36 +86,61 @@ export const Popover: React.FC<PopoverProps> = ({
   )
 
   const onClick = useCallback(() => {
-    if (targetRef?.current && enabled && !keepOpen) {
+    if (
+      targetRef?.current &&
+      enabled &&
+      !keepOpen &&
+      shouldTrigger('click', trigger)
+    ) {
       setIsOpen((prev) =>
         prev.isClicked === true ? CLOSED_STATE : { ...prev, isClicked: true },
       )
     }
-  }, [enabled, keepOpen, targetRef])
+  }, [enabled, keepOpen, targetRef, trigger])
 
   const onMouseEnter = useCallback(() => {
-    if (targetRef?.current && enabled && !keepOpen) {
+    if (
+      targetRef?.current &&
+      enabled &&
+      !keepOpen &&
+      shouldTrigger('hover', trigger)
+    ) {
       setIsOpen((prev) => ({ ...prev, isHovered: true }))
     }
-  }, [enabled, keepOpen, targetRef])
+  }, [enabled, keepOpen, targetRef, trigger])
 
   const onMouseLeave = useCallback(() => {
-    if (targetRef?.current && enabled && !keepOpen) {
+    if (
+      targetRef?.current &&
+      enabled &&
+      !keepOpen &&
+      shouldTrigger('hover', trigger)
+    ) {
       setIsOpen((prev) => ({ ...prev, isHovered: false }))
     }
-  }, [enabled, keepOpen, targetRef])
+  }, [enabled, keepOpen, targetRef, trigger])
 
   const onFocus = useCallback(() => {
-    if (targetRef?.current && enabled && !keepOpen) {
+    if (
+      targetRef?.current &&
+      enabled &&
+      !keepOpen &&
+      shouldTrigger('focus', trigger)
+    ) {
       setIsOpen((prev) => ({ ...prev, isFocused: true }))
     }
-  }, [enabled, keepOpen, targetRef])
+  }, [enabled, keepOpen, targetRef, trigger])
 
   const onBlur = useCallback(() => {
-    if (targetRef?.current && enabled && !keepOpen) {
+    if (
+      targetRef?.current &&
+      enabled &&
+      !keepOpen &&
+      shouldTrigger('focus', trigger)
+    ) {
       setIsOpen((prev) => ({ ...prev, isFocused: false }))
     }
-  }, [enabled, keepOpen, targetRef])
+  }, [enabled, keepOpen, targetRef, trigger])
 
   useEffect(() => {
     const effectRef = targetRef?.current
@@ -170,6 +207,8 @@ export const Popover: React.FC<PopoverProps> = ({
         return 'top'
     }
   }, [targetRef, ref])
+
+  if (!content) return null
 
   return (
     <div

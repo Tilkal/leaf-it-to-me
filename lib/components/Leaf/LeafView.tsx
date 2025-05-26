@@ -84,9 +84,6 @@ export const LeafView: React.FC<LeafViewProps> = ({
       if (
         toggleToolbarRef &&
         event.target instanceof Node &&
-        [...document.querySelectorAll('.button-expand')].some((element) =>
-          element.contains(event.target as Node),
-        ) &&
         !toggleToolbarRef.current?.contains(event.target)
       ) {
         setIsExpanded(false)
@@ -186,45 +183,49 @@ export const LeafView: React.FC<LeafViewProps> = ({
               )}
               onClick={() => setIsExpanded((prev) => !prev)}
               icon={<Dots />}
+              tooltip={{
+                content: isExpanded
+                  ? null
+                  : t(`leaf.view.action.toolbar.label.open`),
+                trigger: ['hover', 'focus'],
+              }}
               popover={{
-                fullWidth: isExpanded,
-                variant: isExpanded
-                  ? mustConfirm
-                    ? VariantState.ERROR
-                    : VariantState.INFO
-                  : VariantState.DEFAULT,
-                keepOpen: mustConfirm || isExpanded,
-                content: isExpanded ? (
-                  mustConfirm ? (
-                    <ConfirmAction
-                      onCancel={() => setMustConfirm(false)}
-                      onConfirm={onDelete}
-                    />
-                  ) : (
-                    <Toolbar>
-                      <ToolbarItem
-                        icon={<Pencil />}
-                        onClick={() => setEditing(node.path)}
-                      >
-                        {t('leaf.view.action.edit.label')}
-                      </ToolbarItem>
-                      <ToolbarItem icon={<Copy />} onClick={() => copy(node)}>
-                        {t('leaf.view.action.copy.label')}
-                      </ToolbarItem>
-                      {!node.isRoot && (
-                        <ToolbarItem
-                          icon={<TrashCan />}
-                          onClick={() => setMustConfirm((prev) => !prev)}
-                          variant={VariantState.ERROR}
-                        >
-                          {deleteNodeError ||
-                            t('leaf.view.action.delete.label')}
-                        </ToolbarItem>
-                      )}
-                    </Toolbar>
-                  )
+                trigger: 'click',
+                fullWidth: !mustConfirm,
+                variant: mustConfirm ? VariantState.ERROR : VariantState.INFO,
+                keepOpen: mustConfirm,
+                content: mustConfirm ? (
+                  <ConfirmAction
+                    onCancel={() => setMustConfirm(false)}
+                    onConfirm={onDelete}
+                  />
                 ) : (
-                  t(`leaf.view.action.toolbar.label.open`)
+                  <Toolbar>
+                    <ToolbarItem
+                      tabIndex={isExpanded ? 0 : -1}
+                      icon={<Pencil />}
+                      onClick={() => setEditing(node.path)}
+                    >
+                      {t('leaf.view.action.edit.label')}
+                    </ToolbarItem>
+                    <ToolbarItem
+                      tabIndex={isExpanded ? 0 : -1}
+                      icon={<Copy />}
+                      onClick={() => copy(node)}
+                    >
+                      {t('leaf.view.action.copy.label')}
+                    </ToolbarItem>
+                    {!node.isRoot && (
+                      <ToolbarItem
+                        tabIndex={isExpanded ? 0 : -1}
+                        icon={<TrashCan />}
+                        onClick={() => setMustConfirm((prev) => !prev)}
+                        variant={VariantState.ERROR}
+                      >
+                        {deleteNodeError || t('leaf.view.action.delete.label')}
+                      </ToolbarItem>
+                    )}
+                  </Toolbar>
                 ),
               }}
             />

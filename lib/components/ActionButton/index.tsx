@@ -14,6 +14,7 @@ import './action-button.css'
 
 type ActionButtonProps = ComponentPropsWithoutRef<'button'> & {
   icon: ReactElement
+  tooltip?: Omit<PopoverProps, 'targetRef'>
   popover?: Omit<PopoverProps, 'targetRef'>
   variant?: VariantState
 }
@@ -27,7 +28,14 @@ export const ActionButton = forwardRef<
   ActionButtonProps
 >(
   (
-    { icon, className, popover, variant = VariantState.DEFAULT, ...props },
+    {
+      icon,
+      className,
+      tooltip,
+      popover,
+      variant = VariantState.DEFAULT,
+      ...props
+    },
     externalRef,
   ) => {
     const localeRef = useRef<HTMLButtonElement>(null)
@@ -40,22 +48,10 @@ export const ActionButton = forwardRef<
       [],
     )
 
-    if (popover) {
-      return (
-        <div className="action-button-container">
-          <Popover {...popover} targetRef={localeRef} />
-          <button
-            ref={localeRef}
-            className={classNames('action-button', variant, className ?? '')}
-            {...props}
-          >
-            {icon}
-          </button>
-        </div>
-      )
-    }
     return (
       <div className="action-button-container">
+        {popover && <Popover {...popover} targetRef={localeRef} />}
+        {tooltip && <Popover {...tooltip} targetRef={localeRef} />}
         <button
           ref={localeRef}
           className={classNames('action-button', variant, className ?? '')}
