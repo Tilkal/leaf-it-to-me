@@ -11,6 +11,7 @@ import React, {
 
 import { useConfigContext } from '../../contexts/ConfigContext/ConfigContext'
 import { useCopyContext } from '../../contexts/CopyContext/CopyContext'
+import { useSearchContext } from '../../contexts/SearchContext/SearchContext'
 import { useTreeContext } from '../../contexts/TreeContext/TreeContext'
 import {
   ErrorLevel,
@@ -69,6 +70,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
   const { disableWarnings, readonly, t } = useConfigContext()
   const { deleteNode, setEditing } = useTreeContext()
   const { copy } = useCopyContext()
+  const { matchSearch } = useSearchContext()
   const toggleToolbarRef = useRef<ActionButtonExternalRef>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [deleteNodeError, setDeleteNodeError] = useState<string>('')
@@ -118,6 +120,7 @@ export const LeafView: React.FC<LeafViewProps> = ({
           readonly: isReadonly(readonly, node.path),
           error: nodeError === ErrorLevel.ERROR,
           warning: nodeError === ErrorLevel.WARNING,
+          highlight: matchSearch(node),
         })}
       >
         <Popover

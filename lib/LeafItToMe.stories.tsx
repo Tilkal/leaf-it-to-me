@@ -275,6 +275,99 @@ export const CollapsedConfig: Story = {
   },
 }
 
+export const SearchAndNavigation: Story = {
+  args: {
+    config: {
+      collapsed: [/^product.reviews$/, /^orderHistory$/, /^sampleData$/],
+    },
+    json: {
+      product: {
+        id: 123,
+        name: 'Wireless Mouse',
+        price: 25.99,
+        inStock: true,
+        tags: ['computer', 'accessory', 'ergonomic'],
+        details: {
+          color: 'black',
+          connectivity: 'bluetooth',
+          weight: '80g',
+        },
+        reviews: [
+          { user: 'Alice', rating: 5, comment: 'Great value!' },
+          { user: 'Bob', rating: 4, comment: 'Works well.' },
+          {
+            user: 'Charlie',
+            rating: 5,
+            comment: 'Ergonomic design is a plus.',
+          },
+          {
+            user: 'David',
+            rating: 3,
+            comment: 'Battery life could be better.',
+          },
+          {
+            user: 'Eve',
+            rating: 4,
+            comment: 'Solid performance for the price.',
+          },
+        ],
+      },
+      userSettings: {
+        theme: 'dark',
+        notifications: {
+          email: true,
+          sms: false,
+        },
+        language: 'en',
+      },
+      orderHistory: [
+        { orderId: 'A1B2', date: '2023-11-01', total: 50.0 },
+        { orderId: 'C3D4', date: '2023-11-05', total: 75.5 },
+      ],
+      configurations: {
+        general: {
+          autoSave: true,
+          interval: 5,
+        },
+        advanced: {
+          loggingLevel: 'info',
+          maxRetries: 3,
+        },
+      },
+      contactInfo: {
+        email: 'support@example.com',
+        phone: '1-800-TECH',
+        address: {
+          street: '123 Tech Lane',
+          city: 'Silicon Valley',
+          zip: '95000',
+        },
+      },
+      sampleData: [
+        'apple',
+        'banana',
+        'cherry',
+        'date',
+        'elderberry',
+        'fig',
+        'grape',
+        'honeydew',
+        'kiwi',
+        'lemon',
+        'mango',
+        'nectarine',
+        'orange',
+        'papaya',
+      ],
+    },
+  },
+  render: (props) => (
+    <div style={{ height: '600px' }}>
+      <LeafItToMe {...props} />
+    </div>
+  ),
+}
+
 export const LongText: Story = {
   args: {
     json: {
