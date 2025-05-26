@@ -43,7 +43,7 @@
 }
 
 .navigation-buttons .up svg {
-  transform: rotate(270deg);
+  transform: rotate(-90deg);
 }
 
 .navigation-buttons .down svg {
@@ -52,6 +52,7 @@
 
 .highlight-count {
   font-size: 0.825rem;
+  font-family: var(--font-family);
   color: var(--gray-8);
   white-space: nowrap;
 }

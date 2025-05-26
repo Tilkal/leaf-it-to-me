@@ -361,6 +361,11 @@ export const SearchAndNavigation: Story = {
       ],
     },
   },
+  render: (props) => (
+    <div style={{ height: '600px' }}>
+      <LeafItToMe {...props} />
+    </div>
+  ),
 }
 
 export const LongText: Story = {
