@@ -1,0 +1,320 @@
+.litm-container {
+  & *:focus {
+    outline: 2px solid var(--focus-color);
+  }
+
+  & ::selection {
+    background-color: var(--focus-color);
+    color: var(--selected-text-color);
+  }
+
+  box-sizing: border-box;
+  font-family: var(--value-font);
+  color: var(--text-color);
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  background-color: var(--main-background);
+
+  & .litm-overflow-wrapper {
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  & .litm-main-toolbar {
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    padding: 1rem;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--toolbar-background);
+    border-radius: 1rem 1rem 0 0;
+    z-index: 10;
+  }
+
+  & .litm-input {
+    box-sizing: border-box;
+    background-color: var(--input-background);
+    font-family: var(--text-font);
+    border: none;
+    color: var(--text-color);
+    border-radius: 1rem;
+    height: 2rem;
+    line-height: 2rem;
+    padding: 0 1rem;
+    font-size: 1rem;
+
+    &:hover,
+    &:focus {
+      filter: brightness(var(--brightness-hard));
+    }
+  }
+
+  & .litm-icon-button {
+    box-sizing: border-box;
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    border-radius: 50%;
+    border: none;
+    background-color: var(--input-background);
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color ease-in 0.1s;
+
+    & svg {
+      height: calc(var(--icon-button-size) / 2);
+      width: calc(var(--icon-button-size) / 2);
+      fill: var(--input-text-color);
+    }
+
+    &:hover,
+    &:focus {
+      filter: brightness(var(--brightness-hard));
+    }
+
+    &.litm-button-prev {
+      transform: rotate(-90deg);
+    }
+
+    &.litm-button-next {
+      transform: rotate(90deg);
+    }
+
+    &.litm-button-small {
+      height: calc(var(--icon-button-size) * 3 / 4);
+      width: calc(var(--icon-button-size) * 3 / 4);
+
+      & svg {
+        height: calc(var(--icon-button-size) * 3 / 8);
+        width: calc(var(--icon-button-size) * 3 / 8);
+      }
+    }
+  }
+
+  & .litm-root {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1rem;
+    padding-bottom: 1.75rem;
+    position: relative;
+
+    & .litm-tree {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      padding-left: 1.5rem;
+
+      & .litm-tree-branches {
+        box-sizing: border-box;
+        position: absolute;
+        height: calc(100% + var(--leaf-height));
+        width: 0.75rem;
+        top: calc(var(--leaf-height) / -2 - 1rem);
+        left: -1.25rem;
+        border-color: var(--tree-branches-background);
+        border-style: solid;
+        border-width: 2px;
+        border-right: none;
+        z-index: 1;
+
+        & .litm-icon-button.litm-button-expand {
+          transform: rotate(-90deg);
+          position: absolute;
+          top: calc(var(--icon-button-size) * -3 / 8);
+          left: calc(var(--icon-button-size) * -3 / 8);
+        }
+
+        & .litm-tree-actions {
+          position: absolute;
+          left: calc(var(--icon-button-size) * -3 / 8);
+          z-index: 2;
+          opacity: 0;
+          transition: opacity ease-in 0.1s;
+          /* Make button visible if hovering between leaves */
+          width: 100vw;
+          height: 1rem;
+
+          &:hover {
+            opacity: 1;
+          }
+
+          &.one-one,
+          &.two-one {
+            top: calc(
+              var(--leaf-height) / 2 + 0.5rem - var(--icon-button-size) * 3 / 8
+            );
+          }
+
+          &.one-two,
+          &.two-two {
+            top: calc(
+              (var(--leaf-height) * 3 / 2 + 1.5rem) -
+                (var(--icon-button-size) * 3 / 8)
+            );
+          }
+
+          &.one-three,
+          &.two-three {
+            top: calc(100% - var(--icon-button-size) / 2 + 0.5rem);
+          }
+        }
+      }
+
+      &:hover:not(:has(.litm-tree:hover)) > .litm-tree-branches {
+        filter: brightness(var(--brightness-hard));
+      }
+
+      & .litm-leaf {
+        box-sizing: border-box;
+        width: 100%;
+        height: var(--leaf-height);
+        background-color: var(--leaf-background);
+        border-radius: calc(var(--leaf-height) / 2);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+
+        &:not(:last-child) {
+          margin-bottom: 1rem;
+        }
+
+        & .litm-leaf-content {
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 1rem;
+          font-size: var(--leaf-font-size);
+          padding: calc((var(--leaf-height) - var(--leaf-font-size)) / 2)
+            calc(var(--leaf-height) / 4);
+
+          & .litm-leaf-type {
+            box-sizing: border-box;
+            font-size: calc(var(--leaf-font-size) * 3 / 4);
+            height: calc(var(--leaf-height) / 2);
+            line-height: calc(var(--leaf-height) / 2);
+            background-color: var(--leaf-type-background);
+            border-radius: calc(var(--leaf-height) / 4);
+            padding: 0 calc(var(--leaf-font-size) / 2);
+          }
+        }
+
+        & .litm-leaf-actions {
+          padding-right: calc(calc(var(--leaf-height) / 2) - 1rem);
+          opacity: 0;
+          transition: opacity ease-in 0.1s;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 0.25rem;
+
+          & .litm-icon-button {
+            background-color: transparent;
+
+            &:hover {
+              background-color: var(--input-background);
+            }
+          }
+
+          &.fake-clicked {
+            opacity: 1;
+
+            & .litm-icon-button {
+              background-color: var(--input-background);
+            }
+          }
+        }
+
+        &:hover .litm-leaf-actions {
+          opacity: 1;
+        }
+
+        &.litm-leaf-edit {
+          & .litm-leaf-content {
+            gap: 0.5rem;
+          }
+
+          & .litm-leaf-actions {
+            opacity: 1;
+
+            & .litm-icon-button {
+              background-color: var(--input-background);
+
+              &.button-save {
+                background-color: var(--success-color);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  & .litm-popover {
+    position: absolute;
+    font-family: var(--text-font);
+    background-color: var(--popover-background);
+    right: 0;
+    bottom: calc(var(--icon-button-size) + 1rem);
+    z-index: 20;
+    border-radius: 0.5rem;
+
+    &:after {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      border-color: var(--popover-background) transparent;
+      border-width: 6px 6px 0;
+      top: 100%;
+      right: calc(var(--icon-button-size) / 2 - 0.125rem);
+    }
+  }
+
+  & .litm-menu {
+    padding: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+
+    & .litm-menu-item {
+      padding: 0.5rem 1rem;
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      background-color: var(--popover-background);
+      cursor: pointer;
+
+      &:hover {
+        filter: brightness(var(--brightness-hard));
+      }
+
+      & .litm-menu-item-icon {
+        width: 1rem;
+        height: 1rem;
+        & svg {
+          fill: var(--text-color);
+        }
+      }
+
+      &.danger {
+        color: var(--danger-color);
+
+        & svg {
+          fill: var(--danger-color);
+        }
+      }
+    }
+  }
+}

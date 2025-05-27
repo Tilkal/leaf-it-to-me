@@ -1,0 +1,29 @@
+:root {
+  --main-background: #eff2f8;
+  --toolbar-background: #ccd1e1;
+  --leaf-background: #ffffff;
+  --input-background: #eff2f8;
+  --leaf-type-background: #eff2f8;
+  --tree-branches-background: #d4d7e1;
+  --popover-background: #e2e5ef;
+
+  --text-color: #111111;
+  --input-text-color: #333333;
+  --selected-text-color: #ffffff;
+
+  --text-font: 'Roboto';
+  --value-font: 'Source Code Pro';
+
+  --leaf-height: 2.5rem;
+  --leaf-font-size: 1rem;
+
+  --icon-button-size: 2rem;
+
+  --success-color: #c4ecdc;
+  --danger-color: #a32323;
+
+  --focus-color: #5285fd;
+
+  --brightness-hard: 0.95;
+  --brightness-medium: 0.975;
+}
