@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="580" viewBox="0 0 800 580">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      text { font-family: ui-sans-serif, system-ui, sans-serif; }
+      .label-layer { font-size: 11px; fill: #5F5E5A; font-weight: 400; }
+      .title { font-size: 14px; font-weight: 600; }
+      .sub { font-size: 11px; font-weight: 400; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="580" fill="#FAFAF9" rx="12"/>
+
+  <!-- ── LAYER LABELS ── -->
+  <text class="label-layer" transform="rotate(-90,28,115) translate(0,0)" x="0" y="0" text-anchor="middle">instance</text>
+  <text class="label-layer" transform="rotate(-90,28,280) translate(0,0)" x="0" y="0" text-anchor="middle">core</text>
+  <text class="label-layer" transform="rotate(-90,28,455) translate(0,0)" x="0" y="0" text-anchor="middle">plugins</text>
+
+  <!-- Brackets -->
+  <path d="M38 72 L44 72 L44 158 L38 158" fill="none" stroke="#B4B2A9" stroke-width="1"/>
+  <path d="M38 178 L44 178 L44 382 L38 382" fill="none" stroke="#B4B2A9" stroke-width="1"/>
+  <path d="M38 402 L44 402 L44 542 L38 542" fill="none" stroke="#B4B2A9" stroke-width="1"/>
+
+  <!-- ══ INSTANCE CONFIG ══ -->
+  <rect x="56" y="72" width="720" height="86" rx="10" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+  <text class="title" fill="#3C3489" x="416" y="103" text-anchor="middle">Instance config</text>
+  <text class="sub" fill="#534AB7" x="416" y="123" text-anchor="middle">JSON Schema (optionnel)  ·  plugins déclarés  ·  options UI  ·  custom validators</text>
+  <text class="sub" fill="#7F77DD" x="416" y="143" text-anchor="middle">createInstance({ schema, plugins, options })</text>
+
+  <!-- Arrow down -->
+  <line x1="416" y1="158" x2="416" y2="176" stroke="#888780" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- ══ CORE ══ -->
+  <!-- AST/IR -->
+  <rect x="56" y="178" width="218" height="204" rx="10" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+  <text class="title" fill="#085041" x="165" y="210" text-anchor="middle">AST / IR</text>
+  <text class="sub" fill="#0F6E56" x="165" y="234" text-anchor="middle">RFC 6901 paths</text>
+  <text class="sub" fill="#0F6E56" x="165" y="254" text-anchor="middle">nœuds typés + IDs stables</text>
+  <text class="sub" fill="#0F6E56" x="165" y="274" text-anchor="middle">schemaPath dérivé</text>
+  <text class="sub" fill="#0F6E56" x="165" y="294" text-anchor="middle">getJsonDescription()</text>
+  <text class="sub" fill="#0F6E56" x="165" y="314" text-anchor="middle">getJsonFromNode()</text>
+  <text class="sub" fill="#0F6E56" x="165" y="354" text-anchor="middle" font-style="italic">→ { data, errors }</text>
+
+  <!-- Validator -->
+  <rect x="291" y="178" width="218" height="204" rx="10" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+  <text class="title" fill="#085041" x="400" y="210" text-anchor="middle">Validator</text>
+  <text class="sub" fill="#0F6E56" x="400" y="234" text-anchor="middle">AJV + JSON Schema</text>
+  <text class="sub" fill="#0F6E56" x="400" y="254" text-anchor="middle">erreurs indexées par path</text>
+  <text class="sub" fill="#0F6E56" x="400" y="274" text-anchor="middle">custom keywords AJV</text>
+  <text class="sub" fill="#0F6E56" x="400" y="294" text-anchor="middle">fallback permissif</text>
+  <text class="sub" fill="#0F6E56" x="400" y="314" text-anchor="middle">(sans schema = JSON std)</text>
+
+  <!-- Tree ops -->
+  <rect x="526" y="178" width="250" height="204" rx="10" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+  <text class="title" fill="#085041" x="651" y="210" text-anchor="middle">Tree ops</text>
+  <text class="sub" fill="#0F6E56" x="651" y="234" text-anchor="middle">add / update / delete</text>
+  <text class="sub" fill="#0F6E56" x="651" y="254" text-anchor="middle">move (drag &amp; drop)</text>
+  <text class="sub" fill="#0F6E56" x="651" y="274" text-anchor="middle">contraintes schema</text>
+  <text class="sub" fill="#0F6E56" x="651" y="294" text-anchor="middle">immutable updates</text>
+  <text class="sub" fill="#0F6E56" x="651" y="314" text-anchor="middle">addNodeToTree()</text>
+  <text class="sub" fill="#0F6E56" x="651" y="334" text-anchor="middle">updateNodeInTree()</text>
+  <text class="sub" fill="#0F6E56" x="651" y="354" text-anchor="middle">deleteNodeInTree()</text>
+
+  <!-- Arrow down -->
+  <line x1="416" y1="382" x2="416" y2="400" stroke="#888780" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- ══ PLUGINS ══ -->
+  <!-- Registry bar -->
+  <rect x="56" y="402" width="720" height="34" rx="8" fill="#D3D1C7" stroke="#B4B2A9" stroke-width="1"/>
+  <text class="title" fill="#2C2C2A" x="416" y="424" text-anchor="middle">Plugin registry  ·  register(plugin)  ·  match(node, schemaNode) → component</text>
+
+  <!-- built-in -->
+  <rect x="56" y="448" width="160" height="86" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+  <text class="title" fill="#633806" x="136" y="474" text-anchor="middle">built-in</text>
+  <text class="sub" fill="#854F0B" x="136" y="494" text-anchor="middle">string · number</text>
+  <text class="sub" fill="#854F0B" x="136" y="512" text-anchor="middle">boolean · null</text>
+  <text class="sub" fill="#854F0B" x="136" y="530" text-anchor="middle">object · array</text>
+
+  <!-- form -->
+  <rect x="232" y="448" width="160" height="86" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+  <text class="title" fill="#633806" x="312" y="474" text-anchor="middle">form</text>
+  <text class="sub" fill="#854F0B" x="312" y="494" text-anchor="middle">select / enum</text>
+  <text class="sub" fill="#854F0B" x="312" y="512" text-anchor="middle">date picker</text>
+  <text class="sub" fill="#854F0B" x="312" y="530" text-anchor="middle">color picker</text>
+
+  <!-- EPCIS -->
+  <rect x="408" y="448" width="160" height="86" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+  <text class="title" fill="#633806" x="488" y="474" text-anchor="middle">EPCIS</text>
+  <text class="sub" fill="#854F0B" x="488" y="494" text-anchor="middle">event types</text>
+  <text class="sub" fill="#854F0B" x="488" y="512" text-anchor="middle">GLN / GTIN</text>
+  <text class="sub" fill="#854F0B" x="488" y="530" text-anchor="middle">bizStep enum</text>
+
+  <!-- custom -->
+  <rect x="584" y="448" width="192" height="86" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="6 3"/>
+  <text class="title" fill="#444441" x="680" y="474" text-anchor="middle">custom</text>
+  <text class="sub" fill="#5F5E5A" x="680" y="500" text-anchor="middle">ton plugin métier</text>
+  <text class="sub" fill="#5F5E5A" x="680" y="520" text-anchor="middle">→ register()</text>
+</svg>
