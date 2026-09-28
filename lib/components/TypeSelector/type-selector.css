@@ -1,53 +1,32 @@
 .type-selector {
   position: relative;
   cursor: pointer;
-  padding: var(--padding-sqr-4);
-  background: var(--gray-1);
   flex-grow: 0;
+  border-radius: calc(var(--leaf-height) / 4);
 
-  &:first-child {
-    border-radius: var(--border-radius-h-start-4);
-  }
-
-  &:last-child {
-    border-radius: var(--border-radius-h-end-4);
-  }
-
-  &:only-child {
-    border-radius: var(--border-radius-4);
+  &:hover .type-tag {
+    filter: brightness(var(--brightness-hard));
   }
 }
 
 .type-selector-dropdown {
   position: absolute;
-  width: 100%;
-  top: 100%;
+  top: calc(100% + var(--gap));
   left: 0;
-  background-color: var(--white);
+  padding: var(--padding-sqr-4) 0;
+  background-color: var(--popover-background);
   border-radius: var(--border-radius-4);
-  box-shadow: var(--box-shadow);
   display: flex;
   flex-direction: column;
-  z-index: 1;
+  z-index: 20;
 }
 
 .type-selector-dropdown-item {
-  padding: var(--padding-sqr-3);
-
-  &:first-child {
-    border-radius: var(--border-radius-v-start-4);
-  }
-
-  &:last-child {
-    border-radius: var(--border-radius-v-end-4);
-  }
-
-  &:only-child {
-    border-radius: var(--border-radius-4);
-  }
+  padding: var(--padding-rect-3);
 
   &:hover,
   &.hover {
-    background-color: var(--gray-1);
+    filter: brightness(var(--brightness-hard));
+    background-color: var(--popover-background);
   }
 }

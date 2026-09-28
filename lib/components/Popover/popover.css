@@ -6,61 +6,45 @@
   font-family: var(--font-family);
   font-size: 0.9rem;
   position: absolute;
-  border-radius: var(--border-radius-2);
-  padding: var(--padding-sqr-3);
-  background-color: var(--transparent-black);
-  backdrop-filter: blur(0.2rem);
-  color: var(--white);
-  z-index: 2;
+  border-radius: var(--border-radius-4);
+  padding: var(--padding-rect-3);
+  background-color: var(--popover-background);
+  color: var(--text-color);
+  z-index: 20;
 
   &.full-width {
-    padding: 4px 0;
+    padding: var(--padding-sqr-4) 0;
   }
 
   &:hover {
-    z-index: 3;
-  }
-
-  &.info {
-    color: var(--gray-10);
-    background-color: var(--white);
-    box-shadow: var(--box-shadow);
-
-    &:after {
-      border-color: var(--white) transparent;
-    }
-
-    &.left:after,
-    &.right:after {
-      border-color: transparent var(--white);
-    }
+    z-index: 21;
   }
 
   &.warning {
     color: var(--orange-10);
-    background-color: var(--transparent-orange);
+    background-color: var(--orange-2);
 
     &:after {
-      border-color: var(--transparent-orange) transparent;
+      border-color: var(--orange-2) transparent;
     }
 
     &.left:after,
     &.right:after {
-      border-color: transparent var(--transparent-orange);
+      border-color: transparent var(--orange-2);
     }
   }
 
   &.error {
-    color: var(--red-10);
-    background-color: var(--transparent-red);
+    color: var(--danger-color);
+    background-color: var(--red-0);
 
     &:after {
-      border-color: var(--transparent-red) transparent;
+      border-color: var(--red-0) transparent;
     }
 
     &.left:after,
     &.right:after {
-      border-color: transparent var(--transparent-red);
+      border-color: transparent var(--red-0);
     }
   }
 
@@ -68,7 +52,7 @@
     content: '';
     position: absolute;
     border-style: solid;
-    border-color: var(--transparent-black) transparent;
+    border-color: var(--popover-background) transparent;
   }
 
   &:not(.active) {
@@ -112,7 +96,7 @@
       bottom: 50%;
       left: 100%;
       transform: translate(0, 50%);
-      border-color: transparent var(--transparent-black);
+      border-color: transparent var(--popover-background);
     }
   }
 
@@ -126,7 +110,7 @@
       bottom: 50%;
       right: 100%;
       transform: translate(0, 50%);
-      border-color: transparent var(--transparent-black);
+      border-color: transparent var(--popover-background);
     }
   }
 }

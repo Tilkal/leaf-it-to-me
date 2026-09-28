@@ -1,38 +1,42 @@
 .leaf-container {
   position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.625rem;
 
   * {
     &:focus {
-      outline: 2px solid var(--blue-7);
+      outline: 2px solid var(--focus-color);
     }
   }
 
+  & ::selection {
+    background-color: var(--focus-color);
+    color: var(--selected-text-color);
+  }
+
   .leaf {
+    box-sizing: border-box;
     position: relative;
-    background-color: var(--white);
-    border-radius: var(--border-radius-4);
-    box-shadow: var(--box-shadow);
+    background-color: var(--leaf-background);
+    border-radius: calc(var(--leaf-height) / 2);
     width: 100%;
     min-width: 0;
-    flex: 1 1 0;
-    padding: var(--padding-sqr-4);
+    min-height: var(--leaf-height);
+    padding: var(--padding-sqr-2) calc(var(--icon-button-size) + var(--gap))
+      var(--padding-sqr-2) calc(var(--leaf-height) / 4);
     display: flex;
     flex-direction: row;
-    gap: var(--gap);
-    font-family: var(--font-family);
+    gap: calc(var(--gap) * 2);
+    font-family: var(--value-font);
+    font-size: var(--leaf-font-size);
+    color: var(--text-color);
     align-items: center;
     justify-content: space-between;
 
     &.error {
-      outline: 1px solid var(--red-3);
+      outline: 1px solid var(--danger-color);
     }
 
     &.warning {
-      outline: 1px solid var(--orange-3);
+      outline: 1px solid var(--orange-5);
     }
 
     &.highlight::after {
@@ -54,11 +58,10 @@
     .leaf-content {
       display: flex;
       flex-direction: row;
-      gap: var(--gap);
+      gap: calc(var(--gap) * 2);
       width: 100%;
       max-width: 100%;
       align-items: center;
-      min-height: var(--action-button-size);
       container-name: leaf-content;
       container-type: inline-size;
     }
@@ -81,9 +84,9 @@
     }
 
     .leaf-name {
-      color: var(--gray-7);
       &.empty-string {
-        color: var(--gray-5);
+        color: var(--input-text-color);
+        font-family: var(--font-family);
         font-size: 0.8rem;
       }
     }
@@ -92,7 +95,8 @@
       &.type-string {
         color: var(--blue-8);
         &.empty-string {
-          color: var(--gray-5);
+          color: var(--input-text-color);
+          font-family: var(--font-family);
           font-size: 0.8rem;
         }
       }
@@ -111,15 +115,20 @@
     }
 
     &.leaf-edit {
-      &:hover {
-        background-color: var(--white);
+      padding-right: calc(
+        var(--icon-button-size) * 2 + var(--gap) + var(--padding-sqr-2)
+      );
+
+      .leaf-content {
+        gap: var(--gap);
       }
     }
 
     .leaf-input-group {
       display: flex;
       flex-direction: row;
-      gap: 3px;
+      align-items: center;
+      gap: var(--gap);
       width: 100%;
     }
 
@@ -128,42 +137,33 @@
       max-width: 100%;
       min-width: 0;
 
-      &:first-child {
-        .leaf-input {
-          border-radius: var(--border-radius-h-start-4);
-        }
-      }
-
       &:last-child {
         flex: 1 1 auto;
-
-        .leaf-input {
-          border-radius: var(--border-radius-h-end-4);
-          width: -moz-available;
-          width: -webkit-fill-available;
-        }
-      }
-
-      &:only-child {
-        .leaf-input {
-          border-radius: var(--border-radius-4);
-        }
       }
 
       .leaf-input {
-        font-size: 1rem;
-        position: relative;
-        padding: var(--padding-sqr-4);
-        background: var(--gray-1);
+        box-sizing: border-box;
+        width: 100%;
+        height: var(--input-height);
+        line-height: var(--input-height);
+        padding: 0 var(--padding-sqr-5);
         border: none;
-        flex-grow: 1;
-        max-width: calc(100% - (2 * var(--padding-sqr-4)));
+        border-radius: var(--border-radius-5);
+        background-color: var(--input-background);
+        color: var(--text-color);
+        font-family: var(--font-family);
+        font-size: 1rem;
+
+        &:hover,
+        &:focus {
+          filter: brightness(var(--brightness-hard));
+        }
 
         &.error {
-          outline: 1px solid var(--red-5);
+          outline: 1px solid var(--danger-color);
 
           &:focus {
-            outline: 2px solid var(--red-5);
+            outline: 2px solid var(--danger-color);
           }
         }
 
@@ -180,56 +180,80 @@
     @container leaf-content (width < 200px) {
       .leaf-input-group {
         flex-direction: column;
+        align-items: stretch;
       }
-
-      .leaf-input-container {
-        &:first-child {
-          .leaf-input {
-            border-radius: var(--border-radius-v-start-4);
-          }
-        }
-
-        &:last-child {
-          .leaf-input {
-            border-radius: var(--border-radius-v-end-4);
-          }
-        }
-
-        &:only-child {
-          .leaf-input {
-            border-radius: var(--border-radius-4);
-          }
-        }
-      }
-
-      .type-selector {
-        &:first-child {
-          border-radius: var(--border-radius-v-start-4);
-        }
-
-        &:last-child {
-          border-radius: var(--border-radius-v-end-4);
-        }
-
-        &:only-child {
-          border-radius: var(--border-radius-4);
-        }
-      }
-    }
-
-    .leaf-addon {
-      display: flex;
-      flex-direction: row;
-      gap: var(--gap);
     }
   }
 
+  /* Actions are displayed inside the leaf, on its right side */
   .leaf-actions {
-    width: calc((2 * 1.5rem) + 8px);
-    min-width: calc((2 * 1.5rem) + 8px);
-    height: var(--action-button-size);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: calc(var(--leaf-height) / 2 - 1rem);
     display: flex;
     flex-direction: row;
-    gap: 0.5rem;
+    align-items: center;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity ease-in 0.1s;
+
+    & .action-button {
+      background-color: transparent;
+
+      &:hover {
+        background-color: var(--icon-button-background);
+      }
+    }
+
+    &.expanded {
+      opacity: 1;
+
+      & .action-button {
+        background-color: var(--icon-button-background);
+
+        &.success {
+          background-color: var(--success-color);
+        }
+      }
+    }
+
+    &:focus-within {
+      opacity: 1;
+    }
+
+    /*
+    Menus open on the left of the button, vertically centered
+    Above or below, they would be cut by the scrolling container on the first and last leaves
+    */
+    & .popover {
+      top: 50%;
+      bottom: auto;
+      left: auto;
+      right: calc(100% + 7px);
+      transform: translate(0, -50%);
+
+      &:after {
+        top: auto;
+        bottom: 50%;
+        left: 100%;
+        right: auto;
+        transform: translate(0, 50%);
+        border-width: 6px 0 6px 6px;
+        border-color: transparent var(--popover-background);
+      }
+
+      &.warning:after {
+        border-color: transparent var(--orange-2);
+      }
+
+      &.error:after {
+        border-color: transparent var(--red-0);
+      }
+    }
+  }
+
+  &:hover .leaf-actions {
+    opacity: 1;
   }
 }

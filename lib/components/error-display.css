@@ -1,22 +1,23 @@
 .error-message {
-  border-radius: var(--border-radius-4);
+  box-sizing: border-box;
+  border-radius: var(--border-radius-5);
   padding: calc(2 * var(--padding-sqr-4));
   width: 100%;
-  background-color: var(--red-1);
+  background-color: var(--main-background);
   font-family: var(--font-family);
 
   .message-title {
-    color: var(--red-8);
+    color: var(--danger-color);
     font-size: 1.1rem;
   }
 
   .message-content {
     margin-top: 0.5rem;
-    background-color: var(--red-0);
+    background-color: var(--leaf-background);
     padding: var(--padding-rect-4);
-    border-radius: var(--border-radius-4);
+    border-radius: var(--border-radius-5);
     font-size: 1rem;
-    font-family: monospace;
-    color: var(--gray-9);
+    font-family: var(--value-font);
+    color: var(--text-color);
   }
 }

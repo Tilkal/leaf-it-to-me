@@ -6,4 +6,12 @@
   flex-direction: column;
   overflow: hidden;
   overflow-y: auto;
+  border-radius: var(--border-radius-5);
+  background-color: var(--main-background);
+  scrollbar-width: none;
+
+  /* Older Safari does not support scrollbar-width */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
