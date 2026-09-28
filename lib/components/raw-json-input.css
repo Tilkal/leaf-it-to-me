@@ -5,8 +5,16 @@
   gap: var(--gap);
 
   & textarea {
+    box-sizing: border-box;
     min-width: 200px;
     min-height: 80px;
+    padding: var(--padding-sqr-4);
+    border: none;
+    border-radius: var(--border-radius-4);
+    background-color: var(--leaf-background);
+    color: var(--text-color);
+    font-family: var(--value-font);
+    resize: vertical;
   }
 
   & .confirm-action-buttons {

@@ -1,5 +1,7 @@
+@import './font.css';
+
 :root {
-  --font-family: sans-serif;
+  --font-family: var(--text-font), sans-serif;
   --box-shadow: rgba(50, 50, 93, 0.125) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.125) 0px 1px 3px -1px;
 
@@ -7,6 +9,7 @@
   --border-radius-2: 4px;
   --border-radius-3: 6px;
   --border-radius-4: 8px;
+  --border-radius-5: 16px;
 
   --border-radius-v-start-1: 2px 2px 0 0;
   --border-radius-v-start-2: 4px 4px 0 0;
@@ -32,6 +35,7 @@
   --padding-sqr-2: 4px;
   --padding-sqr-3: 6px;
   --padding-sqr-4: 8px;
+  --padding-sqr-5: 16px;
 
   --padding-rect-1: 2px 4px;
   --padding-rect-2: 4px 8px;
@@ -129,5 +133,34 @@
   --action-button-border-radius: 50%;
 
   --tree-v-padding: 1.5rem;
-  --tree-h-padding: 0.5rem;
+  --tree-h-padding: 1rem;
+  --tree-branches-offset: 1.25rem;
+  --tree-branches-width: 0.75rem;
+  --tree-root-padding-bottom: 2.75rem;
+
+  --text-font: 'Roboto';
+  --value-font: 'Source Code Pro';
+
+  --main-background: #eff2f8;
+  --toolbar-background: #ccd1e1;
+  --leaf-background: var(--white);
+  --input-background: #eff2f8;
+  --tree-branches-background: #d4d7e1;
+  --popover-background: #e2e5ef;
+  --icon-button-background: var(--toolbar-background);
+
+  --text-color: #111111;
+  --input-text-color: #333333;
+  --selected-text-color: var(--white);
+
+  --success-color: #c4ecdc;
+  --danger-color: #a32323;
+  --focus-color: #5285fd;
+
+  --leaf-height: 2.5rem;
+  --leaf-font-size: 1rem;
+  --icon-button-size: 2rem;
+  --input-height: 2rem;
+
+  --brightness-hard: 0.95;
 }

@@ -1,46 +1,68 @@
 .tree-view {
-  width: calc(100% - var(--tree-v-padding));
-  max-width: calc(100% - var(--tree-v-padding));
-  margin-left: calc(var(--tree-v-padding) / 2);
-  padding-left: calc(var(--tree-v-padding) / 2);
+  box-sizing: border-box;
+  position: relative;
   padding-top: var(--tree-h-padding);
 
-  &:not(.root) {
-    border-left: 1px solid var(--gray-2);
+  &.root {
+    padding: var(--tree-h-padding) var(--tree-h-padding)
+      var(--tree-root-padding-bottom) calc(var(--tree-branches-offset) * 2);
+    border-radius: var(--border-radius-5);
+    background-color: var(--main-background);
+    color: var(--text-color);
   }
 
-  &:last-child:not(.root) {
-    position: relative;
-    margin-left: calc(var(--tree-v-padding) / 2);
-    padding-left: calc(var(--tree-v-padding) / 2);
-    padding-top: var(--tree-h-padding);
-    border-left: 1px solid;
-    border-image: linear-gradient(
-        to bottom,
-        var(--gray-2) calc(100% - var(--action-button-size) / 2),
-        transparent 50%
-      )
-      1 100%;
+  &:not(.root) {
+    margin-left: var(--tree-v-padding);
+  }
 
-    &:before {
-      content: '';
-      position: absolute;
-      top: calc(100% - (var(--action-button-size) / 2));
-      left: 0;
-      border-bottom: 1px solid var(--gray-2);
-      width: calc(var(--tree-v-padding) / 4);
-    }
+  &:has(> .tree-view, > .tree-view-actions)::before {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    top: calc(var(--tree-h-padding) + var(--leaf-height) / 2);
+    bottom: calc(var(--leaf-height) / 2);
+    left: calc(var(--tree-branches-offset) * -1);
+    width: var(--tree-branches-width);
+    border: 2px solid var(--tree-branches-background);
+    border-right: none;
+  }
+
+  &:has(> .tree-view-actions)::before {
+    bottom: calc(var(--tree-h-padding) - var(--leaf-height) / 2);
+  }
+
+  &.root::before {
+    left: var(--tree-branches-offset);
+  }
+
+  &.root:has(> .tree-view, > .tree-view-actions)::before {
+    bottom: calc(var(--tree-root-padding-bottom) + var(--leaf-height) / 2);
+  }
+
+  &.root:has(> .tree-view-actions)::before {
+    bottom: calc(
+      var(--tree-root-padding-bottom) + var(--tree-h-padding) -
+        var(--leaf-height) / 2
+    );
   }
 
   .leaf {
     .leaf-addon {
+      position: absolute;
+      top: calc(50% - var(--icon-button-size) * 3 / 8);
+      left: calc(
+        var(--tree-branches-offset) * -1 - var(--icon-button-size) * 3 / 8
+      );
+
       .button-toggle {
-        box-shadow: none;
+        width: calc(var(--icon-button-size) * 3 / 4);
+        height: calc(var(--icon-button-size) * 3 / 4);
         transform: rotate(90deg);
         transition: transform ease-in 0.1s;
 
         & svg {
-          opacity: 0.3;
+          width: calc(var(--icon-button-size) * 3 / 8);
+          height: calc(var(--icon-button-size) * 3 / 8);
         }
 
         &.expanded {
@@ -51,49 +73,71 @@
   }
 
   & .tree-view-actions {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    position: relative;
-    margin-left: calc(var(--tree-v-padding) / 2);
-    padding-left: calc(var(--tree-v-padding) / 2);
-    padding-top: var(--tree-h-padding);
-    border-left: 1px solid;
-    border-image: linear-gradient(
-        to bottom,
-        var(--gray-2) calc(50% + var(--tree-h-padding) / 2),
-        transparent 50%
-      )
-      1 100%;
+    position: absolute;
+    bottom: calc(
+      var(--tree-h-padding) - var(--leaf-height) / 2 - var(--icon-button-size) *
+        3 / 8
+    );
+    left: calc(
+      var(--tree-branches-offset) * -1 - var(--icon-button-size) * 3 / 8
+    );
+    opacity: 0;
+    transition: opacity ease-in 0.1s;
 
-    & .button-add {
+    & .action-button {
+      width: calc(var(--icon-button-size) * 3 / 4);
+      height: calc(var(--icon-button-size) * 3 / 4);
+
+      & svg {
+        width: calc(var(--icon-button-size) * 3 / 8);
+        height: calc(var(--icon-button-size) * 3 / 8);
+      }
+    }
+
+    & .icon-add {
+      width: 100%;
+      height: 100%;
       transform: rotate(45deg);
     }
 
-    &:before {
-      content: '';
-      position: absolute;
-      top: calc(var(--tree-h-padding) + (var(--action-button-size) / 2));
-      left: 0;
-      border-bottom: 1px solid var(--gray-2);
-      width: calc(var(--tree-v-padding) / 4);
+    &.expanded,
+    &:focus-within,
+    &:has(.popover.active) {
+      opacity: 1;
     }
   }
 
-  &:hover:not(:has(.tree-view:hover)) > .tree-view {
-    border-color: var(--gray-5);
+  /* Buttons on the left edge: popovers open toward the inside of the box */
+  & .leaf-addon,
+  & .tree-view-actions {
+    & .popover.top,
+    & .popover.bottom {
+      left: 0;
+      transform: none;
+
+      &:after {
+        left: calc(var(--icon-button-size) * 3 / 8);
+      }
+    }
   }
 
-  &:hover:not(:has(.tree-view:hover)) > .tree-view-actions {
-    border-image: linear-gradient(
-        to bottom,
-        var(--gray-5) calc(50% + var(--tree-h-padding) / 2),
-        transparent 50%
-      )
-      1 100%;
+  &.root > .tree-view-actions {
+    bottom: calc(
+      var(--tree-root-padding-bottom) + var(--tree-h-padding) -
+        var(--leaf-height) / 2 - var(--icon-button-size) * 3 / 8
+    );
+    left: calc(var(--tree-branches-offset) - var(--icon-button-size) * 3 / 8);
+  }
 
-    &:before {
-      border-color: var(--gray-5);
+  &:hover:not(
+      :has(.tree-view:hover > .tree-view, .tree-view:hover > .tree-view-actions)
+    ) {
+    &::before {
+      filter: brightness(var(--brightness-hard));
+    }
+
+    & > .tree-view-actions {
+      opacity: 1;
     }
   }
 }
